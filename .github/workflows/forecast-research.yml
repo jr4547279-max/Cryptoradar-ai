@@ -50,6 +50,8 @@ jobs:
         continue-on-error: true
         run: |
           python tests/test_reward_referee.py
+          python tests/test_forecast_integrity.py
+          python scripts/forecast_integrity.py
           python scripts/score_rewards.py
       - name: Publish unattended learning readiness
         if: steps.collection.outcome == 'success'
