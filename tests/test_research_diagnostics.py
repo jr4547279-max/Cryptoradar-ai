@@ -4,6 +4,8 @@ import pathlib,sys
 sys.path.insert(0,str(pathlib.Path(__file__).resolve().parents[1]/'scripts'))
 from regime_diagnostics import classify,enrich,regime_diagnostics,selective_diagnostics
 from historical_research import walk_forward
+from agent_council import council
+from council_evaluation import evaluate_council
 def run():
     assert classify(.09,.02)=='uptrend'
     assert classify(-.09,.02)=='downtrend'
@@ -25,5 +27,13 @@ def run():
     selective=selective_diagnostics(rows,result['folds'])
     assert selective['status']=='evaluated'
     assert selective['selected']<=selective['total']
+    assert council([float('nan'),0,0,0])['decision']=='NO_TRADE'
+    assert council([0,0,0,0],estimated_roundtrip_cost=.02)['decision']=='NO_TRADE'
+    assert council([.1,0,.24,.25])['decision']=='NO_TRADE'
+    report=evaluate_council(rows,candles,result['folds'])
+    assert report['status']=='evaluated'
+    assert report['signals']<=report['observations']
+    assert report['coverage']<=1
+    assert all(f['signals']<=f['observations'] for f in report['folds'])
     print('Research diagnostic tests passed (synthetic fixtures; not model training).')
 if __name__=='__main__':run()
