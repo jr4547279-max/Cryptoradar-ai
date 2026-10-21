@@ -3,6 +3,7 @@
 No trading, no API keys, no claims of predictive skill. Chronological train/holdout.
 """
 import csv, datetime as dt, io, json, math, pathlib, statistics, urllib.request, zipfile
+from regime_diagnostics import regime_diagnostics, selective_diagnostics
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 OUT=ROOT/'historical-training-report.json'
 PAIRS=['BTCUSDT','ETHUSDT','SOLUSDT','BNBUSDT','XRPUSDT']
@@ -124,6 +125,15 @@ def main():
                           holdoutBrier=round(model,5),constantTrainRateBrier=round(baseline,5),
                           betterThanConstantBaseline=model<baseline)
     report['walkForward']=walk_forward(rows)
+    report['regimes']=regime_diagnostics(rows,raw)
+    report['selectiveForecasting']=selective_diagnostics(rows,report['walkForward'].get('folds',[]))
+    report['researchVersion']='V26: market regimes, walk-forward comparisons, abstention diagnostics'
+    report['limitations']=[
+      'Market-regime thresholds are hand-chosen, not learned or independently validated.',
+      'Model candidates have been inspected on the same historical data; no untouched final evaluation exists.',
+      'Daily candles cannot model intraday execution, spreads, fees, funding, or market impact.',
+      'No real-money execution or automated live trading.'
+    ]
     OUT.write_text(json.dumps(report,indent=2)+'\n')
     print('Historical training:',report['status'],'examples:',len(rows),flush=True)
 if __name__=='__main__':main()
