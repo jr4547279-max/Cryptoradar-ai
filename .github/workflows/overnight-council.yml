@@ -1,0 +1,57 @@
+name: Twelve-hour overnight council research
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/overnight-council.yml'
+      - 'scripts/overnight_research.py'
+  schedule:
+    - cron: '35 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: overnight-council
+  cancel-in-progress: false
+jobs:
+  simulate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run bounded synthetic scenario research
+        run: python scripts/overnight_research.py
+      - name: Publish research results with concurrency retries
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -f overnight-research.json ]; then exit 0; fi
+          cp overnight-research.json "$RUNNER_TEMP/overnight-research.json"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            git reset --hard origin/main
+            python - "$RUNNER_TEMP/overnight-research.json" <<'PY'
+          import json, pathlib, sys
+          source=json.loads(pathlib.Path(sys.argv[1]).read_text())
+          target=pathlib.Path('overnight-research.json')
+          try: current=json.loads(target.read_text())
+          except (OSError,ValueError): current={'batches':[]}
+          by_hour={b['hour']:b for b in current.get('batches',[])}
+          by_hour.update({b['hour']:b for b in source.get('batches',[])})
+          current.update(source)
+          current['batches']=[by_hour[k] for k in sorted(by_hour)]
+          current['totalSimulations']=sum(b['simulations'] for b in current['batches'])
+          target.write_text(json.dumps(current,indent=2)+'\n')
+          PY
+            git add overnight-research.json
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m "Research: overnight synthetic council stress batch"
+            if git push origin HEAD:main; then exit 0; fi
+            sleep $((attempt * 2))
+          done
+          exit 1
