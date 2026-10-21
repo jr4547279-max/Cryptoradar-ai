@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-21T13:17:55.756063+00:00",
+  "generatedAt": "2026-10-21T13:19:54.028098+00:00",
   "status": "evaluated",
   "source": "Binance Vision public historical daily spot candles, USDT-quoted, not GBP",
   "pairs": {
@@ -103,6 +103,86 @@
     "description": "Five fixed-rule specialists; disagreement and risk gates default to no trade.",
     "limitations": "Not trained, not validated as profitable, and does not place orders."
   },
+  "trainedCouncil": {
+    "status": "evaluated",
+    "trainExamples": 2120,
+    "testExamples": 535,
+    "testStart": "2026-06-15",
+    "agents": [
+      "short_term",
+      "medium_term",
+      "long_term",
+      "full_context"
+    ],
+    "scores": {
+      "baseline": {
+        "brier": 0.250746,
+        "logLoss": 0.69464,
+        "directionAccuracy": 0.47103
+      },
+      "short_term": {
+        "brier": 0.252571,
+        "logLoss": 0.698325,
+        "directionAccuracy": 0.47664
+      },
+      "medium_term": {
+        "brier": 0.251216,
+        "logLoss": 0.695592,
+        "directionAccuracy": 0.50467
+      },
+      "long_term": {
+        "brier": 0.250682,
+        "logLoss": 0.694512,
+        "directionAccuracy": 0.4785
+      },
+      "full_context": {
+        "brier": 0.252417,
+        "logLoss": 0.698002,
+        "directionAccuracy": 0.47664
+      },
+      "equal_weight_council": {
+        "brier": 0.251578,
+        "logLoss": 0.696311,
+        "directionAccuracy": 0.50654
+      }
+    },
+    "councilBeatsBaselineBrier": false,
+    "councilBeatsAllSpecialistsBrier": false,
+    "calibration": [
+      {
+        "bucket": 0,
+        "count": 0,
+        "meanPrediction": null,
+        "observedUpRate": null
+      },
+      {
+        "bucket": 1,
+        "count": 0,
+        "meanPrediction": null,
+        "observedUpRate": null
+      },
+      {
+        "bucket": 2,
+        "count": 535,
+        "meanPrediction": 0.49032,
+        "observedUpRate": 0.52897
+      },
+      {
+        "bucket": 3,
+        "count": 0,
+        "meanPrediction": null,
+        "observedUpRate": null
+      },
+      {
+        "bucket": 4,
+        "count": 0,
+        "meanPrediction": null,
+        "observedUpRate": null
+      }
+    ],
+    "method": "Four independent L2 logistic specialists trained on different past-return horizons; fixed equal-weight mean. Chronological final 20% test, two-day embargo, train-only standardization.",
+    "warning": "This is a first exploratory final-period evaluation, not permanent untouched proof: once results are inspected, further changes require fresh future data for honest validation. No profit claim or live trading."
+  },
   "councilEvaluation": {
     "status": "evaluated",
     "method": "Fixed council decisions evaluated on walk-forward test date windows; next-day close-to-close returns, fixed assumed round-trip cost.",
@@ -191,7 +271,7 @@
     "rule": "Illustrative fixed filter: forecast only if absolute previous-day log return >=3%; fixed momentum probability 55/45.",
     "warning": "Abstention is not evidence of superior predictions; scores on selected examples cannot be directly compared with full-coverage scores."
   },
-  "researchVersion": "V29: cost-aware council signal evaluation, validated history, fail-closed evaluation",
+  "researchVersion": "V30: independently trained specialist council and chronological evaluation",
   "limitations": [
     "Market-regime thresholds are hand-chosen, not learned or independently validated.",
     "Model candidates have been inspected on the same historical data; no untouched final evaluation exists.",
