@@ -24,13 +24,30 @@ jobs:
           python-version: '3.12'
       - name: Download real historical candles and evaluate
         run: python scripts/historical_research.py
-      - name: Commit research report
+      - name: Publish research report safely
+        shell: bash
         run: |
+          set -euo pipefail
+          # Preserve the generated report while rebasing against the newest main.
+          cp historical-training-report.json "$RUNNER_TEMP/historical-training-report.json"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add historical-training-report.json
-          if ! git diff --cached --quiet; then
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            git reset --hard origin/main
+            cp "$RUNNER_TEMP/historical-training-report.json" historical-training-report.json
+            git add historical-training-report.json
+            if git diff --cached --quiet; then
+              echo "Historical report already current"
+              exit 0
+            fi
             git commit -m "Research: update historical model evaluation"
-            git pull --rebase origin main
-            git push origin HEAD:main
-          fi
+            if git push origin HEAD:main; then
+              echo "Historical report published"
+              exit 0
+            fi
+            echo "Concurrent repository update; retrying publication ($attempt/5)"
+            sleep $((attempt * 2))
+          done
+          echo "Unable to publish historical report after retries" >&2
+          exit 1
