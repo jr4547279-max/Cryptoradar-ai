@@ -48,7 +48,13 @@ for f in state['forecasts']:
         f['outcome']=int(c['current_price']>f['price'])
         f['scoredAt']=ms
         f['scoredPrice']=c['current_price']
-state['observations']=[o for o in state['observations'] if o['time']>=ms-8*86400000][-20000:]
+# Keep one observed price per UTC day and coin for 90 days to bound public Git history.
+# Research training needs multiweek history; hourly collection still updates today's sample.
+daily={}
+for o in state['observations']:
+    if o['time']>=ms-90*86400000:
+        daily[(o['id'],o['time']//86400000)]=o
+state['observations']=sorted(daily.values(),key=lambda o:(o['time'],o['id']))[-10000:]
 state['forecasts']=state['forecasts'][-5000:]
 state['lastRun']=now.isoformat()
 PATH.write_text(json.dumps(state,separators=(',',':'))+'\n')
