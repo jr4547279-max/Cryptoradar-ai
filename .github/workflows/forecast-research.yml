@@ -1,0 +1,32 @@
+name: Forecast research (paper only)
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: forecast-research
+  cancel-in-progress: false
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Collect market observations and score matured forecasts
+        run: python scripts/hourly_research.py
+      - name: Commit research data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research-data.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Research: scheduled market observation"
+            git push
+          fi
