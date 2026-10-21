@@ -6,6 +6,7 @@ import csv, datetime as dt, io, json, math, pathlib, statistics, urllib.request,
 from regime_diagnostics import regime_diagnostics, selective_diagnostics
 from agent_council import council_diagnostics
 from council_evaluation import evaluate_council
+from trainable_council import assess as assess_trainable_council
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 OUT=ROOT/'historical-training-report.json'
 PAIRS=['BTCUSDT','ETHUSDT','SOLUSDT','BNBUSDT','XRPUSDT']
@@ -144,9 +145,10 @@ def main():
         raise RuntimeError('Insufficient validated history for a model evaluation')
     report['regimes']=regime_diagnostics(rows,raw)
     report['agentCouncil']=council_diagnostics(rows)
+    report['trainedCouncil']=assess_trainable_council(rows)
     report['councilEvaluation']=evaluate_council(rows,raw,report['walkForward'].get('folds',[]))
     report['selectiveForecasting']=selective_diagnostics(rows,report['walkForward'].get('folds',[]))
-    report['researchVersion']='V29: cost-aware council signal evaluation, validated history, fail-closed evaluation'
+    report['researchVersion']='V30: independently trained specialist council and chronological evaluation'
     report['limitations']=[
       'Market-regime thresholds are hand-chosen, not learned or independently validated.',
       'Model candidates have been inspected on the same historical data; no untouched final evaluation exists.',
