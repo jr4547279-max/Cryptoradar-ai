@@ -1,0 +1,10 @@
+{
+  "generatedAt": null,
+  "status": "awaiting_first_run",
+  "source": "Binance Vision public daily spot candles (USDT-quoted)",
+  "pairs": {},
+  "examples": 0,
+  "method": "Regularized logistic regression with historical returns",
+  "validation": "Chronological holdout with embargo",
+  "warning": "No historical model run has yet been verified. No demonstrated predictive skill or profitability."
+}
