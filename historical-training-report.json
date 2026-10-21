@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-21T13:43:07.373117+00:00",
+  "generatedAt": "2026-10-21T21:10:11.466791+00:00",
   "status": "evaluated",
   "source": "Binance Vision public historical daily spot candles, USDT-quoted, not GBP",
   "pairs": {
@@ -409,7 +409,19 @@
     "rule": "Illustrative fixed filter: forecast only if absolute previous-day log return >=3%; fixed momentum probability 55/45.",
     "warning": "Abstention is not evidence of superior predictions; scores on selected examples cannot be directly compared with full-coverage scores."
   },
-  "researchVersion": "V31: specialist council robustness research",
+  "councilPromotion": {
+    "status": "RESEARCH_ONLY",
+    "paperTradePromotionApproved": false,
+    "realMoneyApproved": false,
+    "historicalChecksPassed": false,
+    "reasons": [
+      "Council has not consistently beaten the baseline across required historical evaluations.",
+      "No independently verified, immutable forward-forecast performance record for this council.",
+      "No independently validated, executable net-profit and drawdown evidence."
+    ],
+    "rule": "Historical backtests alone can never authorize a promotion; independent forward testing and risk review are required."
+  },
+  "researchVersion": "V32: council promotion safety gate and robustness research",
   "limitations": [
     "Market-regime thresholds are hand-chosen, not learned or independently validated.",
     "Model candidates have been inspected on the same historical data; no untouched final evaluation exists.",
