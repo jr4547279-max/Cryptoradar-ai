@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-21T13:15:31.140112+00:00",
+  "generatedAt": "2026-10-21T13:17:19.295097+00:00",
   "status": "evaluated",
   "source": "Binance Vision public historical daily spot candles, USDT-quoted, not GBP",
   "pairs": {
@@ -103,6 +103,85 @@
     "description": "Five fixed-rule specialists; disagreement and risk gates default to no trade.",
     "limitations": "Not trained, not validated as profitable, and does not place orders."
   },
+  "councilEvaluation": {
+    "status": "evaluated",
+    "method": "Fixed council decisions evaluated on walk-forward test date windows; next-day close-to-close returns, fixed assumed round-trip cost.",
+    "folds": [
+      {
+        "start": "2025-11-14",
+        "end": "2026-02-01",
+        "observations": 400,
+        "signals": 5,
+        "coverage": 0.0125,
+        "correctDirections": 1,
+        "directionalHitRate": 0.2,
+        "sumGrossUnitNotionalReturns": -0.121965,
+        "sumNetUnitNotionalReturns": -0.141965,
+        "assumedRoundTripCost": 0.004,
+        "noTradeReasons": {
+          "Specialists disagree or have insufficient conviction": 369,
+          "Volatile market regime: abstain": 20,
+          "Risk or estimated execution cost gate blocked": 6
+        }
+      },
+      {
+        "start": "2026-02-02",
+        "end": "2026-04-22",
+        "observations": 400,
+        "signals": 2,
+        "coverage": 0.005,
+        "correctDirections": 1,
+        "directionalHitRate": 0.5,
+        "sumGrossUnitNotionalReturns": 0.051367,
+        "sumNetUnitNotionalReturns": 0.043367,
+        "assumedRoundTripCost": 0.004,
+        "noTradeReasons": {
+          "Specialists disagree or have insufficient conviction": 353,
+          "Risk or estimated execution cost gate blocked": 19,
+          "Volatile market regime: abstain": 26
+        }
+      },
+      {
+        "start": "2026-04-23",
+        "end": "2026-07-11",
+        "observations": 400,
+        "signals": 3,
+        "coverage": 0.0075,
+        "correctDirections": 2,
+        "directionalHitRate": 0.66667,
+        "sumGrossUnitNotionalReturns": -0.000334,
+        "sumNetUnitNotionalReturns": -0.012334,
+        "assumedRoundTripCost": 0.004,
+        "noTradeReasons": {
+          "Specialists disagree or have insufficient conviction": 375,
+          "Risk or estimated execution cost gate blocked": 7,
+          "Volatile market regime: abstain": 15
+        }
+      },
+      {
+        "start": "2026-07-12",
+        "end": "2026-09-29",
+        "observations": 400,
+        "signals": 2,
+        "coverage": 0.005,
+        "correctDirections": 2,
+        "directionalHitRate": 1.0,
+        "sumGrossUnitNotionalReturns": 0.036537,
+        "sumNetUnitNotionalReturns": 0.028537,
+        "assumedRoundTripCost": 0.004,
+        "noTradeReasons": {
+          "Specialists disagree or have insufficient conviction": 356,
+          "Volatile market regime: abstain": 22,
+          "Risk or estimated execution cost gate blocked": 20
+        }
+      }
+    ],
+    "observations": 1600,
+    "signals": 12,
+    "coverage": 0.0075,
+    "sumNetUnitNotionalReturns": -0.082395,
+    "warning": "Exploratory and in-sample for the hand-chosen council rules, even though dates match walk-forward model test windows. Signals share days and correlated assets; summed unit-notional returns are NOT portfolio P&L. Close-to-close prices omit execution uncertainty, funding and borrow costs. No demonstrated profitability."
+  },
   "selectiveForecasting": {
     "status": "evaluated",
     "total": 1600,
@@ -112,7 +191,7 @@
     "rule": "Illustrative fixed filter: forecast only if absolute previous-day log return >=3%; fixed momentum probability 55/45.",
     "warning": "Abstention is not evidence of superior predictions; scores on selected examples cannot be directly compared with full-coverage scores."
   },
-  "researchVersion": "V28: experimental multi-agent council, validated history, fail-closed evaluation",
+  "researchVersion": "V29: cost-aware council signal evaluation, validated history, fail-closed evaluation",
   "limitations": [
     "Market-regime thresholds are hand-chosen, not learned or independently validated.",
     "Model candidates have been inspected on the same historical data; no untouched final evaluation exists.",
