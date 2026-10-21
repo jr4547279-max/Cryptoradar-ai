@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-21T21:10:11.466791+00:00",
+  "generatedAt": "2026-10-21T21:11:05.885692+00:00",
   "status": "evaluated",
   "source": "Binance Vision public historical daily spot candles, USDT-quoted, not GBP",
   "pairs": {
@@ -320,6 +320,53 @@
     "foldsBeatingBaseline": 3,
     "method": "Three expanding chronological windows with two-day embargo and per-asset diagnostics; each model fitted on past data only.",
     "warning": "Exploratory windows on already inspected historical data. Overlapping research with previous evaluations means these are NOT new independent confirmations."
+  },
+  "councilSelection": {
+    "status": "evaluated",
+    "folds": [
+      {
+        "start": "2026-01-06",
+        "selectedOnPastValidation": "medium_term",
+        "validationExamples": 330,
+        "testExamples": 395,
+        "brier": {
+          "baseline": 0.253358,
+          "selected": 0.251799,
+          "equal_weight_council": 0.252497
+        }
+      },
+      {
+        "start": "2026-03-27",
+        "selectedOnPastValidation": "medium_term",
+        "validationExamples": 430,
+        "testExamples": 395,
+        "brier": {
+          "baseline": 0.249855,
+          "selected": 0.248978,
+          "equal_weight_council": 0.24934
+        }
+      },
+      {
+        "start": "2026-06-15",
+        "selectedOnPastValidation": "full_context",
+        "validationExamples": 530,
+        "testExamples": 395,
+        "brier": {
+          "baseline": 0.250585,
+          "selected": 0.25051,
+          "equal_weight_council": 0.250416
+        }
+      }
+    ],
+    "testExamples": 1185,
+    "aggregateBrier": {
+      "baseline": 0.251266,
+      "selected": 0.250429,
+      "equal_weight_council": 0.250751
+    },
+    "selectionBeatsBaseline": true,
+    "method": "Nested chronological validation: select among four specialists and equal-weight council using only earlier validation; refit on pre-test data; evaluate later period with two-day embargo.",
+    "warning": "Exploratory historical research already inspected in prior versions; no untouched prospective validation, no profitability evidence."
   },
   "councilEvaluation": {
     "status": "evaluated",
