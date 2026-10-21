@@ -7,6 +7,9 @@ on:
       - 'scripts/hourly_research.py'
       - 'scripts/train_research.py'
       - 'scripts/scenario_stress.py'
+      - 'scripts/reward_referee.py'
+      - 'scripts/score_rewards.py'
+      - 'tests/test_reward_referee.py'
   schedule:
     - cron: '17 * * * *'
   workflow_dispatch:
@@ -40,12 +43,20 @@ jobs:
         if: steps.collection.outcome == 'success'
         continue-on-error: true
         run: python scripts/train_research.py
+      - name: Test reward referee and score matured forecasts
+        id: rewards
+        if: steps.collection.outcome == 'success'
+        continue-on-error: true
+        run: |
+          python tests/test_reward_referee.py
+          python scripts/score_rewards.py
       - name: Publish transparent pipeline status
         if: always()
         env:
           COLLECT_RESULT: ${{ steps.collection.outcome }}
           SCENARIO_RESULT: ${{ steps.scenarios.outcome }}
           TRAIN_RESULT: ${{ steps.training.outcome }}
+          REWARD_RESULT: ${{ steps.rewards.outcome }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           python - <<'PY'
@@ -56,6 +67,7 @@ jobs:
             'collection':os.environ.get('COLLECT_RESULT','unknown'),
             'scenarios':os.environ.get('SCENARIO_RESULT','unknown'),
             'training':os.environ.get('TRAIN_RESULT','unknown'),
+            'rewards':os.environ.get('REWARD_RESULT','unknown'),
             'runUrl':os.environ.get('RUN_URL','')
           }
           p.write_text(json.dumps(status,indent=2)+'\n')
@@ -66,7 +78,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add research-data.json scenario-report.json training-report.json pipeline-status.json
+          git add research-data.json scenario-report.json training-report.json pipeline-status.json reward-report.json
           if ! git diff --cached --quiet; then
             git commit -m "Research: publish scheduled pipeline status"
             git pull --rebase origin main
@@ -82,3 +94,4 @@ jobs:
           test "$COLLECT_RESULT" = "success"
           test "$SCENARIO_RESULT" = "success"
           test "$TRAIN_RESULT" = "success"
+          test "$REWARD_RESULT" = "success"
