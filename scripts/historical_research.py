@@ -90,6 +90,19 @@ def main():
                 errors.append(f'{pair} {month}: {type(exc).__name__}')
         raw[pair]=sorted(candles.values())
         print(pair,len(raw[pair]),'days',flush=True)
+    # Fail closed on missing/incomplete history. Never publish a misleading
+    # successful evaluation after silent API errors or large data gaps.
+    if errors:
+        raise RuntimeError(f'Historical download incomplete: {len(errors)} failed monthly requests; first: {errors[:3]}')
+    for pair, candles in raw.items():
+        days=[t//86400000 for t,_ in candles]
+        if len(days)<360:
+            raise RuntimeError(f'{pair}: only {len(days)} daily candles (minimum 360)')
+        gaps=[b-a for a,b in zip(days,days[1:])]
+        if any(g!=1 for g in gaps):
+            raise RuntimeError(f'{pair}: nonconsecutive daily candles detected')
+        if len(set(days))!=len(days):
+            raise RuntimeError(f'{pair}: duplicate candle dates')
     rows=[]
     for pair,candles in raw.items():
         prices=[p for _,p in candles]
@@ -125,9 +138,11 @@ def main():
                           holdoutBrier=round(model,5),constantTrainRateBrier=round(baseline,5),
                           betterThanConstantBaseline=model<baseline)
     report['walkForward']=walk_forward(rows)
+    if report['status']!='evaluated' or report['walkForward']['status']!='evaluated':
+        raise RuntimeError('Insufficient validated history for a model evaluation')
     report['regimes']=regime_diagnostics(rows,raw)
     report['selectiveForecasting']=selective_diagnostics(rows,report['walkForward'].get('folds',[]))
-    report['researchVersion']='V26: market regimes, walk-forward comparisons, abstention diagnostics'
+    report['researchVersion']='V27: validated complete history, fail-closed evaluation, regime diagnostics'
     report['limitations']=[
       'Market-regime thresholds are hand-chosen, not learned or independently validated.',
       'Model candidates have been inspected on the same historical data; no untouched final evaluation exists.',
