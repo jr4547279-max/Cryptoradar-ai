@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-21T13:07:35.774811+00:00",
+  "generatedAt": "2026-10-21T13:14:50.220571+00:00",
   "status": "evaluated",
   "source": "Binance Vision public historical daily spot candles, USDT-quoted, not GBP",
   "pairs": {
@@ -92,6 +92,17 @@
     },
     "note": "Descriptive research, not learned regime classification or a validated trading signal."
   },
+  "agentCouncil": {
+    "status": "experimental",
+    "sampleCount": 2665,
+    "decisions": {
+      "NO_TRADE": 2635,
+      "PAPER_LONG_CANDIDATE": 14,
+      "PAPER_SHORT_CANDIDATE": 16
+    },
+    "description": "Five fixed-rule specialists; disagreement and risk gates default to no trade.",
+    "limitations": "Not trained, not validated as profitable, and does not place orders."
+  },
   "selectiveForecasting": {
     "status": "evaluated",
     "total": 1600,
@@ -101,7 +112,7 @@
     "rule": "Illustrative fixed filter: forecast only if absolute previous-day log return >=3%; fixed momentum probability 55/45.",
     "warning": "Abstention is not evidence of superior predictions; scores on selected examples cannot be directly compared with full-coverage scores."
   },
-  "researchVersion": "V27: validated complete history, fail-closed evaluation, regime diagnostics",
+  "researchVersion": "V28: experimental multi-agent council, validated history, fail-closed evaluation",
   "limitations": [
     "Market-regime thresholds are hand-chosen, not learned or independently validated.",
     "Model candidates have been inspected on the same historical data; no untouched final evaluation exists.",
