@@ -8,6 +8,7 @@ from agent_council import council
 from council_evaluation import evaluate_council
 from trainable_council import assess as assess_trainable_council
 from council_robustness import robustness
+from council_promotion import assess_promotion
 def run():
     assert classify(.09,.02)=='uptrend'
     assert classify(-.09,.02)=='downtrend'
@@ -49,5 +50,10 @@ def run():
     assert len(robust['folds'])==3
     assert all('BTCUSDT' in fold['perAsset'] for fold in robust['folds'])
     assert robust['testExamples']==sum(fold['testExamples'] for fold in robust['folds'])
+    gate=assess_promotion({'trainedCouncil':trained,'councilRobustness':robust})
+    assert gate['status']=='RESEARCH_ONLY'
+    assert gate['paperTradePromotionApproved'] is False
+    assert gate['realMoneyApproved'] is False
+    assert assess_promotion({})['realMoneyApproved'] is False
     print('Research diagnostic tests passed (synthetic fixtures; not model training).')
 if __name__=='__main__':run()
