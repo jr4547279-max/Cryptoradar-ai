@@ -11,6 +11,7 @@ on:
       - 'scripts/agent_council.py'
       - 'scripts/council_evaluation.py'
       - 'scripts/trainable_council.py'
+      - 'scripts/council_robustness.py'
       - 'tests/test_research_diagnostics.py'
       - '.github/workflows/historical-research.yml'
 permissions:
