@@ -8,6 +8,7 @@ on:
     paths:
       - 'scripts/historical_research.py'
       - 'scripts/regime_diagnostics.py'
+      - 'tests/test_research_diagnostics.py'
       - '.github/workflows/historical-research.yml'
 permissions:
   contents: write
@@ -23,6 +24,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Run research safety and evaluation tests
+        run: python tests/test_research_diagnostics.py
       - name: Download real historical candles and evaluate
         run: python scripts/historical_research.py
       - name: Publish research report safely
