@@ -1,8 +1,7 @@
 {
-  "checkedAt": null,
-  "collection": "not_yet_verified",
-  "scenarios": "not_yet_verified",
-  "training": "not_yet_verified",
-  "runUrl": "",
-  "note": "This status file will update after the next GitHub Actions run. Until then, no new pipeline execution is confirmed."
+  "checkedAt": "2026-10-21T12:41:13.258357+00:00",
+  "collection": "success",
+  "scenarios": "success",
+  "training": "success",
+  "runUrl": "https://github.com/jr4547279-max/Cryptoradar-ai/actions/runs/39601564052"
 }

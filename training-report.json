@@ -1,11 +1,11 @@
 {
-  "generatedAt": null,
-  "status": "awaiting_first_run",
+  "generatedAt": "2026-10-21T12:41:13.217140+00:00",
+  "status": "insufficient_data",
   "model": "regularized_logistic_regression",
   "trainingData": "Real recorded CoinGecko prices only; no synthetic scenarios",
-  "validation": "Chronological 70% train / 30% later holdout with 24-hour embargo",
+  "validation": "Chronological 70% train / 30% later holdout with a 24-hour embargo; no random shuffling",
   "examples": 0,
   "uniqueCoins": 0,
-  "note": "The training pipeline has not published its first report. It requires at least 21 days of actual observations before it can train.",
-  "warning": "No model has been trained or validated. No live trading."
+  "warning": "Educational research, not a trading recommendation or proof of future predictive skill.",
+  "note": "Waiting for at least 21 distinct UTC days, 300 examples and 10 coins before training."
 }

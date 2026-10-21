@@ -1,7 +1,416 @@
 {
-  "disclaimer": "Awaiting first scheduled run. No synthetic stress tests have been executed or verified yet.",
-  "regimes": [],
-  "total_runs": 0,
-  "summary": [],
-  "status": "awaiting_first_run"
+  "disclaimer": "SYNTHETIC deterministic scenarios, not historical data, trained AI, or proof of profitability. Hypothetical next-observation fills, no market impact or leverage. Synthetic distribution assumptions can miss real-world risks.",
+  "regimes": [
+    "bull_trend",
+    "bear_trend",
+    "sideways",
+    "high_volatility",
+    "flash_crash",
+    "pump_and_dump",
+    "slow_recovery",
+    "whipsaw",
+    "liquidity_shock",
+    "low_volatility",
+    "trend_reversal",
+    "gap_risk"
+  ],
+  "seeds_per_regime": 30,
+  "costs_per_fill": [
+    0.0035,
+    0.01,
+    0.03
+  ],
+  "strategies": [
+    "momentum",
+    "reversion",
+    "trend",
+    "cash"
+  ],
+  "total_runs": 4320,
+  "summary": [
+    {
+      "scenario": "bull_trend",
+      "strategy": "momentum",
+      "mean_return_pct": -1.19,
+      "worst_return_pct": -4.862,
+      "worst_drawdown_pct": 5.222,
+      "runs": 30
+    },
+    {
+      "scenario": "bull_trend",
+      "strategy": "reversion",
+      "mean_return_pct": -1.301,
+      "worst_return_pct": -3.697,
+      "worst_drawdown_pct": 4.77,
+      "runs": 30
+    },
+    {
+      "scenario": "bull_trend",
+      "strategy": "trend",
+      "mean_return_pct": 2.982,
+      "worst_return_pct": -1.596,
+      "worst_drawdown_pct": 3.283,
+      "runs": 30
+    },
+    {
+      "scenario": "bull_trend",
+      "strategy": "cash",
+      "mean_return_pct": 0.0,
+      "worst_return_pct": 0.0,
+      "worst_drawdown_pct": 0.0,
+      "runs": 30
+    },
+    {
+      "scenario": "bear_trend",
+      "strategy": "momentum",
+      "mean_return_pct": -5.996,
+      "worst_return_pct": -8.59,
+      "worst_drawdown_pct": 8.769,
+      "runs": 30
+    },
+    {
+      "scenario": "bear_trend",
+      "strategy": "reversion",
+      "mean_return_pct": -5.737,
+      "worst_return_pct": -9.891,
+      "worst_drawdown_pct": 10.003,
+      "runs": 30
+    },
+    {
+      "scenario": "bear_trend",
+      "strategy": "trend",
+      "mean_return_pct": -3.067,
+      "worst_return_pct": -4.746,
+      "worst_drawdown_pct": 5.133,
+      "runs": 30
+    },
+    {
+      "scenario": "bear_trend",
+      "strategy": "cash",
+      "mean_return_pct": 0.0,
+      "worst_return_pct": 0.0,
+      "worst_drawdown_pct": 0.0,
+      "runs": 30
+    },
+    {
+      "scenario": "sideways",
+      "strategy": "momentum",
+      "mean_return_pct": -3.912,
+      "worst_return_pct": -6.082,
+      "worst_drawdown_pct": 6.144,
+      "runs": 30
+    },
+    {
+      "scenario": "sideways",
+      "strategy": "reversion",
+      "mean_return_pct": -3.502,
+      "worst_return_pct": -6.046,
+      "worst_drawdown_pct": 6.428,
+      "runs": 30
+    },
+    {
+      "scenario": "sideways",
+      "strategy": "trend",
+      "mean_return_pct": -1.304,
+      "worst_return_pct": -4.487,
+      "worst_drawdown_pct": 4.635,
+      "runs": 30
+    },
+    {
+      "scenario": "sideways",
+      "strategy": "cash",
+      "mean_return_pct": 0.0,
+      "worst_return_pct": 0.0,
+      "worst_drawdown_pct": 0.0,
+      "runs": 30
+    },
+    {
+      "scenario": "high_volatility",
+      "strategy": "momentum",
+      "mean_return_pct": -3.384,
+      "worst_return_pct": -14.115,
+      "worst_drawdown_pct": 15.389,
+      "runs": 30
+    },
+    {
+      "scenario": "high_volatility",
+      "strategy": "reversion",
+      "mean_return_pct": -1.295,
+      "worst_return_pct": -13.659,
+      "worst_drawdown_pct": 18.329,
+      "runs": 30
+    },
+    {
+      "scenario": "high_volatility",
+      "strategy": "trend",
+      "mean_return_pct": -1.35,
+      "worst_return_pct": -16.4,
+      "worst_drawdown_pct": 17.001,
+      "runs": 30
+    },
+    {
+      "scenario": "high_volatility",
+      "strategy": "cash",
+      "mean_return_pct": 0.0,
+      "worst_return_pct": 0.0,
+      "worst_drawdown_pct": 0.0,
+      "runs": 30
+    },
+    {
+      "scenario": "flash_crash",
+      "strategy": "momentum",
+      "mean_return_pct": -5.26,
+      "worst_return_pct": -9.732,
+      "worst_drawdown_pct": 10.192,
+      "runs": 30
+    },
+    {
+      "scenario": "flash_crash",
+      "strategy": "reversion",
+      "mean_return_pct": -4.778,
+      "worst_return_pct": -9.597,
+      "worst_drawdown_pct": 10.498,
+      "runs": 30
+    },
+    {
+      "scenario": "flash_crash",
+      "strategy": "trend",
+      "mean_return_pct": -3.069,
+      "worst_return_pct": -9.331,
+      "worst_drawdown_pct": 9.564,
+      "runs": 30
+    },
+    {
+      "scenario": "flash_crash",
+      "strategy": "cash",
+      "mean_return_pct": 0.0,
+      "worst_return_pct": 0.0,
+      "worst_drawdown_pct": 0.0,
+      "runs": 30
+    },
+    {
+      "scenario": "pump_and_dump",
+      "strategy": "momentum",
+      "mean_return_pct": -3.702,
+      "worst_return_pct": -9.867,
+      "worst_drawdown_pct": 11.307,
+      "runs": 30
+    },
+    {
+      "scenario": "pump_and_dump",
+      "strategy": "reversion",
+      "mean_return_pct": -2.999,
+      "worst_return_pct": -10.955,
+      "worst_drawdown_pct": 12.498,
+      "runs": 30
+    },
+    {
+      "scenario": "pump_and_dump",
+      "strategy": "trend",
+      "mean_return_pct": -1.761,
+      "worst_return_pct": -8.2,
+      "worst_drawdown_pct": 9.911,
+      "runs": 30
+    },
+    {
+      "scenario": "pump_and_dump",
+      "strategy": "cash",
+      "mean_return_pct": 0.0,
+      "worst_return_pct": 0.0,
+      "worst_drawdown_pct": 0.0,
+      "runs": 30
+    },
+    {
+      "scenario": "slow_recovery",
+      "strategy": "momentum",
+      "mean_return_pct": -2.754,
+      "worst_return_pct": -7.246,
+      "worst_drawdown_pct": 8.403,
+      "runs": 30
+    },
+    {
+      "scenario": "slow_recovery",
+      "strategy": "reversion",
+      "mean_return_pct": -2.303,
+      "worst_return_pct": -6.918,
+      "worst_drawdown_pct": 8.288,
+      "runs": 30
+    },
+    {
+      "scenario": "slow_recovery",
+      "strategy": "trend",
+      "mean_return_pct": 0.257,
+      "worst_return_pct": -5.583,
+      "worst_drawdown_pct": 7.594,
+      "runs": 30
+    },
+    {
+      "scenario": "slow_recovery",
+      "strategy": "cash",
+      "mean_return_pct": 0.0,
+      "worst_return_pct": 0.0,
+      "worst_drawdown_pct": 0.0,
+      "runs": 30
+    },
+    {
+      "scenario": "whipsaw",
+      "strategy": "momentum",
+      "mean_return_pct": -4.749,
+      "worst_return_pct": -10.375,
+      "worst_drawdown_pct": 10.999,
+      "runs": 30
+    },
+    {
+      "scenario": "whipsaw",
+      "strategy": "reversion",
+      "mean_return_pct": -2.766,
+      "worst_return_pct": -9.329,
+      "worst_drawdown_pct": 9.574,
+      "runs": 30
+    },
+    {
+      "scenario": "whipsaw",
+      "strategy": "trend",
+      "mean_return_pct": 3.505,
+      "worst_return_pct": -4.864,
+      "worst_drawdown_pct": 6.191,
+      "runs": 30
+    },
+    {
+      "scenario": "whipsaw",
+      "strategy": "cash",
+      "mean_return_pct": 0.0,
+      "worst_return_pct": 0.0,
+      "worst_drawdown_pct": 0.0,
+      "runs": 30
+    },
+    {
+      "scenario": "liquidity_shock",
+      "strategy": "momentum",
+      "mean_return_pct": -4.631,
+      "worst_return_pct": -12.011,
+      "worst_drawdown_pct": 13.895,
+      "runs": 30
+    },
+    {
+      "scenario": "liquidity_shock",
+      "strategy": "reversion",
+      "mean_return_pct": -3.234,
+      "worst_return_pct": -12.097,
+      "worst_drawdown_pct": 14.732,
+      "runs": 30
+    },
+    {
+      "scenario": "liquidity_shock",
+      "strategy": "trend",
+      "mean_return_pct": -2.707,
+      "worst_return_pct": -15.066,
+      "worst_drawdown_pct": 15.533,
+      "runs": 30
+    },
+    {
+      "scenario": "liquidity_shock",
+      "strategy": "cash",
+      "mean_return_pct": 0.0,
+      "worst_return_pct": 0.0,
+      "worst_drawdown_pct": 0.0,
+      "runs": 30
+    },
+    {
+      "scenario": "low_volatility",
+      "strategy": "momentum",
+      "mean_return_pct": -3.989,
+      "worst_return_pct": -4.893,
+      "worst_drawdown_pct": 4.942,
+      "runs": 30
+    },
+    {
+      "scenario": "low_volatility",
+      "strategy": "reversion",
+      "mean_return_pct": -3.856,
+      "worst_return_pct": -4.709,
+      "worst_drawdown_pct": 4.741,
+      "runs": 30
+    },
+    {
+      "scenario": "low_volatility",
+      "strategy": "trend",
+      "mean_return_pct": -1.298,
+      "worst_return_pct": -2.497,
+      "worst_drawdown_pct": 2.548,
+      "runs": 30
+    },
+    {
+      "scenario": "low_volatility",
+      "strategy": "cash",
+      "mean_return_pct": 0.0,
+      "worst_return_pct": 0.0,
+      "worst_drawdown_pct": 0.0,
+      "runs": 30
+    },
+    {
+      "scenario": "trend_reversal",
+      "strategy": "momentum",
+      "mean_return_pct": -3.741,
+      "worst_return_pct": -7.497,
+      "worst_drawdown_pct": 7.52,
+      "runs": 30
+    },
+    {
+      "scenario": "trend_reversal",
+      "strategy": "reversion",
+      "mean_return_pct": -3.36,
+      "worst_return_pct": -7.333,
+      "worst_drawdown_pct": 7.852,
+      "runs": 30
+    },
+    {
+      "scenario": "trend_reversal",
+      "strategy": "trend",
+      "mean_return_pct": -0.366,
+      "worst_return_pct": -4.569,
+      "worst_drawdown_pct": 5.166,
+      "runs": 30
+    },
+    {
+      "scenario": "trend_reversal",
+      "strategy": "cash",
+      "mean_return_pct": 0.0,
+      "worst_return_pct": 0.0,
+      "worst_drawdown_pct": 0.0,
+      "runs": 30
+    },
+    {
+      "scenario": "gap_risk",
+      "strategy": "momentum",
+      "mean_return_pct": -4.853,
+      "worst_return_pct": -8.334,
+      "worst_drawdown_pct": 8.63,
+      "runs": 30
+    },
+    {
+      "scenario": "gap_risk",
+      "strategy": "reversion",
+      "mean_return_pct": -4.451,
+      "worst_return_pct": -8.286,
+      "worst_drawdown_pct": 8.905,
+      "runs": 30
+    },
+    {
+      "scenario": "gap_risk",
+      "strategy": "trend",
+      "mean_return_pct": -2.515,
+      "worst_return_pct": -7.256,
+      "worst_drawdown_pct": 7.447,
+      "runs": 30
+    },
+    {
+      "scenario": "gap_risk",
+      "strategy": "cash",
+      "mean_return_pct": 0.0,
+      "worst_return_pct": 0.0,
+      "worst_drawdown_pct": 0.0,
+      "runs": 30
+    }
+  ]
 }
