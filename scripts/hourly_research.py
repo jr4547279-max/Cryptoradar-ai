@@ -24,9 +24,23 @@ for cid,c in latest.items():
     older=[o for o in history[cid] if o['time']<=ms-86400000]
     if not older:continue
     if any(f['id']==cid and f['created']>ms-23*3600000 for f in state['forecasts']):continue
-    momentum=(c['current_price']/older[-1]['price']-1)*100
-    prob=max(.35,min(.65,.5+max(-.15,min(.15,momentum*.012))))
-    state['forecasts'].append({'id':cid,'symbol':c.get('symbol',''),'created':ms,'price':c['current_price'],'pUp':prob,'outcome':None,'scoredAt':None})
+    # V16 research ensemble: independent, predeclared rules; NOT trained ML.
+    # Every input is timestamped <= the forecast creation time.
+    p=c['current_price']
+    change=(p/older[-1]['price']-1)*100
+    observations=history[cid]
+    def past_at(hours):
+        eligible=[o for o in observations if o['time']<=ms-hours*3600000]
+        return eligible[-1]['price'] if eligible else None
+    p48=past_at(48)
+    # Distinct fixed research hypotheses; probabilities deliberately capped.
+    momentum=max(.35,min(.65,.5+change*.012))
+    mean_reversion=max(.35,min(.65,.5-change*.012))
+    trend=max(.35,min(.65,.5+((p/p48-1)*100)*.006)) if p48 else .5
+    # No selection or tuning using the existing evaluated holdout.
+    models={'momentum':momentum,'mean_reversion':mean_reversion,'trend_48h':trend,'neutral':.5}
+    ensemble=sum(models.values())/len(models)
+    state['forecasts'].append({'id':cid,'symbol':c.get('symbol',''),'created':ms,'price':p,'pUp':ensemble,'models':models,'outcome':None,'scoredAt':None,'method':'V16 fixed untrained research ensemble'})
 for f in state['forecasts']:
     if f.get('outcome') is not None or ms-f['created']<86400000:continue
     c=latest.get(f['id'])
