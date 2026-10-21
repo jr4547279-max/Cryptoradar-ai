@@ -20,17 +20,58 @@ jobs:
         with:
           python-version: '3.12'
       - name: Collect market observations and score matured forecasts
+        id: collection
+        continue-on-error: true
         run: python scripts/hourly_research.py
       - name: Run deterministic synthetic scenario suite
+        id: scenarios
+        if: steps.collection.outcome == 'success'
+        continue-on-error: true
         run: python scripts/scenario_stress.py
       - name: Train and validate when enough real history exists
+        id: training
+        if: steps.collection.outcome == 'success'
+        continue-on-error: true
         run: python scripts/train_research.py
-      - name: Commit research data
+      - name: Publish transparent pipeline status
+        if: always()
+        env:
+          COLLECT_RESULT: ${{ steps.collection.outcome }}
+          SCENARIO_RESULT: ${{ steps.scenarios.outcome }}
+          TRAIN_RESULT: ${{ steps.training.outcome }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          python - <<'PY'
+          import os,json,datetime,pathlib
+          p=pathlib.Path('pipeline-status.json')
+          status={
+            'checkedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            'collection':os.environ.get('COLLECT_RESULT','unknown'),
+            'scenarios':os.environ.get('SCENARIO_RESULT','unknown'),
+            'training':os.environ.get('TRAIN_RESULT','unknown'),
+            'runUrl':os.environ.get('RUN_URL','')
+          }
+          p.write_text(json.dumps(status,indent=2)+'\n')
+          print(status)
+          PY
+      - name: Commit reports and pipeline status
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add research-data.json scenario-report.json training-report.json
+          git add research-data.json scenario-report.json training-report.json pipeline-status.json
           if ! git diff --cached --quiet; then
-            git commit -m "Research: scheduled market observation"
-            git push
+            git commit -m "Research: publish scheduled pipeline status"
+            git pull --rebase origin main
+            git push origin HEAD:main
           fi
+      - name: Fail workflow if research steps failed
+        if: always()
+        env:
+          COLLECT_RESULT: ${{ steps.collection.outcome }}
+          SCENARIO_RESULT: ${{ steps.scenarios.outcome }}
+          TRAIN_RESULT: ${{ steps.training.outcome }}
+        run: |
+          test "$COLLECT_RESULT" = "success"
+          test "$SCENARIO_RESULT" = "success"
+          test "$TRAIN_RESULT" = "success"
