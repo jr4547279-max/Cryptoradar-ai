@@ -1,0 +1,12 @@
+{
+  "checkedAt": "2026-10-21T21:25:12.780332+00:00",
+  "mode": "AUTONOMOUS_RESEARCH_ONLY",
+  "dataCollection": "scheduled_hourly",
+  "training": "waiting_for_sufficient_forward_data",
+  "historicalHoldoutBeatsBaseline": null,
+  "rewardEligibleShadowAgents": [],
+  "automaticModelPromotion": false,
+  "realTradingEnabled": false,
+  "nextStep": "Keep collecting prospective evidence; independently validate new challengers before any promotion.",
+  "caution": "Hourly evaluation is not continuous online learning. Shadow rewards do not update model weights."
+}
