@@ -9,6 +9,7 @@ on:
       - 'scripts/historical_research.py'
       - 'scripts/regime_diagnostics.py'
       - 'scripts/agent_council.py'
+      - 'scripts/council_evaluation.py'
       - 'tests/test_research_diagnostics.py'
       - '.github/workflows/historical-research.yml'
 permissions:
