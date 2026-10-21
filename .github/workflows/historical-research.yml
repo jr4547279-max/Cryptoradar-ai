@@ -12,6 +12,7 @@ on:
       - 'scripts/council_evaluation.py'
       - 'scripts/trainable_council.py'
       - 'scripts/council_robustness.py'
+      - 'scripts/council_promotion.py'
       - 'tests/test_research_diagnostics.py'
       - '.github/workflows/historical-research.yml'
 permissions:
