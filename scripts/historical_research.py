@@ -7,6 +7,7 @@ from regime_diagnostics import regime_diagnostics, selective_diagnostics
 from agent_council import council_diagnostics
 from council_evaluation import evaluate_council
 from council_robustness import robustness
+from council_selection import assess_selection
 from council_promotion import assess_promotion
 from trainable_council import assess as assess_trainable_council
 ROOT=pathlib.Path(__file__).resolve().parents[1]
@@ -149,6 +150,7 @@ def main():
     report['agentCouncil']=council_diagnostics(rows)
     report['trainedCouncil']=assess_trainable_council(rows)
     report['councilRobustness']=robustness(rows)
+    report['councilSelection']=assess_selection(rows)
     report['councilEvaluation']=evaluate_council(rows,raw,report['walkForward'].get('folds',[]))
     report['selectiveForecasting']=selective_diagnostics(rows,report['walkForward'].get('folds',[]))
     report['councilPromotion']=assess_promotion(report)
