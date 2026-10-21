@@ -33,7 +33,7 @@ def features(p,i):
     return [max(-.3,min(.3,math.log(p[i]/p[i-k]))) for k in (1,3,7,14)]
 def sigmoid(v):return 1/(1+math.exp(-max(-25,min(25,v))))
 def score(rows,w):
-    return sum((sigmoid(w[0]+sum(w[j+1]*x[j] for j in range(4)))-y)**2 for _,_,x,y in rows)/len(rows)
+    return sum((sigmoid(w[0]+sum(w[j+1]*x[j] for j in range(4)))-y)**2 for _,_,x,y in rows) / len(rows)
 def main():
     errors=[];raw={}
     for pair in PAIRS:
