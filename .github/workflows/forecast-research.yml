@@ -1,5 +1,12 @@
 name: Forecast research (paper only)
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/forecast-research.yml'
+      - 'scripts/hourly_research.py'
+      - 'scripts/train_research.py'
+      - 'scripts/scenario_stress.py'
   schedule:
     - cron: '17 * * * *'
   workflow_dispatch:
@@ -11,7 +18,7 @@ concurrency:
 jobs:
   collect:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
         with:
