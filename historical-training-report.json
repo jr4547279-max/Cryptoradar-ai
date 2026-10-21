@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-21T12:58:57.321048+00:00",
+  "generatedAt": "2026-10-21T13:02:10.815411+00:00",
   "status": "evaluated",
   "source": "Binance Vision public historical daily spot candles, USDT-quoted, not GBP",
   "pairs": {
@@ -81,5 +81,31 @@
     },
     "method": "Four expanding-window chronological folds, 2-day embargo, training-only scaling and L2 logistic regression",
     "caution": "Exploratory comparison, not untouched final validation. No demonstrated profitability."
-  }
+  },
+  "regimes": {
+    "method": "Fixed illustrative regimes: 14-day log momentum \u00b18%; trailing 7-day daily-return volatility 5.5%; volatility takes precedence.",
+    "counts": {
+      "range_or_mixed": 1596,
+      "high_volatility": 104,
+      "downtrend": 467,
+      "uptrend": 498
+    },
+    "note": "Descriptive research, not learned regime classification or a validated trading signal."
+  },
+  "selectiveForecasting": {
+    "status": "evaluated",
+    "total": 1600,
+    "selected": 339,
+    "coverage": 0.2119,
+    "selectedBrier": 0.252353,
+    "rule": "Illustrative fixed filter: forecast only if absolute previous-day log return >=3%; fixed momentum probability 55/45.",
+    "warning": "Abstention is not evidence of superior predictions; scores on selected examples cannot be directly compared with full-coverage scores."
+  },
+  "researchVersion": "V26: market regimes, walk-forward comparisons, abstention diagnostics",
+  "limitations": [
+    "Market-regime thresholds are hand-chosen, not learned or independently validated.",
+    "Model candidates have been inspected on the same historical data; no untouched final evaluation exists.",
+    "Daily candles cannot model intraday execution, spreads, fees, funding, or market impact.",
+    "No real-money execution or automated live trading."
+  ]
 }
