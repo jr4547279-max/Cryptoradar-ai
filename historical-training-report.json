@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-21T12:53:42.722190+00:00",
+  "generatedAt": "2026-10-21T12:58:57.321048+00:00",
   "status": "evaluated",
   "source": "Binance Vision public historical daily spot candles, USDT-quoted, not GBP",
   "pairs": {
@@ -19,5 +19,67 @@
   "testStart": "2026-04-23",
   "holdoutBrier": 0.25004,
   "constantTrainRateBrier": 0.25001,
-  "betterThanConstantBaseline": false
+  "betterThanConstantBaseline": false,
+  "walkForward": {
+    "status": "evaluated",
+    "folds": [
+      {
+        "start": "2025-11-14",
+        "end": "2026-02-01",
+        "trainExamples": 1055,
+        "testExamples": 400,
+        "brier": {
+          "constant": 0.253296,
+          "momentum": 0.24825,
+          "reversal": 0.25675,
+          "logistic": 0.253969
+        }
+      },
+      {
+        "start": "2026-02-02",
+        "end": "2026-04-22",
+        "trainExamples": 1455,
+        "testExamples": 400,
+        "brier": {
+          "constant": 0.250118,
+          "momentum": 0.252,
+          "reversal": 0.253,
+          "logistic": 0.250523
+        }
+      },
+      {
+        "start": "2026-04-23",
+        "end": "2026-07-11",
+        "trainExamples": 1855,
+        "testExamples": 400,
+        "brier": {
+          "constant": 0.249751,
+          "momentum": 0.24725,
+          "reversal": 0.25775,
+          "logistic": 0.24916
+        }
+      },
+      {
+        "start": "2026-07-12",
+        "end": "2026-09-29",
+        "trainExamples": 2255,
+        "testExamples": 400,
+        "brier": {
+          "constant": 0.251037,
+          "momentum": 0.2595,
+          "reversal": 0.2455,
+          "logistic": 0.253615
+        }
+      }
+    ],
+    "testExamples": 1600,
+    "aggregateBrier": {
+      "constant": 0.251051,
+      "momentum": 0.25175,
+      "reversal": 0.25325,
+      "logistic": 0.251817
+    },
+    "method": "Four expanding-window chronological folds, 2-day embargo, training-only scaling and L2 logistic regression",
+    "caution": "Exploratory comparison, not untouched final validation. No demonstrated profitability."
+  }
 }
