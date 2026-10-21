@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-21T13:03:33.456762+00:00",
+  "generatedAt": "2026-10-21T13:07:35.774811+00:00",
   "status": "evaluated",
   "source": "Binance Vision public historical daily spot candles, USDT-quoted, not GBP",
   "pairs": {
@@ -101,7 +101,7 @@
     "rule": "Illustrative fixed filter: forecast only if absolute previous-day log return >=3%; fixed momentum probability 55/45.",
     "warning": "Abstention is not evidence of superior predictions; scores on selected examples cannot be directly compared with full-coverage scores."
   },
-  "researchVersion": "V26: market regimes, walk-forward comparisons, abstention diagnostics",
+  "researchVersion": "V27: validated complete history, fail-closed evaluation, regime diagnostics",
   "limitations": [
     "Market-regime thresholds are hand-chosen, not learned or independently validated.",
     "Model candidates have been inspected on the same historical data; no untouched final evaluation exists.",
