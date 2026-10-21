@@ -7,6 +7,7 @@ from historical_research import walk_forward
 from agent_council import council
 from council_evaluation import evaluate_council
 from trainable_council import assess as assess_trainable_council
+from council_robustness import robustness
 def run():
     assert classify(.09,.02)=='uptrend'
     assert classify(-.09,.02)=='downtrend'
@@ -43,5 +44,10 @@ def run():
     assert 'baseline' in trained['scores']
     assert all(0<=v['brier']<=1 for v in trained['scores'].values())
     assert sum(b['count'] for b in trained['calibration'])==trained['testExamples']
+    robust=robustness(rows)
+    assert robust['status']=='evaluated',robust
+    assert len(robust['folds'])==3
+    assert all('BTCUSDT' in fold['perAsset'] for fold in robust['folds'])
+    assert robust['testExamples']==sum(fold['testExamples'] for fold in robust['folds'])
     print('Research diagnostic tests passed (synthetic fixtures; not model training).')
 if __name__=='__main__':run()
