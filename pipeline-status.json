@@ -1,0 +1,8 @@
+{
+  "checkedAt": null,
+  "collection": "not_yet_verified",
+  "scenarios": "not_yet_verified",
+  "training": "not_yet_verified",
+  "runUrl": "",
+  "note": "This status file will update after the next GitHub Actions run. Until then, no new pipeline execution is confirmed."
+}
