@@ -6,6 +6,7 @@ from regime_diagnostics import classify,enrich,regime_diagnostics,selective_diag
 from historical_research import walk_forward
 from agent_council import council
 from council_evaluation import evaluate_council
+from trainable_council import assess as assess_trainable_council
 def run():
     assert classify(.09,.02)=='uptrend'
     assert classify(-.09,.02)=='downtrend'
@@ -35,5 +36,12 @@ def run():
     assert report['signals']<=report['observations']
     assert report['coverage']<=1
     assert all(f['signals']<=f['observations'] for f in report['folds'])
+    trained=assess_trainable_council(rows)
+    assert trained['status']=='evaluated',trained
+    assert trained['trainExamples']>trained['testExamples']
+    assert 'equal_weight_council' in trained['scores']
+    assert 'baseline' in trained['scores']
+    assert all(0<=v['brier']<=1 for v in trained['scores'].values())
+    assert sum(b['count'] for b in trained['calibration'])==trained['testExamples']
     print('Research diagnostic tests passed (synthetic fixtures; not model training).')
 if __name__=='__main__':run()
