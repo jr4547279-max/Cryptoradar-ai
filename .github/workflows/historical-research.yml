@@ -14,6 +14,8 @@ on:
       - 'scripts/council_robustness.py'
       - 'scripts/council_selection.py'
       - 'scripts/council_promotion.py'
+      - 'scripts/reward_referee.py'
+      - 'tests/test_reward_referee.py'
       - 'tests/test_research_diagnostics.py'
       - '.github/workflows/historical-research.yml'
 permissions:
@@ -31,7 +33,9 @@ jobs:
         with:
           python-version: '3.12'
       - name: Run research safety and evaluation tests
-        run: python tests/test_research_diagnostics.py
+        run: |
+          python tests/test_research_diagnostics.py
+          python tests/test_reward_referee.py
       - name: Download real historical candles and evaluate
         run: python scripts/historical_research.py
       - name: Publish research report safely
