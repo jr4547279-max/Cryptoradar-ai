@@ -34,6 +34,50 @@ def features(p,i):
 def sigmoid(v):return 1/(1+math.exp(-max(-25,min(25,v))))
 def score(rows,w):
     return sum((sigmoid(w[0]+sum(w[j+1]*x[j] for j in range(4)))-y)**2 for _,_,x,y in rows) / len(rows)
+
+def walk_forward(rows):
+    """Expanding-window evaluation. No selection of winners on test folds."""
+    dates=sorted(set(r[0] for r in rows))
+    if len(dates)<180:return {'status':'insufficient_data'}
+    folds=[]
+    boundaries=[.4,.55,.7,.85,1.]
+    for k in range(4):
+        lo=dates[int(len(dates)*boundaries[k])]
+        hi=dates[min(len(dates)-1,int(len(dates)*boundaries[k+1])-1)]
+        train=[r for r in rows if r[0]<lo-2*86400000]
+        test=[r for r in rows if lo<=r[0]<=hi]
+        if len(train)<300 or len(test)<80:continue
+        mean=[statistics.fmean(r[2][j] for r in train) for j in range(4)]
+        std=[max(1e-5,statistics.pstdev(r[2][j] for r in train)) for j in range(4)]
+        def scaled(r):return [(r[2][j]-mean[j])/std[j] for j in range(4)]
+        w=[0.]*5
+        for _ in range(150):
+            grad=[0.]*5
+            for r in train:
+                x=scaled(r)
+                p=sigmoid(w[0]+sum(w[j+1]*x[j] for j in range(4)))
+                for j,z in enumerate([1.]+x):grad[j]+=(p-r[3])*z
+            for j in range(5):w[j]-=.16*(grad[j]/len(train)+(.08*w[j] if j else 0))
+        base=statistics.fmean(r[3] for r in train)
+        totals={name:0. for name in ('constant','momentum','reversal','logistic')}
+        for r in test:
+            x=scaled(r);y=r[3]
+            preds={'constant':base,'momentum':.55 if r[2][0]>0 else .45,
+                   'reversal':.45 if r[2][0]>0 else .55,
+                   'logistic':sigmoid(w[0]+sum(w[j+1]*x[j] for j in range(4)))}
+            for name,p in preds.items():totals[name]+=(p-y)**2
+        folds.append({'start':dt.datetime.fromtimestamp(lo/1000,dt.timezone.utc).date().isoformat(),
+                      'end':dt.datetime.fromtimestamp(hi/1000,dt.timezone.utc).date().isoformat(),
+                      'trainExamples':len(train),'testExamples':len(test),
+                      'brier':{name:round(val/len(test),6) for name,val in totals.items()}})
+    if not folds:return {'status':'insufficient_data'}
+    n=sum(f['testExamples'] for f in folds)
+    return {'status':'evaluated','folds':folds,'testExamples':n,
+            'aggregateBrier':{name:round(sum(f['brier'][name]*f['testExamples'] for f in folds)/n,6)
+                              for name in ('constant','momentum','reversal','logistic')},
+            'method':'Four expanding-window chronological folds, 2-day embargo, training-only scaling and L2 logistic regression',
+            'caution':'Exploratory comparison, not untouched final validation. No demonstrated profitability.'}
+
 def main():
     errors=[];raw={}
     for pair in PAIRS:
@@ -79,6 +123,7 @@ def main():
                           testStart=dt.datetime.fromtimestamp(boundary/1000,dt.timezone.utc).date().isoformat(),
                           holdoutBrier=round(model,5),constantTrainRateBrier=round(baseline,5),
                           betterThanConstantBaseline=model<baseline)
+    report['walkForward']=walk_forward(rows)
     OUT.write_text(json.dumps(report,indent=2)+'\n')
     print('Historical training:',report['status'],'examples:',len(rows),flush=True)
 if __name__=='__main__':main()
