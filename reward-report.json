@@ -1,0 +1,33 @@
+{
+  "status": "SHADOW_RESEARCH",
+  "source": "research-data.json existing GBP forward forecasts",
+  "modelFamily": "V16 fixed untrained research rules (not historical trained council)",
+  "agents": {
+    "momentum": {
+      "status": "INSUFFICIENT_DATA",
+      "reward": 0,
+      "eligible": false
+    },
+    "mean_reversion": {
+      "status": "INSUFFICIENT_DATA",
+      "reward": 0,
+      "eligible": false
+    },
+    "trend_48h": {
+      "status": "INSUFFICIENT_DATA",
+      "reward": 0,
+      "eligible": false
+    },
+    "neutral": {
+      "status": "INSUFFICIENT_DATA",
+      "reward": 0,
+      "eligible": false
+    },
+    "council": {
+      "status": "INSUFFICIENT_DATA",
+      "reward": 0,
+      "eligible": false
+    }
+  },
+  "warning": "Exploratory reward score; forecast file is mutable and is not independently immutable. No reward-based training or trading authorization."
+}
