@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Read-only scheduled forecast research. No orders, secrets, or exchange access."""
-import json, pathlib, urllib.request, datetime, math
+import json, pathlib, urllib.request, urllib.error, datetime, math, time
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 PATH=ROOT/'research-data.json'
 now=datetime.datetime.now(datetime.timezone.utc)
@@ -9,7 +9,18 @@ try: state=json.loads(PATH.read_text())
 except (FileNotFoundError,ValueError): state={'observations':[],'forecasts':[]}
 url='https://api.coingecko.com/api/v3/coins/markets?vs_currency=gbp&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=24h'
 request=urllib.request.Request(url,headers={'Accept':'application/json','User-Agent':'CryptoRadarResearch/0.1'})
-with urllib.request.urlopen(request,timeout=30) as response: coins=json.load(response)
+coins=None
+for attempt in range(4):
+    try:
+        with urllib.request.urlopen(request,timeout=30) as response:
+            coins=json.load(response)
+        break
+    except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError) as exc:
+        print(f'CoinGecko fetch attempt {attempt+1}/4 failed: {exc}', flush=True)
+        if attempt == 3:
+            raise
+        # Short, bounded retry for transient network errors / API rate limits.
+        time.sleep(5 * (attempt + 1))
 if not isinstance(coins,list) or not coins: raise ValueError('No market data returned')
 latest={}
 for c in coins:
