@@ -90,6 +90,7 @@ jobs:
           COLLECT_RESULT: ${{ steps.collection.outcome }}
           SCENARIO_RESULT: ${{ steps.scenarios.outcome }}
           TRAIN_RESULT: ${{ steps.training.outcome }}
+          REWARD_RESULT: ${{ steps.rewards.outcome }}
         run: |
           test "$COLLECT_RESULT" = "success"
           test "$SCENARIO_RESULT" = "success"
