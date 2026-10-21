@@ -1,0 +1,37 @@
+{
+  "batches": [
+    {
+      "hour": 497949,
+      "at": "2026-10-21T21:34:22.995469+00:00",
+      "simulations": 14400,
+      "regimes": 12,
+      "seedPolicy": "fixed by UTC hour",
+      "strategies": {
+        "momentum": {
+          "meanReturnPct": -15.1465,
+          "worstDrawdownPct": 41.312,
+          "samples": 3600
+        },
+        "reversion": {
+          "meanReturnPct": -15.1266,
+          "worstDrawdownPct": 41.365,
+          "samples": 3600
+        },
+        "trend": {
+          "meanReturnPct": -4.7271,
+          "worstDrawdownPct": 22.922,
+          "samples": 3600
+        },
+        "cash": {
+          "meanReturnPct": 0.0,
+          "worstDrawdownPct": 0,
+          "samples": 3600
+        }
+      }
+    }
+  ],
+  "totalSimulations": 14400,
+  "endAt": "2026-10-22T09:33:49+00:00",
+  "status": "SYNTHETIC_RESEARCH_ONLY",
+  "disclaimer": "Stress tests on artificial price paths; no training, agent rewards, forward validation, or evidence of profit. No models are promoted."
+}
