@@ -4,6 +4,7 @@ No trading, no API keys, no claims of predictive skill. Chronological train/hold
 """
 import csv, datetime as dt, io, json, math, pathlib, statistics, urllib.request, zipfile
 from regime_diagnostics import regime_diagnostics, selective_diagnostics
+from agent_council import council_diagnostics
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 OUT=ROOT/'historical-training-report.json'
 PAIRS=['BTCUSDT','ETHUSDT','SOLUSDT','BNBUSDT','XRPUSDT']
@@ -141,8 +142,9 @@ def main():
     if report['status']!='evaluated' or report['walkForward']['status']!='evaluated':
         raise RuntimeError('Insufficient validated history for a model evaluation')
     report['regimes']=regime_diagnostics(rows,raw)
+    report['agentCouncil']=council_diagnostics(rows)
     report['selectiveForecasting']=selective_diagnostics(rows,report['walkForward'].get('folds',[]))
-    report['researchVersion']='V27: validated complete history, fail-closed evaluation, regime diagnostics'
+    report['researchVersion']='V28: experimental multi-agent council, validated history, fail-closed evaluation'
     report['limitations']=[
       'Market-regime thresholds are hand-chosen, not learned or independently validated.',
       'Model candidates have been inspected on the same historical data; no untouched final evaluation exists.',
