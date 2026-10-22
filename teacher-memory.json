@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-10-22T20:04:34.152397+00:00",
+  "updatedAt": "2026-10-22T20:04:51.468510+00:00",
   "history": [
     {
       "at": "2026-10-22T12:22:27.784840+00:00",
@@ -45,6 +45,16 @@
     },
     {
       "at": "2026-10-22T20:04:34.152397+00:00",
+      "grade": "NEEDS_MORE_EVIDENCE",
+      "trainingStatus": "insufficient_data",
+      "lessonTopics": [
+        "evidence_quality",
+        "reward_discipline"
+      ],
+      "fingerprint": "evidence_quality|reward_discipline"
+    },
+    {
+      "at": "2026-10-22T20:04:51.468510+00:00",
       "grade": "NEEDS_MORE_EVIDENCE",
       "trainingStatus": "insufficient_data",
       "lessonTopics": [
