@@ -113,10 +113,17 @@ def audit_data(data, now_ms=None, historical=None):
             "validObservations": hist_audit.get("validObservations", 0), "coins": hist_audit.get("coins", 0),
             "utcDays": hist_audit.get("utcDays", 0), "warnings": hist_audit.get("warnings", []),
             "sourceDeclaredByBackfill": historical.get("source") if isinstance(historical, dict) else None,
+            "quoteCurrency": historical.get("quoteCurrency") if isinstance(historical, dict) else None,
             "externalAuthenticityVerified": False
         }
         for item in hist_audit.get("errors", []):
             errors.append("historical_" + item)
+        if isinstance(historical, dict) and historical.get("quoteCurrency") not in (None, "gbp"):
+            errors.append("historical_quote_currency_not_gbp")
+        if isinstance(hist_rows, list):
+            for i, row in enumerate(hist_rows):
+                if isinstance(row, dict) and not isinstance(row.get("source"), str):
+                    errors.append(f"historical_observation_{i}_missing_source_attribution")
 
     return {
         "status": "PASS" if not errors else "FAIL",
