@@ -1,12 +1,12 @@
 {
   "status": "PASS",
-  "checkedAt": "2026-10-22T20:26:32.657000+00:00",
+  "checkedAt": "2026-10-22T20:31:33.340000+00:00",
   "sourceDeclaredByCollector": "CoinGecko public markets endpoint; source authenticity is not independently verified",
   "observations": 205,
   "validObservations": 205,
   "coins": 104,
   "utcDays": 2,
-  "latestObservationMs": 1792700608342,
+  "latestObservationMs": 1792701032043,
   "forecasts": 1,
   "maturedForecasts": 0,
   "pendingForecasts": 1,
@@ -18,13 +18,11 @@
   ],
   "historicalDataQuality": {
     "status": "PASS",
-    "observations": 9855,
-    "validObservations": 9855,
-    "coins": 27,
+    "observations": 10950,
+    "validObservations": 10950,
+    "coins": 30,
     "utcDays": 365,
-    "warnings": [
-      "no_forecasts_yet"
-    ],
+    "warnings": [],
     "sourceDeclaredByBackfill": "CoinGecko public API market_chart",
     "quoteCurrency": "gbp",
     "externalAuthenticityVerified": false

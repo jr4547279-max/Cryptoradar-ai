@@ -1,17 +1,17 @@
 {
-  "generatedAt": "2026-10-22T20:26:40.657234+00:00",
+  "generatedAt": "2026-10-22T20:32:34.421000+00:00",
   "teacherVersion": "teacher-v2-rule-based-memory",
   "mode": "RESEARCH_SUPERVISOR_ONLY",
   "grade": "NEEDS_MORE_EVIDENCE",
   "trainingStatus": "evaluated",
-  "trainingExamples": 9720,
+  "trainingExamples": 10020,
   "eligibleForReward": [],
   "lessons": [
     {
       "topic": "predictive_skill",
-      "finding": "Chronological holdout Brier 0.25379 did not beat baseline 0.25346.",
-      "lesson": "The current model has not demonstrated predictive skill against its simple baseline.",
-      "nextExperiment": "Keep the candidate shadow-only; test simpler features and probability calibration without touching the holdout."
+      "finding": "Chronological holdout Brier 0.25352 did not beat the best available constant baseline (neutral_0.5) 0.25000.",
+      "lesson": "The current model has not demonstrated predictive skill against a simple constant forecast; it must remain unpromoted.",
+      "nextExperiment": "Use development-only walk-forward experiments for feature research, then freeze the candidate and evaluate it prospectively without retuning on that window."
     },
     {
       "topic": "reward_discipline",
@@ -20,9 +20,9 @@
       "nextExperiment": "Keep every agent in shadow mode until enough mature, valid, independent outcomes exist."
     }
   ],
-  "lessonHistoryCount": 13,
+  "lessonHistoryCount": 14,
   "sameLessonPatternSeenBefore": true,
-  "repeatPatternCount": 1,
+  "repeatPatternCount": 2,
   "actionsPermitted": [
     "publish_lessons",
     "recommend_next_experiment",
