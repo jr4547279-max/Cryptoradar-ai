@@ -263,7 +263,11 @@ def score_trial(trial, research_data, now_ms=None):
         challenge = (forecast.get("challengers") or {}).get(MODEL_KEY)
         if not isinstance(challenge, dict):
             continue
-        if challenge.get("trialId") != trial.get("trialId") or challenge.get("modelHash") != trial.get("modelHash"):
+        expected_data_hash = (trial.get("trainingProvenance") or {}).get("datasetSha256")
+        if (challenge.get("trialId") != trial.get("trialId")
+                or challenge.get("modelVersion") != trial.get("modelVersion")
+                or challenge.get("modelHash") != trial.get("modelHash")
+                or challenge.get("trainingDatasetSha256") != expected_data_hash):
             excluded += 1
             continue
         probability = challenge.get("pUp")
