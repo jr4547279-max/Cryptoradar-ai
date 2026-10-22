@@ -116,6 +116,7 @@ jobs:
         if: always()
         env:
           COLLECT_RESULT: ${{ steps.collection.outcome }}
+          DATA_AGENT_RESULT: ${{ steps.data_agent.outcome }}
           SCENARIO_RESULT: ${{ steps.scenarios.outcome }}
           TRAIN_RESULT: ${{ steps.training.outcome }}
           REWARD_RESULT: ${{ steps.rewards.outcome }}
