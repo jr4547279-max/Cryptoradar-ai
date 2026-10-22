@@ -17,6 +17,19 @@ def test():
         assert audit([f])['status']=='FAIL',field
     f=fixture();f['outcome']=None;f['scoredAt']=None;f.pop('scoredPrice')
     assert audit([f])['status']=='PASS'
+    f=fixture()
+    f['challengers']={'trend_logistic_v1':{
+        'pUp':0.62,'trialId':'trend-logistic-v1-forward-001',
+        'modelVersion':'trend-logistic-v1','modelHash':'a'*64,
+        'trainingDatasetSha256':'b'*64}}
+    assert audit([f])['status']=='PASS'
+    f['challengers']['trend_logistic_v1']['pUp']=1.2
+    assert audit([f])['status']=='FAIL'
+    f=fixture()
+    f['challengers']={'trend_logistic_v1':{
+        'pUp':0.62,'trialId':'trial','modelVersion':'v1','modelHash':'x',
+        'trainingDatasetSha256':'b'*64}}
+    assert audit([f])['status']=='FAIL'
     print('Forward forecast integrity adversarial tests passed')
 
 if __name__=='__main__':test()
