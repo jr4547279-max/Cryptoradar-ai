@@ -89,6 +89,7 @@ def create_frozen_trial(candidate, training_report, active_from_ms):
             "datasetSha256": candidate["datasetSha256"],
             "trainingExamples": candidate.get("trainingExamples"),
             "trainingPositiveRate": candidate["trainingPositiveRate"],
+            "trainingCoins": candidate.get("trainingCoins", []),
             "trainingStartDateUtc": candidate.get("trainStartDateUtc"),
             "trainingEndDateUtc": candidate.get("trainEndDateUtc"),
             "walkForwardSelectedL2": (training_report.get("walkForwardCV") or {}).get("selectedL2"),
@@ -181,6 +182,9 @@ def predict_trial_probability(trial, coin_id, historical_observations, live_obse
         return None
     model = trial.get("model")
     if not isinstance(model, dict) or model.get("features") != FEATURE_NAMES:
+        return None
+    trained_coins = (trial.get("trainingProvenance") or {}).get("trainingCoins")
+    if isinstance(trained_coins, list) and trained_coins and coin_id not in trained_coins:
         return None
     if model_fingerprint(model) != trial.get("modelHash"):
         return None
