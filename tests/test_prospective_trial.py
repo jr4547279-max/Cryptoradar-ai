@@ -77,9 +77,10 @@ def test_trial_hash_detects_changed_frozen_weights():
 
 def test_live_inference_uses_only_available_past_daily_prices():
     trial, _ = create_frozen_trial(candidate_fixture(), report_fixture(True), NOW_MS)
-    now_ms = 30 * DAY + DAY - 1
+    today = NOW_MS // DAY
+    now_ms = today * DAY + DAY - 1
     history = [{"id": "bitcoin", "time": day * DAY, "price": 100.0 + day,
-                "source": "fixture-only"} for day in range(31)]
+                "source": "fixture-only"} for day in range(today - 30, today + 1)]
     probability = predict_trial_probability(trial, "bitcoin", history, [], now_ms)
     assert probability is not None and abs(probability["pUp"] - 0.5) < 1e-12
     future = history + [{"id": "bitcoin", "time": now_ms + 60_000, "price": 1.0e9}]
@@ -90,7 +91,8 @@ def test_live_inference_uses_only_available_past_daily_prices():
 def test_prospective_scorer_requires_mature_frozen_model_forecasts():
     trial, _ = create_frozen_trial(candidate_fixture(), report_fixture(True), NOW_MS)
     forecasts = []
-    for day in range(1, 31):
+    first_day = NOW_MS // DAY + 1
+    for day in range(first_day, first_day + 30):
         for coin_index in range(30):
             created = day * DAY + coin_index * 100
             forecasts.append({
@@ -102,7 +104,7 @@ def test_prospective_scorer_requires_mature_frozen_model_forecasts():
                     "trainingDatasetSha256": trial["trainingProvenance"]["datasetSha256"]
                 }}
             })
-    report = score_trial(trial, {"forecasts": forecasts}, now_ms=NOW_MS + 100 * DAY)
+    report = score_trial(trial, {"forecasts": forecasts}, now_ms=(first_day + 100) * DAY)
     assert report["status"] == "EVALUATED"
     assert report["maturedForecasts"] == 900
     assert report["distinctForecastCreationUtcDays"] == 30
