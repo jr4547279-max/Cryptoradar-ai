@@ -1,11 +1,15 @@
 {
-  "generatedAt": "2026-10-22T20:04:51.326132+00:00",
+  "generatedAt": "2026-10-22T20:11:42.524579+00:00",
   "status": "insufficient_data",
-  "model": "regularized_logistic_regression",
-  "trainingData": "Real recorded CoinGecko prices only; no synthetic scenarios",
-  "validation": "Chronological 70% train / 30% later holdout with a 24-hour embargo; no random shuffling",
+  "model": "logistic-regression-v2",
+  "trainingData": "Real CoinGecko historical market_chart prices and prospective recorded prices only; synthetic scenarios excluded",
+  "validation": "Chronological 70% UTC-day train / later holdout with a full UTC-day embargo; no random shuffling",
   "examples": 0,
   "uniqueCoins": 0,
-  "warning": "Educational research, not a trading recommendation or proof of future predictive skill.",
-  "note": "Waiting for at least 21 distinct UTC days, 300 examples and 10 coins before training."
+  "distinctExampleUtcDays": 0,
+  "validMergedObservations": 204,
+  "datasetSha256": "e5d1240d5677dbee09d4045157914c32bd210f179b7891bff350dd3a1fb5f232",
+  "betterThanConstantBaseline": null,
+  "warning": "Research only; not a trading recommendation or proof of future predictive skill.",
+  "note": "Requires at least 300 examples, 90 distinct example UTC days, 10 coins, 150 training examples, 50 holdout examples and 21 holdout UTC days; observed 0 examples, 0 days, 0 coins, 0 train examples, 0 holdout examples and 0 holdout days."
 }
