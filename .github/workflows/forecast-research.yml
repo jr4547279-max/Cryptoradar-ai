@@ -105,14 +105,40 @@ jobs:
           python - <<'PY'
           import os,json,datetime,pathlib
           p=pathlib.Path('pipeline-status.json')
+          def read_report(name):
+            try:
+              value=json.loads(pathlib.Path(name).read_text())
+              return value if isinstance(value,dict) else {}
+            except (OSError,ValueError):
+              return {}
+          historical=read_report('historical-data-report.json')
+          data_agent=read_report('data-agent-report.json')
+          training=read_report('training-report.json')
+          candidate=read_report('candidate-model.json')
+          historical_quality=data_agent.get('historicalDataQuality') or {}
           status={
             'checkedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),
             'collection':os.environ.get('COLLECT_RESULT','unknown'),
             'unitTests':os.environ.get('UNIT_TEST_RESULT','unknown'),
-            'historicalBackfill':os.environ.get('HISTORY_RESULT','unknown'),
-            'dataAgent':os.environ.get('DATA_AGENT_RESULT','unknown'),
+            'historicalBackfillStep':os.environ.get('HISTORY_RESULT','unknown'),
+            'historicalEvidenceStatus':historical.get('status','MISSING'),
+            'historicalAssetsWithHistory':historical.get('assetsWithStoredHistory',0),
+            'historicalDailySamples':historical.get('storedObservations',0),
+            'dataAgentStep':os.environ.get('DATA_AGENT_RESULT','unknown'),
+            'dataAgentAuditStatus':data_agent.get('status','MISSING'),
+            'historicalEvidenceAuditStatus':historical_quality.get('status','MISSING'),
             'scenarios':os.environ.get('SCENARIO_RESULT','unknown'),
-            'training':os.environ.get('TRAIN_RESULT','unknown'),
+            'trainingStep':os.environ.get('TRAIN_RESULT','unknown'),
+            'modelTrainingStatus':training.get('status','MISSING'),
+            'modelExamples':training.get('examples',0),
+            'modelCoins':training.get('uniqueCoins',0),
+            'holdoutBrier':training.get('holdoutBrier'),
+            'bestConstantBaselineBrier':training.get('bestConstantBaselineBrier'),
+            'beatsConstantBaseline':training.get('betterThanConstantBaseline'),
+            'candidateModelStatus':candidate.get('status','MISSING'),
+            'candidatePromotionEligible':candidate.get('promotionEligible',False),
+            'automaticModelPromotion':False,
+            'realTradingEnabled':False,
             'rewards':os.environ.get('REWARD_RESULT','unknown'),
             'runUrl':os.environ.get('RUN_URL','')
           }
