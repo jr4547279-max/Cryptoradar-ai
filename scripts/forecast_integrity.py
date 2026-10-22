@@ -25,6 +25,25 @@ def audit(forecasts):
             elif isinstance(p,(int,float)) and math.isfinite(p) and abs(p-sum(values)/len(values))>1e-9:
                 problems.append({'index':i,'reason':'council_probability_mismatch'})
         else:problems.append({'index':i,'reason':'missing_specialist_predictions'})
+        challengers=f.get('challengers',{})
+        if not isinstance(challengers,dict):
+            problems.append({'index':i,'reason':'invalid_challengers_container'})
+        else:
+            for name, challenge in challengers.items():
+                if not isinstance(name,str) or not name or not isinstance(challenge,dict):
+                    problems.append({'index':i,'reason':'invalid_challenger_record'})
+                    continue
+                cp=challenge.get('pUp')
+                if not isinstance(cp,(int,float)) or isinstance(cp,bool) or not math.isfinite(cp) or not 0<=cp<=1:
+                    problems.append({'index':i,'reason':'invalid_challenger_probability'})
+                for field in ('trialId','modelVersion','modelHash','trainingDatasetSha256'):
+                    value=challenge.get(field)
+                    if not isinstance(value,str) or not value:
+                        problems.append({'index':i,'reason':'missing_challenger_'+field})
+                for field in ('modelHash','trainingDatasetSha256'):
+                    value=challenge.get(field)
+                    if isinstance(value,str) and (len(value)!=64 or any(ch not in '0123456789abcdef' for ch in value.lower())):
+                        problems.append({'index':i,'reason':'invalid_challenger_'+field})
         if outcome is None:
             pending+=1
             if scored is not None:problems.append({'index':i,'reason':'unresolved_but_scored'})
