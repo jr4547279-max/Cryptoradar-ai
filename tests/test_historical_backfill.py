@@ -54,9 +54,20 @@ def test_candidate_store_cap_is_enforced():
     assert candidates == [] and qualified == 30
 
 
+def test_stale_qualified_history_is_refreshed_even_at_cap():
+    qualified_ids = CORE_ASSETS[:30]
+    store = {"coins": {cid: {"status": "ok", "pointCount": 365,
+                             "fetchedAtEpoch": NOW_EPOCH - 181 * 86400 if cid == qualified_ids[0] else NOW_EPOCH}
+                       for cid in qualified_ids}}
+    live = {"observations": [{"id": cid, "time": NOW_MS, "price": 100} for cid in CORE_ASSETS]}
+    candidates, qualified = select_candidate_ids(live, store, NOW_EPOCH)
+    assert candidates == [qualified_ids[0]] and qualified == 30
+
+
 if __name__ == "__main__":
     test_one_latest_valid_point_per_utc_day()
     test_merge_keeps_latest_point_per_asset_day()
     test_selection_uses_fresh_live_universe_and_skips_stored_history()
     test_candidate_store_cap_is_enforced()
-    print("Historical backfill tests passed (4 cases)")
+    test_stale_qualified_history_is_refreshed_even_at_cap()
+    print("Historical backfill tests passed (5 cases)")
