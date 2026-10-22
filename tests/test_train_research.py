@@ -56,6 +56,8 @@ def test_evaluation_emits_shadow_candidate_not_promoted_model():
     report, candidate = evaluate_training(live, {"observations": []})
     assert report["status"] == "evaluated"
     assert report["testExamples"] > 0
+    assert report["walkForwardCV"]["available"] is True
+    assert report["walkForwardCV"]["selectedL2"] in report["walkForwardCV"]["candidateGrid"]
     assert report["testDays"] >= 21
     assert "holdoutBrier" in report and "constantTrainRateBrier" in report
     assert candidate["status"] == "FITTED_UNPROMOTED_CANDIDATE"
