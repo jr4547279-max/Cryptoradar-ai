@@ -1,0 +1,123 @@
+"""School capstone: teacher assigns a large, evidence-first research project.
+
+This is a deterministic assignment planner, not an autonomous trader. XP are
+internal research points, never money or permission to trade.
+"""
+import json
+import pathlib
+import datetime
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+OUT = ROOT / "school-project.json"
+
+
+def read(name):
+    try:
+        return json.loads((ROOT / name).read_text())
+    except (OSError, ValueError):
+        return {}
+
+
+def build_project(training, rewards, integrity, scenario, memory):
+    now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    forecast_count = integrity.get("forecasts", 0)
+    integrity_ok = integrity.get("status") == "PASS"
+    examples = training.get("examples", 0)
+    agents = rewards.get("agents", {})
+    tasks = [
+        {
+            "id": "capstone-01-data-audit",
+            "title": "Build the Market Atlas",
+            "assignedTo": ["data_scout", "integrity_guard"],
+            "objective": "Collect real timestamped observations across the supported coins; audit gaps, duplicates, stale values and schema validity.",
+            "doneWhen": ["Every observation has source and timestamp", "Duplicate and malformed rows are rejected", "Coverage and missingness are reported"],
+            "rewardXp": 100,
+            "gate": "Integrity tests pass; no synthetic data counted as real observations"
+        },
+        {
+            "id": "capstone-02-baseline-battle",
+            "title": "Beat the Boring Baseline",
+            "assignedTo": ["momentum", "mean_reversion", "trend_48h", "neutral", "council"],
+            "objective": "Compare every student with a simple baseline on chronological, untouched, matured forward outcomes.",
+            "doneWhen": ["At least 30 valid matured outcomes per candidate", "Brier score and calibration reported", "No random shuffling or holdout leakage"],
+            "rewardXp": 250,
+            "gate": "Independent referee confirms sample size, integrity and baseline comparison"
+        },
+        {
+            "id": "capstone-03-storm-lab",
+            "title": "Survive the Storm Lab",
+            "assignedTo": ["risk_analyst", "scenario_runner"],
+            "objective": "Stress test trend, sideways, crash, volatility spike and recovery regimes; report fees, slippage assumptions and drawdown.",
+            "doneWhen": ["Each regime reported separately", "Costs and worst drawdown shown", "Synthetic results clearly separated from observed market outcomes"],
+            "rewardXp": 200,
+            "gate": "No promotion from synthetic tests; no strategy hides failed regimes"
+        },
+        {
+            "id": "capstone-04-reproducibility",
+            "title": "The Reproducible Experiment",
+            "assignedTo": ["experiment_recorder", "integrity_guard"],
+            "objective": "Record dataset window, code version, assumptions, baseline, metrics and failure cases for every experiment.",
+            "doneWhen": ["Experiment ledger has immutable identifiers or hashes", "A second run reproduces the reported metrics", "Failures are retained rather than overwritten"],
+            "rewardXp": 150,
+            "gate": "Reproducibility checks pass and no duplicate result is counted twice"
+        },
+        {
+            "id": "capstone-05-final-defence",
+            "title": "Present the Evidence",
+            "assignedTo": ["teacher", "independent_referee"],
+            "objective": "Write a final scorecard covering accuracy, calibration, coverage, cost-aware paper results, drawdown and limitations.",
+            "doneWhen": ["Results use untouched forward data", "Every claim is linked to a report", "Uncertainty and negative results are explicit"],
+            "rewardXp": 300,
+            "gate": "Independent review only; passing earns research XP, never trading permission"
+        }
+    ]
+    eligible = [name for name, result in agents.items()
+                if isinstance(result, dict) and result.get("eligible") is True]
+    # Project completion is intentionally not inferred from synthetic stress or
+    # a successful workflow. Students earn only the base participation XP until
+    # independent gates are actually met.
+    completed = []
+    if integrity_ok and forecast_count >= 30:
+        completed.append("capstone-01-data-audit")
+    if integrity_ok and eligible:
+        completed.append("capstone-02-baseline-battle")
+    if scenario.get("status") == "PASS" and scenario.get("source") not in ("synthetic_only", "synthetic"):
+        completed.append("capstone-03-storm-lab")
+    xp_awarded = sum(t["rewardXp"] for t in tasks if t["id"] in completed)
+    return {
+        "generatedAt": now,
+        "school": "CryptoRadar Research School",
+        "projectTitle": "The Great Market Atlas: Multi-Agent Evidence Challenge",
+        "status": "IN_PROGRESS",
+        "level": "CAPSTONE",
+        "currentEvidence": {
+            "trainingStatus": training.get("status", "missing"),
+            "trainingExamples": examples,
+            "validForecasts": forecast_count,
+            "integrityStatus": integrity.get("status", "missing"),
+            "rewardEligibleStudents": eligible,
+            "scenarioStatus": scenario.get("status", "missing")
+        },
+        "assignments": tasks,
+        "completedAssignments": completed,
+        "researchXpAwarded": xp_awarded,
+        "xpRules": [
+            "XP are symbolic research points, not cash, tokens, or financial rewards.",
+            "No XP for fabricated, duplicated, immature, leaked or integrity-failing results.",
+            "No reward from synthetic scenarios alone.",
+            "The teacher cannot edit student models, scoring rules, or promotion status.",
+            "Passing this project never authorizes live trading."
+        ],
+        "nextLesson": "Start with real-data quality and a valid observation pipeline; current training evidence is insufficient until the prospective dataset meets its minimum requirements.",
+        "memoryEntries": len(memory.get("history", [])) if isinstance(memory.get("history"), list) else 0,
+        "warning": "Research-only school project. Automated assignment tracking is not proof that a task was completed; each gate needs independent verification."
+    }
+
+
+if __name__ == "__main__":
+    report = build_project(read("training-report.json"), read("reward-report.json"),
+                           read("forecast-integrity-report.json"), read("scenario-report.json"),
+                           read("teacher-memory.json"))
+    OUT.write_text(json.dumps(report, indent=2) + "\n")
+    print("School capstone:", report["status"], "| XP:", report["researchXpAwarded"],
+          "| completed:", report["completedAssignments"])
