@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-22T20:12:43.586864+00:00",
+  "generatedAt": "2026-10-22T20:13:26.470444+00:00",
   "teacherVersion": "teacher-v2-rule-based-memory",
   "mode": "RESEARCH_SUPERVISOR_ONLY",
   "grade": "NEEDS_MORE_EVIDENCE",
@@ -20,9 +20,9 @@
       "nextExperiment": "Keep every agent in shadow mode until enough mature, valid, independent outcomes exist."
     }
   ],
-  "lessonHistoryCount": 8,
+  "lessonHistoryCount": 9,
   "sameLessonPatternSeenBefore": true,
-  "repeatPatternCount": 6,
+  "repeatPatternCount": 7,
   "actionsPermitted": [
     "publish_lessons",
     "recommend_next_experiment",
