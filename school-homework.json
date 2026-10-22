@@ -1,0 +1,100 @@
+{
+  "school": "CryptoRadar School",
+  "projectId": "CRS-001",
+  "title": "The Market Truth Project",
+  "status": "ACTIVE_RESEARCH_ONLY",
+  "brief": "Build a forecasting council that proves whether it adds value on genuinely unseen data, survives different market regimes, and remains useful after realistic costs. The goal is truth, not a forced profitable result.",
+  "studentTeams": [
+    {
+      "id": "momentum",
+      "mission": "Test momentum hypotheses against neutral and training-rate baselines."
+    },
+    {
+      "id": "mean_reversion",
+      "mission": "Find where mean reversion works and where it fails."
+    },
+    {
+      "id": "trend_48h",
+      "mission": "Test multi-day trends across market regimes."
+    },
+    {
+      "id": "calibration",
+      "mission": "Measure Brier score, calibration and confidence reliability."
+    },
+    {
+      "id": "risk_auditor",
+      "mission": "Attack the system with fees, slippage, drawdowns, missing data and extreme regimes."
+    },
+    {
+      "id": "skeptic",
+      "mission": "Try to disprove promising results using a frozen candidate and untouched forward data."
+    }
+  ],
+  "milestones": [
+    {
+      "id": "M1",
+      "name": "Data integrity",
+      "points": 100,
+      "deliverable": "Timestamped observations and forecasts; duplicate, leakage, missing-data and schema tests pass."
+    },
+    {
+      "id": "M2",
+      "name": "Baseline challenge",
+      "points": 150,
+      "deliverable": "Chronological holdout compared with neutral and training-rate baselines; sample size and uncertainty reported."
+    },
+    {
+      "id": "M3",
+      "name": "Regime laboratory",
+      "points": 150,
+      "deliverable": "Results separated by trending, sideways, high-volatility and adverse regimes; synthetic results labelled clearly."
+    },
+    {
+      "id": "M4",
+      "name": "Cost and risk audit",
+      "points": 150,
+      "deliverable": "Fees/slippage sensitivity, drawdown, coverage and failure cases reported."
+    },
+    {
+      "id": "M5",
+      "name": "Skeptic replication",
+      "points": 250,
+      "deliverable": "Frozen candidate tested on a later untouched window by an independent audit path."
+    },
+    {
+      "id": "M6",
+      "name": "Final school defence",
+      "points": 200,
+      "deliverable": "Reproducible report with ablations, limitations, failed experiments and a go/no-go recommendation."
+    }
+  ],
+  "totalResearchCredits": 1000,
+  "rewardRules": {
+    "type": "non-monetary research credits only",
+    "zeroCreditFor": [
+      "fabricated or duplicated records",
+      "future-data leakage",
+      "synthetic scenarios presented as real returns",
+      "unreported costs",
+      "changing rules after viewing the holdout",
+      "profit claims without evidence"
+    ],
+    "insufficientEvidenceMeansZeroCredit": true,
+    "independentVerificationRequired": true
+  },
+  "completionCriteria": [
+    "No leakage or duplicate forecast records.",
+    "At least 30 matured independent outcomes for a provisional score; stronger conclusions require larger samples.",
+    "Chronological out-of-sample comparison with simple baselines.",
+    "Brier score, calibration, coverage, cost assumptions and drawdown all reported.",
+    "A single winning window is not enough; untouched forward evidence and regime stress are required.",
+    "Failure is an acceptable scientific result; gaming the reward system is not."
+  ],
+  "currentProgress": {
+    "verifiedMilestones": [],
+    "earnedResearchCredits": 0,
+    "nextMilestone": "M1",
+    "note": "No milestone is considered passed until independent checks verify its evidence."
+  },
+  "safety": "Research and paper evaluation only. No orders, exchange credentials, real-money trading, automatic model promotion, or self-awarded credits."
+}
