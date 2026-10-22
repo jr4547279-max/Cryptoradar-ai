@@ -78,8 +78,8 @@ def test_trial_hash_detects_changed_frozen_weights():
 
 def test_live_inference_uses_only_available_past_daily_prices():
     trial, _ = create_frozen_trial(candidate_fixture(), report_fixture(True), NOW_MS)
-    today = NOW_MS // DAY
-    now_ms = today * DAY + DAY - 1
+    today = NOW_MS // DAY + 1
+    now_ms = today * DAY + 20 * 60_000
     history = [{"id": "bitcoin", "time": day * DAY, "price": 100.0 + day,
                 "source": "fixture-only"} for day in range(today - 30, today + 1)]
     probability = predict_trial_probability(trial, "bitcoin", history, [], now_ms)
@@ -89,6 +89,8 @@ def test_live_inference_uses_only_available_past_daily_prices():
     assert with_future == probability
     untrained_coin = predict_trial_probability(trial, "ethereum", history, [], now_ms)
     assert untrained_coin is None
+    outside_evaluation_window = predict_trial_probability(trial, "bitcoin", history, [], today * DAY + 2 * 60 * 60 * 60_000)
+    assert outside_evaluation_window is None
 
 
 def test_prospective_scorer_requires_mature_frozen_model_forecasts():
