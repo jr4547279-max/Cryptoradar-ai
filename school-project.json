@@ -1,0 +1,112 @@
+{
+  "generatedAt": "2026-10-22T19:43:46.837263+00:00",
+  "school": "CryptoRadar Research School",
+  "projectTitle": "The Great Market Atlas: Multi-Agent Evidence Challenge",
+  "status": "IN_PROGRESS",
+  "level": "CAPSTONE",
+  "currentEvidence": {
+    "trainingStatus": "insufficient_data",
+    "trainingExamples": 0,
+    "validForecasts": 1,
+    "integrityStatus": "PASS",
+    "rewardEligibleStudents": [],
+    "scenarioStatus": "missing"
+  },
+  "assignments": [
+    {
+      "id": "capstone-01-data-audit",
+      "title": "Build the Market Atlas",
+      "assignedTo": [
+        "data_scout",
+        "integrity_guard"
+      ],
+      "objective": "Collect real timestamped observations across the supported coins; audit gaps, duplicates, stale values and schema validity.",
+      "doneWhen": [
+        "Every observation has source and timestamp",
+        "Duplicate and malformed rows are rejected",
+        "Coverage and missingness are reported"
+      ],
+      "rewardXp": 100,
+      "gate": "Integrity tests pass; no synthetic data counted as real observations"
+    },
+    {
+      "id": "capstone-02-baseline-battle",
+      "title": "Beat the Boring Baseline",
+      "assignedTo": [
+        "momentum",
+        "mean_reversion",
+        "trend_48h",
+        "neutral",
+        "council"
+      ],
+      "objective": "Compare every student with a simple baseline on chronological, untouched, matured forward outcomes.",
+      "doneWhen": [
+        "At least 30 valid matured outcomes per candidate",
+        "Brier score and calibration reported",
+        "No random shuffling or holdout leakage"
+      ],
+      "rewardXp": 250,
+      "gate": "Independent referee confirms sample size, integrity and baseline comparison"
+    },
+    {
+      "id": "capstone-03-storm-lab",
+      "title": "Survive the Storm Lab",
+      "assignedTo": [
+        "risk_analyst",
+        "scenario_runner"
+      ],
+      "objective": "Stress test trend, sideways, crash, volatility spike and recovery regimes; report fees, slippage assumptions and drawdown.",
+      "doneWhen": [
+        "Each regime reported separately",
+        "Costs and worst drawdown shown",
+        "Synthetic results clearly separated from observed market outcomes"
+      ],
+      "rewardXp": 200,
+      "gate": "No promotion from synthetic tests; no strategy hides failed regimes"
+    },
+    {
+      "id": "capstone-04-reproducibility",
+      "title": "The Reproducible Experiment",
+      "assignedTo": [
+        "experiment_recorder",
+        "integrity_guard"
+      ],
+      "objective": "Record dataset window, code version, assumptions, baseline, metrics and failure cases for every experiment.",
+      "doneWhen": [
+        "Experiment ledger has immutable identifiers or hashes",
+        "A second run reproduces the reported metrics",
+        "Failures are retained rather than overwritten"
+      ],
+      "rewardXp": 150,
+      "gate": "Reproducibility checks pass and no duplicate result is counted twice"
+    },
+    {
+      "id": "capstone-05-final-defence",
+      "title": "Present the Evidence",
+      "assignedTo": [
+        "teacher",
+        "independent_referee"
+      ],
+      "objective": "Write a final scorecard covering accuracy, calibration, coverage, cost-aware paper results, drawdown and limitations.",
+      "doneWhen": [
+        "Results use untouched forward data",
+        "Every claim is linked to a report",
+        "Uncertainty and negative results are explicit"
+      ],
+      "rewardXp": 300,
+      "gate": "Independent review only; passing earns research XP, never trading permission"
+    }
+  ],
+  "completedAssignments": [],
+  "researchXpAwarded": 0,
+  "xpRules": [
+    "XP are symbolic research points, not cash, tokens, or financial rewards.",
+    "No XP for fabricated, duplicated, immature, leaked or integrity-failing results.",
+    "No reward from synthetic scenarios alone.",
+    "The teacher cannot edit student models, scoring rules, or promotion status.",
+    "Passing this project never authorizes live trading."
+  ],
+  "nextLesson": "Start with real-data quality and a valid observation pipeline; current training evidence is insufficient until the prospective dataset meets its minimum requirements.",
+  "memoryEntries": 4,
+  "warning": "Research-only school project. Automated assignment tracking is not proof that a task was completed; each gate needs independent verification."
+}
