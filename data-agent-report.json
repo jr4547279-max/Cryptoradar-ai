@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "checkedAt": "2026-10-22T20:04:32.673000+00:00",
+  "sourceDeclaredByCollector": "CoinGecko public markets endpoint; source authenticity is not independently verified",
+  "observations": 204,
+  "validObservations": 204,
+  "coins": 103,
+  "utcDays": 2,
+  "latestObservationMs": 1792699472198,
+  "forecasts": 1,
+  "maturedForecasts": 0,
+  "pendingForecasts": 1,
+  "errorCount": 0,
+  "errors": [],
+  "warningCount": 1,
+  "warnings": [
+    "fewer_than_21_distinct_utc_days"
+  ],
+  "limitations": [
+    "PASS checks structural consistency only, not external-source authenticity.",
+    "Sparse history is warned about, never filled with synthetic data.",
+    "This agent does not train models, edit observations, score strategy performance, or place orders."
+  ]
+}
