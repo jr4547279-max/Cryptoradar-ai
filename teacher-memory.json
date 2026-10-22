@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "updatedAt": "2026-10-22T12:22:27.784840+00:00",
+  "history": [
+    {
+      "at": "2026-10-22T12:22:27.784840+00:00",
+      "grade": "NEEDS_MORE_EVIDENCE",
+      "trainingStatus": "insufficient_data",
+      "lessonTopics": [
+        "evidence_quality",
+        "integrity",
+        "reward_discipline"
+      ],
+      "fingerprint": "evidence_quality|integrity|reward_discipline"
+    }
+  ]
+}

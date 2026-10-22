@@ -1,26 +1,38 @@
 {
-  "generatedAt": "2026-10-22T12:18:49.650804+00:00",
-  "teacherVersion": "teacher-v1-rule-based",
+  "generatedAt": "2026-10-22T12:22:27.784840+00:00",
+  "teacherVersion": "teacher-v2-rule-based-memory",
   "mode": "RESEARCH_SUPERVISOR_ONLY",
   "grade": "NEEDS_MORE_EVIDENCE",
+  "trainingStatus": "insufficient_data",
+  "trainingExamples": 0,
   "eligibleForReward": [],
   "lessons": [
     {
       "topic": "evidence_quality",
-      "finding": "There is not yet a usable comparable candidate scorecard.",
-      "lesson": "Do not infer skill from simulation volume or incomplete samples.",
-      "nextExperiment": "Collect timestamped predictions and wait for their outcomes to mature before grading."
+      "finding": "Training status is insufficient_data; examples=0.",
+      "lesson": "No grade for predictive skill is justified until enough real timestamped observations exist.",
+      "nextExperiment": "Continue collecting real observations; require chronological holdout evaluation before comparing candidates."
+    },
+    {
+      "topic": "integrity",
+      "finding": "Integrity status is PASS with 0 forecasts.",
+      "lesson": "A clean empty file is not evidence of predictive performance; malformed or duplicated records must receive no reward.",
+      "nextExperiment": "Verify that valid specialist predictions are being recorded and rerun adversarial integrity tests."
     },
     {
       "topic": "reward_discipline",
       "finding": "No shadow agent currently qualifies for reward.",
-      "lesson": "Zero reward is the correct result when evidence is insufficient or an agent fails its baseline.",
-      "nextExperiment": "Keep all agents in shadow mode until there are enough mature, valid, independent observations."
+      "lesson": "Zero reward is correct when evidence is insufficient or an agent fails its baseline.",
+      "nextExperiment": "Keep every agent in shadow mode until enough mature, valid, independent outcomes exist."
     }
   ],
+  "lessonHistoryCount": 1,
+  "sameLessonPatternSeenBefore": false,
+  "repeatPatternCount": 0,
   "actionsPermitted": [
     "publish_lessons",
-    "recommend_next_experiment"
+    "recommend_next_experiment",
+    "remember_lesson_history"
   ],
   "actionsForbidden": [
     "edit_model_weights",
@@ -28,5 +40,5 @@
     "promote_model",
     "place_orders"
   ],
-  "warning": "Teacher conclusions are deterministic checks over current reports, not proof of trading skill. Reward decisions require valid prospective evidence."
+  "warning": "Deterministic teaching and memory only. It does not update model weights; reward and trading authorization remain separate."
 }
