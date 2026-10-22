@@ -1,69 +1,342 @@
 #!/usr/bin/env python3
-"""V18 chronological research training. Standard-library logistic regression; never trades.
-Runs only after sufficient real, timestamped data exists. No synthetic data in training.
+"""Chronological research trainer. Uses genuine recorded CoinGecko prices only.
+
+Historical downloads and prospective samples are merged per asset/UTC day.
+Synthetic scenario fixtures are deliberately not used here. Trained outputs remain
+unpromoted shadow candidates; they are not connected to live trading.
 """
-import json, pathlib, math, datetime
-ROOT=pathlib.Path(__file__).resolve().parents[1]
-raw=json.loads((ROOT/'research-data.json').read_text())
-obs=raw.get('observations',[])
-by_coin={}
-for x in obs:
- try:
-  if math.isfinite(float(x['price'])) and float(x['price'])>0:
-   by_coin.setdefault(x['id'],[]).append((int(x['time']),float(x['price'])))
- except (KeyError,TypeError,ValueError):pass
-for v in by_coin.values():v.sort()
-H=3600000; DAY=24*H
-examples=[]
-for coin,points in by_coin.items():
- if len(points)<5:continue
- # One example per UTC day per coin; never reuse the same daily close repeatedly.
- daily={}
- for t,p in points:daily[t//DAY]=(t,p)
- ordered=sorted(daily.values())
- for j,(t,p) in enumerate(ordered):
-  def prior(age):
-   candidates=[(tt,pp) for tt,pp in ordered[:j] if tt<=t-age]
-   return candidates[-1][1] if candidates else None
-  a=prior(DAY);b=prior(2*DAY);c=prior(3*DAY)
-  future=[(tt,pp) for tt,pp in ordered[j+1:] if tt>=t+DAY]
-  if not (a and b and c and future):continue
-  y=int(future[0][1]>p)
-  # Features available at forecast creation only, with capped log returns.
-  x=[max(-.5,min(.5,math.log(p/a))),max(-.5,min(.5,math.log(a/b))),max(-.5,min(.5,math.log(b/c)))]
-  examples.append((t,coin,x,y))
-examples.sort(key=lambda z:z[0])
-result={'generatedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),
- 'status':'insufficient_data','model':'regularized_logistic_regression',
- 'trainingData':'Real recorded CoinGecko prices only; no synthetic scenarios',
- 'validation':'Chronological 70% train / 30% later holdout with a 24-hour embargo; no random shuffling',
- 'examples':len(examples),'uniqueCoins':len({x[1] for x in examples}),
- 'warning':'Educational research, not a trading recommendation or proof of future predictive skill.'}
-# Avoid training on very short or highly correlated recent samples.
-if len(examples)>=300 and len({x[0]//DAY for x in examples})>=21 and len({x[1] for x in examples})>=10:
- split=int(len(examples)*.7);boundary=examples[split][0]
- train=[r for r in examples if r[0]<boundary-DAY]
- test=[r for r in examples if r[0]>=boundary]
- if len(train)>=150 and len(test)>=50 and len({r[0]//DAY for r in test})>=5:
-  weights=[0.,0.,0.,0.]
-  for epoch in range(300):
-   grad=[0.]*4
-   for _,_,x,y in train:
-    v=max(-25.,min(25.,weights[0]+sum(weights[i+1]*x[i] for i in range(3))))
-    pred=1/(1+math.exp(-v))
-    for k,z in enumerate([1.]+x):grad[k]+=(pred-y)*z
-   rate=.25
-   for k in range(4):
-    weights[k]-=rate*(grad[k]/len(train)+(.005*weights[k] if k else 0))
-  def brier(data,baseline=False):
-   return sum(((sum(y for *_,y in train)/len(train)) if baseline else 1/(1+math.exp(-max(-25,min(25,weights[0]+sum(weights[i+1]*x[i] for i in range(3))))))-y)**2 for _,_,x,y in data)/len(data)
-  model_score=brier(test);baseline_score=brier(test,True)
-  result.update({'status':'evaluated','trainExamples':len(train),'testExamples':len(test),
-    'testDays':len({r[0]//DAY for r in test}),
-    'holdoutBrier':round(model_score,5),'constantTrainRateBrier':round(baseline_score,5),
-    'betterThanConstantBaseline':model_score<baseline_score,
-    'note':'A single evaluation is not sufficient to establish predictive skill. Repeated coins share market shocks.'})
-else:
- result['note']='Waiting for at least 21 distinct UTC days, 300 examples and 10 coins before training.'
-(ROOT/'training-report.json').write_text(json.dumps(result,indent=2)+'\n')
-print('V18 training:',result['status'],'examples:',len(examples))
+import datetime
+import hashlib
+import json
+import math
+import pathlib
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+LIVE_PATH = ROOT / "research-data.json"
+HIST_PATH = ROOT / "historical-data.json"
+REPORT_PATH = ROOT / "training-report.json"
+MODEL_PATH = ROOT / "candidate-model.json"
+DAY_MS = 86_400_000
+MIN_EXAMPLES = 300
+MIN_DAYS = 90
+MIN_COINS = 10
+MIN_TRAIN_EXAMPLES = 150
+MIN_TEST_EXAMPLES = 50
+MIN_TEST_DAYS = 21
+FEATURE_NAMES = ["log_return_1d", "log_return_previous_day", "log_return_two_days_ago"]
+MODEL_VERSION = "logistic-regression-v2"
+LEARNING_RATE = 0.08
+L2 = 0.02
+MAX_EPOCHS = 1000
+GRADIENT_TOLERANCE = 1e-7
+
+
+def read_json(path):
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+        return value if isinstance(value, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
+def valid_price_row(row):
+    if not isinstance(row, dict) or not isinstance(row.get("id"), str):
+        return False
+    timestamp, price = row.get("time"), row.get("price")
+    return (not isinstance(timestamp, bool) and isinstance(timestamp, int) and timestamp > 0
+            and not isinstance(price, bool) and isinstance(price, (int, float))
+            and math.isfinite(price) and price > 0)
+
+
+def merge_observations(live_data, historical_data):
+    """Deduplicate by asset/UTC day, keeping the latest valid source timestamp."""
+    candidates = []
+    for label, dataset in (("live", live_data), ("historical", historical_data)):
+        rows = dataset.get("observations", []) if isinstance(dataset, dict) else []
+        if not isinstance(rows, list):
+            continue
+        for row in rows:
+            if not valid_price_row(row):
+                continue
+            candidates.append((row["id"], row["time"], float(row["price"]), label))
+    daily = {}
+    for cid, timestamp, price, label in candidates:
+        key = (cid, timestamp // DAY_MS)
+        current = daily.get(key)
+        # A later timestamp wins; a live sample wins ties over the historical copy.
+        if current is None or timestamp > current["time"] or (
+                timestamp == current["time"] and label == "live" and current["label"] != "live"):
+            daily[key] = {"id": cid, "time": timestamp, "price": price, "label": label}
+    return sorted(daily.values(), key=lambda row: (row["time"], row["id"]))
+
+
+def build_examples(observations):
+    by_coin = {}
+    for row in observations:
+        if valid_price_row(row):
+            by_coin.setdefault(row["id"], []).append((row["time"], float(row["price"])))
+    examples = []
+    for coin, points in by_coin.items():
+        points.sort()
+        daily = {}
+        for timestamp, price in points:
+            daily[timestamp // DAY_MS] = (timestamp, price)
+        ordered = [daily[key] for key in sorted(daily)]
+        for index, (timestamp, price) in enumerate(ordered):
+            def prior(days_ago):
+                eligible = [p for p in ordered[:index] if p[0] <= timestamp - days_ago * DAY_MS]
+                return eligible[-1][1] if eligible else None
+
+            previous = prior(1)
+            previous2 = prior(2)
+            previous3 = prior(3)
+            if not (previous and previous2 and previous3):
+                continue
+            future = next((p for p in ordered[index + 1:] if p[0] >= timestamp + DAY_MS), None)
+            if future is None:
+                continue
+            features = [
+                max(-0.5, min(0.5, math.log(price / previous))),
+                max(-0.5, min(0.5, math.log(previous / previous2))),
+                max(-0.5, min(0.5, math.log(previous2 / previous3))),
+            ]
+            if not all(math.isfinite(value) for value in features):
+                continue
+            examples.append({"time": timestamp, "coin": coin, "x": features,
+                             "y": int(future[1] > price)})
+    examples.sort(key=lambda row: (row["time"], row["coin"]))
+    return examples
+
+
+def chronological_split(examples):
+    """Split by UTC date, not individual rows; keep a full UTC-day embargo."""
+    days = sorted({row["time"] // DAY_MS for row in examples})
+    if len(days) < 3:
+        return [], [], None
+    index = max(1, min(len(days) - 1, int(len(days) * 0.70)))
+    test_start_day = days[index]
+    # Do not train on the UTC day immediately preceding the test period.
+    train = [row for row in examples if row["time"] // DAY_MS < test_start_day - 1]
+    test = [row for row in examples if row["time"] // DAY_MS >= test_start_day]
+    return train, test, test_start_day
+
+
+def sigmoid(value):
+    if value >= 35:
+        return 1.0
+    if value <= -35:
+        return 0.0
+    return 1.0 / (1.0 + math.exp(-value))
+
+
+def standardizer(train):
+    means, scales = [], []
+    for j in range(len(FEATURE_NAMES)):
+        values = [row["x"][j] for row in train]
+        mean = sum(values) / len(values)
+        variance = sum((value - mean) ** 2 for value in values) / len(values)
+        scale = math.sqrt(variance)
+        means.append(mean)
+        scales.append(scale if scale > 1e-9 else 1.0)
+    return means, scales
+
+
+def transformed(features, means, scales):
+    return [(features[j] - means[j]) / scales[j] for j in range(len(FEATURE_NAMES))]
+
+
+def fit_logistic(train):
+    """Full-batch, deterministic L2-regularized logistic regression."""
+    means, scales = standardizer(train)
+    normalized = [(transformed(row["x"], means, scales), row["y"]) for row in train]
+    weights = [0.0] * (len(FEATURE_NAMES) + 1)
+    epochs_used = 0
+    for epoch in range(MAX_EPOCHS):
+        gradients = [0.0] * len(weights)
+        for features, label in normalized:
+            probability = sigmoid(weights[0] + sum(weights[j + 1] * features[j]
+                                                  for j in range(len(features))))
+            error = probability - label
+            gradients[0] += error
+            for j, value in enumerate(features):
+                gradients[j + 1] += error * value
+        gradients = [gradient / len(normalized) for gradient in gradients]
+        for j in range(1, len(gradients)):
+            gradients[j] += L2 * weights[j]
+        max_gradient = max(abs(value) for value in gradients)
+        for j, gradient in enumerate(gradients):
+            weights[j] -= LEARNING_RATE * gradient
+        epochs_used = epoch + 1
+        if max_gradient < GRADIENT_TOLERANCE:
+            break
+    model = {
+        "modelVersion": MODEL_VERSION,
+        "features": FEATURE_NAMES,
+        "featureMeans": means,
+        "featureScales": scales,
+        "weights": weights,
+        "optimizer": {"name": "full_batch_gradient_descent", "learningRate": LEARNING_RATE,
+                      "l2": L2, "maxEpochs": MAX_EPOCHS, "epochsRun": epochs_used,
+                      "convergedByGradientTolerance": epochs_used < MAX_EPOCHS},
+        "promotionEligible": False,
+        "mode": "SHADOW_RESEARCH_ONLY"
+    }
+    return model
+
+
+def predict_probability(features, model):
+    scaled = transformed(features, model["featureMeans"], model["featureScales"])
+    return sigmoid(model["weights"][0] + sum(model["weights"][j + 1] * scaled[j]
+                                             for j in range(len(scaled))))
+
+
+def brier_score(probabilities, labels):
+    if not labels or len(probabilities) != len(labels):
+        return None
+    return sum((probability - label) ** 2 for probability, label in zip(probabilities, labels)) / len(labels)
+
+
+def log_loss(probabilities, labels):
+    if not labels or len(probabilities) != len(labels):
+        return None
+    epsilon = 1e-15
+    return -sum(label * math.log(max(epsilon, min(1 - epsilon, p))) +
+                (1 - label) * math.log(max(epsilon, min(1 - epsilon, 1 - p)))
+                for p, label in zip(probabilities, labels)) / len(labels)
+
+
+def calibration_bins(probabilities, labels, bins=10):
+    output = []
+    for index in range(bins):
+        low, high = index / bins, (index + 1) / bins
+        pairs = [(p, y) for p, y in zip(probabilities, labels)
+                 if low <= p < high or (index == bins - 1 and p == 1)]
+        if pairs:
+            output.append({"lowerBound": round(low, 2), "upperBound": round(high, 2),
+                           "count": len(pairs),
+                           "meanPredictedProbability": round(sum(p for p, _ in pairs) / len(pairs), 5),
+                           "observedUpRate": round(sum(y for _, y in pairs) / len(pairs), 5)})
+    return output
+
+
+def dataset_fingerprint(observations):
+    canonical = "\n".join(
+        f"{row['id']}|{row['time']}|{float(row['price']):.12g}"
+        for row in observations
+    )
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def insufficient_report(examples, observations, fingerprint, reason):
+    unique_coins = sorted({row["coin"] for row in examples})
+    unique_days = sorted({row["time"] // DAY_MS for row in examples})
+    report = {
+        "generatedAt": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "status": "insufficient_data", "model": MODEL_VERSION,
+        "trainingData": "Real CoinGecko historical market_chart prices and prospective recorded prices only; synthetic scenarios excluded",
+        "validation": "Chronological 70% UTC-day train / later holdout with a full UTC-day embargo; no random shuffling",
+        "examples": len(examples), "uniqueCoins": len(unique_coins), "distinctExampleUtcDays": len(unique_days),
+        "validMergedObservations": len(observations), "datasetSha256": fingerprint,
+        "betterThanConstantBaseline": None, "warning": "Research only; not a trading recommendation or proof of future predictive skill.",
+        "note": reason
+    }
+    candidate = {
+        "modelVersion": MODEL_VERSION, "status": "NOT_FITTED",
+        "reason": reason, "datasetSha256": fingerprint, "promotionEligible": False,
+        "mode": "SHADOW_RESEARCH_ONLY"
+    }
+    return report, candidate
+
+
+def evaluate_training(live_data, historical_data):
+    observations = merge_observations(live_data, historical_data)
+    examples = build_examples(observations)
+    fingerprint = dataset_fingerprint(observations)
+    train, test, test_start_day = chronological_split(examples)
+    coin_count = len({row["coin"] for row in examples})
+    all_days = sorted({row["time"] // DAY_MS for row in examples})
+    test_days = sorted({row["time"] // DAY_MS for row in test})
+    if (len(examples) < MIN_EXAMPLES or len(all_days) < MIN_DAYS or coin_count < MIN_COINS
+            or len(train) < MIN_TRAIN_EXAMPLES or len(test) < MIN_TEST_EXAMPLES
+            or len(test_days) < MIN_TEST_DAYS):
+        reason = (f"Requires at least {MIN_EXAMPLES} examples, {MIN_DAYS} distinct example UTC days, "
+                  f"{MIN_COINS} coins, {MIN_TRAIN_EXAMPLES} training examples, {MIN_TEST_EXAMPLES} holdout examples "
+                  f"and {MIN_TEST_DAYS} holdout UTC days; observed {len(examples)} examples, {len(all_days)} days, "
+                  f"{coin_count} coins, {len(train)} train examples, {len(test)} holdout examples and {len(test_days)} holdout days.")
+        report, candidate = insufficient_report(examples, observations, fingerprint, reason)
+        return report, candidate
+
+    model = fit_logistic(train)
+    labels = [row["y"] for row in test]
+    probabilities = [predict_probability(row["x"], model) for row in test]
+    train_rate = sum(row["y"] for row in train) / len(train)
+    constant_probabilities = [train_rate] * len(test)
+    neutral_probabilities = [0.5] * len(test)
+    holdout_brier = brier_score(probabilities, labels)
+    constant_brier = brier_score(constant_probabilities, labels)
+    neutral_brier = brier_score(neutral_probabilities, labels)
+    accuracy = sum(int((p >= 0.5) == bool(y)) for p, y in zip(probabilities, labels)) / len(labels)
+    majority_accuracy = sum(int((train_rate >= 0.5) == bool(y)) for y in labels) / len(labels)
+    train_dates = [row["time"] // DAY_MS for row in train]
+    test_dates = [row["time"] // DAY_MS for row in test]
+    better = holdout_brier < constant_brier
+    report = {
+        "generatedAt": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "status": "evaluated", "model": MODEL_VERSION,
+        "trainingData": "Real CoinGecko historical market_chart prices and prospective recorded prices only; synthetic scenarios excluded",
+        "validation": "Chronological UTC-day split; 70% earlier dates for training; one-day embargo; later dates held out; no random shuffling",
+        "examples": len(examples), "uniqueCoins": coin_count, "distinctExampleUtcDays": len(all_days),
+        "trainExamples": len(train), "testExamples": len(test), "testDays": len(test_dates),
+        "trainStartUtcDay": min(train_dates), "trainEndUtcDay": max(train_dates),
+        "holdoutStartUtcDay": min(test_dates), "holdoutEndUtcDay": max(test_dates),
+        "holdoutBrier": round(holdout_brier, 6),
+        "constantTrainRateBrier": round(constant_brier, 6),
+        "neutral50Brier": round(neutral_brier, 6),
+        "betterThanConstantBaseline": better,
+        "baselineImprovementBrier": round(constant_brier - holdout_brier, 6),
+        "holdoutLogLoss": round(log_loss(probabilities, labels), 6),
+        "holdoutAccuracy": round(accuracy, 6),
+        "constantMajorityAccuracy": round(majority_accuracy, 6),
+        "calibrationBins": calibration_bins(probabilities, labels),
+        "optimizer": model["optimizer"],
+        "datasetSha256": fingerprint,
+        "holdoutLimitations": [
+            "A single chronological holdout is not proof of durable predictive skill.",
+            "Crypto assets share market-wide shocks, so asset rows are not independent trials.",
+            "This is a direction-probability model, not a tested net-return or trading strategy.",
+            "No transaction costs, execution slippage or market impact are included in this prediction metric."
+        ],
+        "warning": "Research only. The model remains an unpromoted paper/research candidate."
+    }
+    candidate = dict(model)
+    candidate.update({
+        "status": "FITTED_UNPROMOTED_CANDIDATE",
+        "datasetSha256": fingerprint, "generatedAt": report["generatedAt"],
+        "trainingExamples": len(train), "holdoutExamples": len(test),
+        "trainStartUtcDay": min(train_dates), "trainEndUtcDay": max(train_dates),
+        "holdoutStartUtcDay": min(test_dates), "holdoutEndUtcDay": max(test_dates),
+        "holdoutBrier": round(holdout_brier, 6), "constantTrainRateBrier": round(constant_brier, 6),
+        "betterThanConstantBaseline": better,
+        "note": "Weights are fitted for research reproducibility only. Automatic promotion and real trading are disabled."
+    })
+    return report, candidate
+
+
+def main():
+    live = read_json(LIVE_PATH)
+    historical = read_json(HIST_PATH)
+    report, candidate = evaluate_training(live, historical)
+    REPORT_PATH.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    MODEL_PATH.write_text(json.dumps(candidate, indent=2) + "\n", encoding="utf-8")
+    print(f"Research training: {report['status']} | examples: {report['examples']} | "
+          f"coins: {report['uniqueCoins']} | days: {report['distinctExampleUtcDays']}")
+    if report.get("status") == "evaluated":
+        print(f"Holdout Brier {report['holdoutBrier']} vs constant baseline {report['constantTrainRateBrier']} | "
+              f"better baseline: {report['betterThanConstantBaseline']}")
+    # Insufficient history is an honest research state, not a workflow crash.
+    if report.get("status") == "failed":
+        raise SystemExit(1)
+
+
+if __name__ == "__main__":
+    main()
