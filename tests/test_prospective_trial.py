@@ -23,6 +23,7 @@ def candidate_fixture():
         "datasetSha256": "a" * 64,
         "trainingPositiveRate": 0.54,
         "trainingExamples": 1000,
+        "trainingCoins": ["bitcoin"],
         "trainStartDateUtc": "2025-01-01",
         "trainEndDateUtc": "2025-09-01",
     }
@@ -86,6 +87,8 @@ def test_live_inference_uses_only_available_past_daily_prices():
     future = history + [{"id": "bitcoin", "time": now_ms + 60_000, "price": 1.0e9}]
     with_future = predict_trial_probability(trial, "bitcoin", future, [], now_ms)
     assert with_future == probability
+    untrained_coin = predict_trial_probability(trial, "ethereum", history, [], now_ms)
+    assert untrained_coin is None
 
 
 def test_prospective_scorer_requires_mature_frozen_model_forecasts():
