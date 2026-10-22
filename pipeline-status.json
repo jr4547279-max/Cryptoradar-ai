@@ -1,9 +1,11 @@
 {
-  "checkedAt": "2026-10-22T20:13:26.610419+00:00",
+  "checkedAt": "2026-10-22T20:14:40.571047+00:00",
   "collection": "success",
+  "unitTests": "success",
+  "historicalBackfill": "success",
   "dataAgent": "success",
   "scenarios": "success",
   "training": "success",
   "rewards": "success",
-  "runUrl": "https://github.com/jr4547279-max/Cryptoradar-ai/actions/runs/39846923111"
+  "runUrl": "https://github.com/jr4547279-max/Cryptoradar-ai/actions/runs/39847043480"
 }

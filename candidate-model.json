@@ -1,0 +1,8 @@
+{
+  "modelVersion": "logistic-regression-v2",
+  "status": "NOT_FITTED",
+  "reason": "Requires at least 300 examples, 90 distinct example UTC days, 10 coins, 150 training examples, 50 holdout examples and 21 holdout UTC days; observed 1080 examples, 360 days, 3 coins, 750 train examples, 327 holdout examples and 109 holdout days.",
+  "datasetSha256": "69bc5d0e7de351c31f596261eb2a56a517fdc05cf9761a4293617b2f9216f1bd",
+  "promotionEligible": false,
+  "mode": "SHADOW_RESEARCH_ONLY"
+}

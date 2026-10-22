@@ -1,15 +1,15 @@
 {
-  "generatedAt": "2026-10-22T20:13:26.236261+00:00",
+  "generatedAt": "2026-10-22T20:14:40.263080+00:00",
   "status": "insufficient_data",
   "model": "logistic-regression-v2",
   "trainingData": "Real CoinGecko historical market_chart prices and prospective recorded prices only; synthetic scenarios excluded",
   "validation": "Chronological 70% UTC-day train / later holdout with a full UTC-day embargo; no random shuffling",
-  "examples": 0,
-  "uniqueCoins": 0,
-  "distinctExampleUtcDays": 0,
-  "validMergedObservations": 204,
-  "datasetSha256": "f987417127cb3be88893fa0d07108342c7a8290b275bd5bff82fcb2ac1664f4e",
+  "examples": 1080,
+  "uniqueCoins": 3,
+  "distinctExampleUtcDays": 360,
+  "validMergedObservations": 1293,
+  "datasetSha256": "69bc5d0e7de351c31f596261eb2a56a517fdc05cf9761a4293617b2f9216f1bd",
   "betterThanConstantBaseline": null,
   "warning": "Research only; not a trading recommendation or proof of future predictive skill.",
-  "note": "Requires at least 300 examples, 90 distinct example UTC days, 10 coins, 150 training examples, 50 holdout examples and 21 holdout UTC days; observed 0 examples, 0 days, 0 coins, 0 train examples, 0 holdout examples and 0 holdout days."
+  "note": "Requires at least 300 examples, 90 distinct example UTC days, 10 coins, 150 training examples, 50 holdout examples and 21 holdout UTC days; observed 1080 examples, 360 days, 3 coins, 750 train examples, 327 holdout examples and 109 holdout days."
 }

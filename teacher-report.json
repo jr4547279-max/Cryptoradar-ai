@@ -1,15 +1,15 @@
 {
-  "generatedAt": "2026-10-22T20:13:26.470444+00:00",
+  "generatedAt": "2026-10-22T20:14:40.454675+00:00",
   "teacherVersion": "teacher-v2-rule-based-memory",
   "mode": "RESEARCH_SUPERVISOR_ONLY",
   "grade": "NEEDS_MORE_EVIDENCE",
   "trainingStatus": "insufficient_data",
-  "trainingExamples": 0,
+  "trainingExamples": 1080,
   "eligibleForReward": [],
   "lessons": [
     {
       "topic": "evidence_quality",
-      "finding": "Training status is insufficient_data; examples=0.",
+      "finding": "Training status is insufficient_data; examples=1080.",
       "lesson": "No grade for predictive skill is justified until enough real timestamped observations exist.",
       "nextExperiment": "Continue collecting real observations; require chronological holdout evaluation before comparing candidates."
     },
@@ -20,9 +20,9 @@
       "nextExperiment": "Keep every agent in shadow mode until enough mature, valid, independent outcomes exist."
     }
   ],
-  "lessonHistoryCount": 9,
+  "lessonHistoryCount": 10,
   "sameLessonPatternSeenBefore": true,
-  "repeatPatternCount": 7,
+  "repeatPatternCount": 8,
   "actionsPermitted": [
     "publish_lessons",
     "recommend_next_experiment",
