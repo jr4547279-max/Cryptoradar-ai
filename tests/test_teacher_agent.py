@@ -12,7 +12,7 @@ def test():
     integrity = {"status": "PASS", "forecasts": 0}
     result, memory = teach(training, rewards, integrity, {}, {})
     assert result["grade"] == "NEEDS_MORE_EVIDENCE"
-    assert any(x["topic"] == "predictive_skill" and "did not beat baseline" in x["finding"] for x in result["lessons"])
+    assert any(x["topic"] == "predictive_skill" and "did not beat the best available constant baseline" in x["finding"] for x in result["lessons"])
     assert "place_orders" in result["actionsForbidden"]
     assert "edit_model_weights" in result["actionsForbidden"]
     assert memory["history"]
