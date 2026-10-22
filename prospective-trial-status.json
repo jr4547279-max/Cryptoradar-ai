@@ -1,12 +1,12 @@
 {
   "status": "ACTIVE_EXPERIMENTAL_SHADOW_TRIAL",
-  "checkedAt": "2026-10-22T20:44:43.054000+00:00",
-  "createdNow": true,
+  "checkedAt": "2026-10-22T22:24:24.202000+00:00",
+  "createdNow": false,
   "trialId": "trend-logistic-v1-forward-001",
   "modelVersion": "trend-logistic-v1",
   "modelHash": "2e0bdf86cd754c7dc1febea9f3d7d93a50e16fb769edc5fcdccf5abbf34a32b4",
-  "historicalHoldoutBeatsBaseline": false,
-  "warning": "This is a frozen research experiment, not an endorsement or a trading signal.",
+  "activatedAt": "2026-10-22T20:44:43.054000+00:00",
+  "warning": "Frozen parameters retained; newly trained candidates do not change this trial.",
   "realTradingEnabled": false,
   "automaticPromotion": false
 }
