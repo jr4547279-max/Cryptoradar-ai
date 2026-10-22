@@ -387,7 +387,7 @@ def evaluate_training(live_data, historical_data):
         "bestConstantBaselineBrier": round(best_constant_brier, 6),
         "bestConstantBaselineName": "training_rate" if constant_brier <= neutral_brier else "neutral_0.5",
         "betterThanConstantBaseline": better,
-        "baselineImprovementBrier": round(constant_brier - holdout_brier, 6),
+        "baselineImprovementBrier": round(best_constant_brier - holdout_brier, 6),
         "holdoutLogLoss": round(log_loss(probabilities, labels), 6),
         "holdoutAccuracy": round(accuracy, 6),
         "constantMajorityAccuracy": round(majority_accuracy, 6),
