@@ -1,17 +1,17 @@
 {
-  "generatedAt": "2026-10-22T20:16:33.671189+00:00",
+  "generatedAt": "2026-10-22T20:19:58.340816+00:00",
   "teacherVersion": "teacher-v2-rule-based-memory",
   "mode": "RESEARCH_SUPERVISOR_ONLY",
   "grade": "NEEDS_MORE_EVIDENCE",
-  "trainingStatus": "insufficient_data",
-  "trainingExamples": 1080,
+  "trainingStatus": "evaluated",
+  "trainingExamples": 5400,
   "eligibleForReward": [],
   "lessons": [
     {
-      "topic": "evidence_quality",
-      "finding": "Training status is insufficient_data; examples=1080.",
-      "lesson": "No grade for predictive skill is justified until enough real timestamped observations exist.",
-      "nextExperiment": "Continue collecting real observations; require chronological holdout evaluation before comparing candidates."
+      "topic": "predictive_skill",
+      "finding": "Chronological holdout Brier 0.25418 did not beat baseline 0.25327.",
+      "lesson": "The current model has not demonstrated predictive skill against its simple baseline.",
+      "nextExperiment": "Keep the candidate shadow-only; test simpler features and probability calibration without touching the holdout."
     },
     {
       "topic": "reward_discipline",
@@ -20,9 +20,9 @@
       "nextExperiment": "Keep every agent in shadow mode until enough mature, valid, independent outcomes exist."
     }
   ],
-  "lessonHistoryCount": 11,
-  "sameLessonPatternSeenBefore": true,
-  "repeatPatternCount": 9,
+  "lessonHistoryCount": 12,
+  "sameLessonPatternSeenBefore": false,
+  "repeatPatternCount": 0,
   "actionsPermitted": [
     "publish_lessons",
     "recommend_next_experiment",

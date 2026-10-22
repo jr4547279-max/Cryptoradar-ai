@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-10-22T20:14:40.523899+00:00",
+  "checkedAt": "2026-10-22T20:19:58.403393+00:00",
   "mode": "AUTONOMOUS_RESEARCH_ONLY",
   "dataCollection": "scheduled_hourly",
-  "training": "waiting_for_sufficient_forward_data",
-  "historicalHoldoutBeatsBaseline": null,
+  "training": "evaluated",
+  "historicalHoldoutBeatsBaseline": false,
   "rewardEligibleShadowAgents": [],
   "automaticModelPromotion": false,
   "realTradingEnabled": false,

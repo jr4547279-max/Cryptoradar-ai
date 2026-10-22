@@ -1,8 +1,47 @@
 {
   "modelVersion": "logistic-regression-v2",
-  "status": "NOT_FITTED",
-  "reason": "Requires at least 300 examples, 90 distinct example UTC days, 10 coins, 150 training examples, 50 holdout examples and 21 holdout UTC days; observed 1080 examples, 360 days, 3 coins, 750 train examples, 327 holdout examples and 109 holdout days.",
-  "datasetSha256": "69bc5d0e7de351c31f596261eb2a56a517fdc05cf9761a4293617b2f9216f1bd",
+  "features": [
+    "log_return_1d",
+    "log_return_previous_day",
+    "log_return_two_days_ago"
+  ],
+  "featureMeans": [
+    -0.003157341406380852,
+    -0.00317055733195417,
+    -0.0029996898412980276
+  ],
+  "featureScales": [
+    0.03685034577137377,
+    0.03683382049069861,
+    0.03688607620325374
+  ],
+  "weights": [
+    -0.1818932815896755,
+    -0.10143720844499499,
+    -0.1166246826209204,
+    0.012912528860461741
+  ],
+  "optimizer": {
+    "name": "full_batch_gradient_descent",
+    "learningRate": 0.08,
+    "l2": 0.02,
+    "maxEpochs": 1000,
+    "epochsRun": 661,
+    "convergedByGradientTolerance": true
+  },
   "promotionEligible": false,
-  "mode": "SHADOW_RESEARCH_ONLY"
+  "mode": "SHADOW_RESEARCH_ONLY",
+  "status": "FITTED_UNPROMOTED_CANDIDATE",
+  "datasetSha256": "5f21b11f1d93862d4cb1d7b6abe80591c61c8a46da91c81ab1d434a0ce70c3da",
+  "generatedAt": "2026-10-22T20:19:58.138368+00:00",
+  "trainingExamples": 3750,
+  "holdoutExamples": 1635,
+  "trainStartUtcDay": 20387,
+  "trainEndUtcDay": 20636,
+  "holdoutStartUtcDay": 20638,
+  "holdoutEndUtcDay": 20746,
+  "holdoutBrier": 0.254177,
+  "constantTrainRateBrier": 0.253271,
+  "betterThanConstantBaseline": false,
+  "note": "Weights are fitted for research reproducibility only. Automatic promotion and real trading are disabled."
 }

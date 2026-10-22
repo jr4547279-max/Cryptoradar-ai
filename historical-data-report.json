@@ -1,27 +1,24 @@
 {
-  "generatedAt": "2026-10-22T20:14:39.266999+00:00",
-  "status": "RATE_LIMITED",
+  "generatedAt": "2026-10-22T20:19:53.787215+00:00",
+  "status": "PASS",
   "source": "CoinGecko public API /coins/{id}/market_chart",
+  "candidateUniverse": "Core-asset priority list intersected with recent live observations",
   "quoteCurrency": "gbp",
   "requestedDays": 365,
-  "assetsAttemptedThisRun": 4,
-  "assetsFetchedThisRun": 3,
-  "assetsWithStoredHistory": 3,
-  "uniqueCoinUtcDays": 1095,
+  "assetsAttemptedThisRun": 12,
+  "assetsFetchedThisRun": 12,
+  "assetLimit": 30,
+  "requestSpacingSeconds": 15,
+  "assetsWithStoredHistory": 15,
+  "uniqueCoinUtcDays": 5475,
   "distinctUtcDays": 365,
-  "storedObservations": 1095,
+  "storedObservations": 5475,
   "invalidStoredRows": 0,
-  "failedAssets": [
-    {
-      "asset": "ripple",
-      "error": "HTTP 429"
-    }
-  ],
-  "throttleSeconds": 10,
+  "failedAssets": [],
   "limitations": [
     "External-source authenticity is not independently verified.",
-    "Historical prices are not evidence that a forecast could have been made at the time; this file is only for chronological training/backtesting.",
+    "Historical prices are for chronological training/backtesting, not pretend live forecasts.",
     "Recently listed assets may have less than one year of history.",
-    "Backfill is incremental and may take multiple runs; no synthetic points are created."
+    "Backfill is incremental; no synthetic points are created."
   ]
 }
