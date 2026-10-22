@@ -28,9 +28,38 @@
           "samples": 3600
         }
       }
+    },
+    {
+      "hour": 497952,
+      "at": "2026-10-22T00:11:11.560072+00:00",
+      "simulations": 14400,
+      "regimes": 12,
+      "seedPolicy": "fixed by UTC hour",
+      "strategies": {
+        "momentum": {
+          "meanReturnPct": -14.9839,
+          "worstDrawdownPct": 41.368,
+          "samples": 3600
+        },
+        "reversion": {
+          "meanReturnPct": -14.9362,
+          "worstDrawdownPct": 40.656,
+          "samples": 3600
+        },
+        "trend": {
+          "meanReturnPct": -4.5446,
+          "worstDrawdownPct": 22.157,
+          "samples": 3600
+        },
+        "cash": {
+          "meanReturnPct": 0.0,
+          "worstDrawdownPct": 0,
+          "samples": 3600
+        }
+      }
     }
   ],
-  "totalSimulations": 14400,
+  "totalSimulations": 28800,
   "endAt": "2026-10-22T09:33:49+00:00",
   "status": "SYNTHETIC_RESEARCH_ONLY",
   "disclaimer": "Stress tests on artificial price paths; no training, agent rewards, forward validation, or evidence of profit. No models are promoted."
