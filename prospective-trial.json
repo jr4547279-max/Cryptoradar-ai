@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "trialId": "trend-logistic-v1-forward-001",
+  "status": "ACTIVE_EXPERIMENTAL_SHADOW_TRIAL",
+  "activatedAt": "2026-10-22T20:44:43.054000+00:00",
+  "activeFromMs": 1792701883054,
+  "modelVersion": "trend-logistic-v1",
+  "modelHash": "2e0bdf86cd754c7dc1febea9f3d7d93a50e16fb769edc5fcdccf5abbf34a32b4",
+  "model": {
+    "modelVersion": "trend-logistic-v1",
+    "features": [
+      "log_return_1d",
+      "log_return_3d",
+      "log_return_7d",
+      "log_return_14d",
+      "log_return_30d",
+      "realized_volatility_7d",
+      "realized_volatility_30d",
+      "momentum_volatility_ratio_7d",
+      "momentum_volatility_ratio_30d",
+      "distance_from_sma7",
+      "distance_from_sma30",
+      "drawdown_30d"
+    ],
+    "featureMeans": [
+      -0.0023735149926203624,
+      -0.007945110747179584,
+      -0.018648682222600577,
+      -0.04220462478911693,
+      -0.09193242808193199,
+      0.035155419221406956,
+      0.04116859387808318,
+      -0.23615570999186697,
+      -0.3939582276336056,
+      -0.008903726506126069,
+      -0.04771206575878571,
+      -0.1685441492868334
+    ],
+    "featureScales": [
+      0.04497095883393669,
+      0.0733285765169554,
+      0.10535499679331567,
+      0.14900028835207096,
+      0.21114905633684286,
+      0.024042627015730227,
+      0.02033449160644089,
+      1.1972356774092587,
+      0.9206195259849578,
+      0.05577374127813391,
+      0.12189915193551105,
+      0.1229297617097336
+    ],
+    "weights": [
+      -0.15470694037813276,
+      -0.01192075358569882,
+      -0.024598454399873803,
+      -0.003761608360810634,
+      -0.014902549945883673,
+      -0.018515140601621974,
+      -0.010847557962413762,
+      -0.016506460153699876,
+      -0.001964548102783977,
+      -0.020413912542835897,
+      -0.025239798692486205,
+      -0.007179741151640325,
+      0.010310534182622776
+    ],
+    "optimizer": {
+      "name": "full_batch_gradient_descent",
+      "learningRate": 0.08,
+      "l2": 0.5,
+      "maxEpochs": 800,
+      "epochsRun": 528,
+      "convergedByGradientTolerance": true
+    },
+    "datasetSha256": "022e2cbf25b731ec8d5f7e7bf9874e034b9ffe81e243d60444a8984c117c295d",
+    "trainingPositiveRate": 0.461494
+  },
+  "trainingProvenance": {
+    "datasetSha256": "022e2cbf25b731ec8d5f7e7bf9874e034b9ffe81e243d60444a8984c117c295d",
+    "trainingExamples": 6960,
+    "trainingPositiveRate": 0.461494,
+    "trainingCoins": [],
+    "trainingStartDateUtc": "2025-11-22",
+    "trainingEndDateUtc": "2026-07-11",
+    "walkForwardSelectedL2": 0.5,
+    "walkForwardMeanValidationBrier": 0.248183,
+    "walkForwardBeatsConstantBaseline": true,
+    "historicalHoldoutStatus": "REUSED_HISTORICAL_EXPLORATORY_BENCHMARK",
+    "historicalHoldoutBrier": 0.253523,
+    "historicalHoldoutBestConstantBaselineBrier": 0.25,
+    "historicalHoldoutBeatsConstantBaseline": false
+  },
+  "evaluationProtocol": {
+    "minimumMaturedForecasts": 500,
+    "minimumDistinctUtcDays": 30,
+    "minimumDistinctCoins": 10,
+    "bootstrapReplicates": 1000,
+    "confidenceLevel": 0.95,
+    "clusterUnit": "forecast creation UTC day",
+    "mustBeatBoth": [
+      "neutral_0.5",
+      "frozen_training_up_rate"
+    ],
+    "frozenAfterActivation": true
+  },
+  "promotionEligible": false,
+  "automaticPromotion": false,
+  "realTradingEnabled": false,
+  "purpose": "Independent prospective probability-quality evaluation only; historical holdout is exploratory and reused."
+}
