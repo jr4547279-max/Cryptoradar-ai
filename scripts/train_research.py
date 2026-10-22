@@ -422,6 +422,7 @@ def evaluate_training(live_data, historical_data):
         "examples": len(examples), "uniqueCoins": coin_count, "distinctExampleUtcDays": len(all_days),
         "trainExamples": len(train), "testExamples": len(test), "testDays": len(set(test_dates)),
         "trainingPositiveRate": round(train_rate, 6),
+        "trainingCoins": sorted({row["coin"] for row in train}),
         "trainStartUtcDay": min(train_dates), "trainEndUtcDay": max(train_dates),
         "holdoutStartUtcDay": min(test_dates), "holdoutEndUtcDay": max(test_dates),
         "trainStartDateUtc": utc_date(min(train_dates)),
