@@ -190,6 +190,7 @@ def fit_logistic(train, l2=L2):
     normalized = [(transformed(row["x"], means, scales), row["y"]) for row in train]
     weights = [0.0] * (len(FEATURE_NAMES) + 1)
     epochs_used = 0
+    converged = False
     for epoch in range(MAX_EPOCHS):
         gradients = [0.0] * len(weights)
         for features, label in normalized:
@@ -207,6 +208,7 @@ def fit_logistic(train, l2=L2):
             weights[j] -= LEARNING_RATE * gradient
         epochs_used = epoch + 1
         if max_gradient < GRADIENT_TOLERANCE:
+            converged = True
             break
     model = {
         "modelVersion": MODEL_VERSION,
@@ -216,7 +218,7 @@ def fit_logistic(train, l2=L2):
         "weights": weights,
         "optimizer": {"name": "full_batch_gradient_descent", "learningRate": LEARNING_RATE,
                       "l2": l2, "maxEpochs": MAX_EPOCHS, "epochsRun": epochs_used,
-                      "convergedByGradientTolerance": epochs_used < MAX_EPOCHS},
+                      "convergedByGradientTolerance": converged},
         "promotionEligible": False,
         "mode": "SHADOW_RESEARCH_ONLY"
     }
@@ -360,7 +362,9 @@ def insufficient_report(examples, observations, fingerprint, reason):
         "validation": "Chronological 70% UTC-day train / later holdout with a full UTC-day embargo; no random shuffling",
         "examples": len(examples), "uniqueCoins": len(unique_coins), "distinctExampleUtcDays": len(unique_days),
         "validMergedObservations": len(observations), "datasetSha256": fingerprint,
-        "betterThanConstantBaseline": None, "warning": "Research only; not a trading recommendation or proof of future predictive skill.",
+        "betterThanConstantBaseline": None, "holdoutStatus": "REUSED_HISTORICAL_EXPLORATORY_BENCHMARK",
+        "independentProspectiveValidationRequired": True,
+        "warning": "Research only; not a trading recommendation or proof of future predictive skill.",
         "note": reason
     }
     candidate = {
@@ -433,7 +437,10 @@ def evaluate_training(live_data, historical_data):
         "walkForwardCV": cv,
         "optimizer": model["optimizer"],
         "datasetSha256": fingerprint,
+        "holdoutStatus": "REUSED_HISTORICAL_EXPLORATORY_BENCHMARK",
+        "independentProspectiveValidationRequired": True,
         "holdoutLimitations": [
+            "This historic window was already inspected for an earlier candidate version, so it is exploratory, not independent confirmation.",
             "A single chronological holdout is not proof of durable predictive skill.",
             "Crypto assets share market-wide shocks, so asset rows are not independent trials.",
             "This is a direction-probability model, not a tested net-return or trading strategy.",
@@ -453,7 +460,8 @@ def evaluate_training(live_data, historical_data):
         "holdoutBrier": round(holdout_brier, 6), "constantTrainRateBrier": round(constant_brier, 6),
         "betterThanConstantBaseline": better,
         "walkForwardCV": cv,
-        "note": "Weights are fitted for research reproducibility only. Automatic promotion and real trading are disabled."
+        "independentProspectiveValidationRequired": True,
+        "note": "Weights are fitted for research reproducibility only. The historical window is exploratory and reused; independent prospective testing is required. Automatic promotion and real trading are disabled."
     })
     return report, candidate
 
