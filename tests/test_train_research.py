@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from train_research import (
-    DAY_MS, brier_score, build_examples, chronological_split, evaluate_training,
+    DAY_MS, FEATURE_NAMES, brier_score, build_examples, chronological_split, evaluate_training,
     fit_logistic, predict_probability,
 )
 
@@ -13,7 +13,7 @@ def synthetic_fixture_only_for_test():
     observations = []
     for coin_index in range(10):
         coin = f"fixture-coin-{coin_index}"
-        for day in range(125):
+        for day in range(220):
             # Deterministic fixtures exercise code paths; production loads only persisted provider data.
             price = 100.0 * math.exp(0.002 * day + 0.025 * math.sin(day * 0.27 + coin_index * 0.61))
             observations.append({"id": coin, "time": day * DAY_MS + coin_index * 1000,
@@ -46,7 +46,7 @@ def test_model_fit_is_finite_and_reproducible():
     model_a = fit_logistic(train)
     model_b = fit_logistic(train)
     assert model_a["weights"] == model_b["weights"]
-    assert len(model_a["weights"]) == 4
+    assert len(model_a["weights"]) == len(FEATURE_NAMES) + 1
     assert all(math.isfinite(value) for value in model_a["weights"])
     assert all(0 <= predict_probability(row["x"], model_a) <= 1 for row in test[:100])
 
