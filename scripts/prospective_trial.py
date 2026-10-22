@@ -30,7 +30,7 @@ def _finite_number(value):
 
 def frozen_model_payload(candidate):
     keys = ("modelVersion", "features", "featureMeans", "featureScales", "weights",
-            "optimizer", "datasetSha256", "trainingPositiveRate")
+            "optimizer", "datasetSha256", "trainingPositiveRate", "trainingCoins")
     return {key: candidate[key] for key in keys if key in candidate}
 
 
@@ -176,6 +176,9 @@ def price_series_for_coin(coin_id, historical_observations, live_observations, n
 
 
 def predict_trial_probability(trial, coin_id, historical_observations, live_observations, now_ms):
+    now = datetime.datetime.fromtimestamp(now_ms / 1000, datetime.timezone.utc)
+    if now.hour != 0:
+        return None
     if not isinstance(trial, dict) or trial.get("status") != "ACTIVE_EXPERIMENTAL_SHADOW_TRIAL":
         return None
     if not isinstance(trial.get("activeFromMs"), int) or now_ms < trial["activeFromMs"]:
