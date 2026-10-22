@@ -116,25 +116,31 @@ def select_candidate_ids(live_data, store, now_epoch):
         cid for cid, record in metadata.items()
         if isinstance(record, dict) and record.get("status") == "ok"
         and isinstance(record.get("pointCount"), int) and record["pointCount"] >= 30
+        and cid != "_summary"
     }
     slots = max(0, MAX_ASSETS_TOTAL - len(qualified))
-    candidates = []
+    refresh_candidates, new_candidates = [], []
     for cid in CORE_ASSETS:
-        if cid not in available or cid in EXCLUDED_IDS or cid in qualified:
+        if cid not in available or cid in EXCLUDED_IDS:
             continue
         record = metadata.get(cid, {})
         if not isinstance(record, dict):
             record = {}
+        fetched = record.get("fetchedAtEpoch")
+        if cid in qualified:
+            # Refresh previously successful history after 180 days so the archive
+            # keeps a rolling year while live records roll off their 90-day window.
+            if not isinstance(fetched, int) or now_epoch - fetched >= HISTORY_REFRESH_DAYS * 86400:
+                refresh_candidates.append(cid)
+            continue
         last_attempt = record.get("lastAttemptEpoch")
         if (isinstance(last_attempt, int) and now_epoch - last_attempt < FAILED_RETRY_DAYS * 86400
                 and record.get("status") != "ok"):
             continue
-        fetched = record.get("fetchedAtEpoch")
         if isinstance(fetched, int) and now_epoch - fetched < HISTORY_REFRESH_DAYS * 86400:
             continue
-        candidates.append(cid)
-    return candidates[:min(MAX_COINS_PER_RUN, slots)], len(qualified)
-
+        new_candidates.append(cid)
+    return (refresh_candidates + new_candidates[:slots])[:MAX_COINS_PER_RUN], len(qualified)
 
 def latest_day_samples(cid, prices, now_ms):
     """Keep the latest valid provider price sample in each UTC day."""
@@ -285,6 +291,13 @@ def main():
 
     if incoming:
         store["observations"] = merge_observations(store.get("observations", []), incoming)
+    # Keep a bounded rolling year plus a small safety margin; older cached points
+    # could otherwise silently outlive the provider's public-plan history window.
+    cutoff_ms = now_ms - (DAYS + 3) * DAY_MS
+    store["observations"] = [
+        row for row in store.get("observations", [])
+        if isinstance(row, dict) and isinstance(row.get("time"), int) and row["time"] >= cutoff_ms
+    ]
     store["coins"]["_summary"] = {
         "coreAssetLimit": MAX_ASSETS_TOTAL,
         "qualifiedCoreAssetsAtStart": qualified_count,
