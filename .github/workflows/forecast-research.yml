@@ -11,6 +11,10 @@ on:
       - 'tests/test_historical_backfill.py'
       - 'tests/test_train_research.py'
       - 'scripts/train_research.py'
+      - 'scripts/prospective_trial.py'
+      - 'scripts/activate_prospective_trial.py'
+      - 'scripts/score_prospective_trial.py'
+      - 'tests/test_prospective_trial.py'
       - 'scripts/scenario_stress.py'
       - 'scripts/reward_referee.py'
       - 'scripts/score_rewards.py'
@@ -54,6 +58,7 @@ jobs:
           python tests/test_data_agent.py
           python tests/test_historical_backfill.py
           python tests/test_train_research.py
+          python tests/test_prospective_trial.py
       - name: Incrementally backfill real historical market data
         id: history_backfill
         if: steps.collection.outcome == 'success' && steps.unit_tests.outcome == 'success'
@@ -74,6 +79,16 @@ jobs:
         if: steps.collection.outcome == 'success' && steps.unit_tests.outcome == 'success' && steps.history_backfill.outcome == 'success' && steps.data_agent.outcome == 'success'
         continue-on-error: true
         run: python scripts/train_research.py
+      - name: Freeze qualified Trend model for prospective paper trial
+        id: trial_activation
+        if: steps.training.outcome == 'success' && steps.unit_tests.outcome == 'success' && steps.data_agent.outcome == 'success'
+        continue-on-error: true
+        run: python scripts/activate_prospective_trial.py
+      - name: Score frozen model on prospective forecasts only
+        id: trial_score
+        if: steps.trial_activation.outcome == 'success' && steps.collection.outcome == 'success'
+        continue-on-error: true
+        run: python scripts/score_prospective_trial.py
       - name: Test reward referee and score matured forecasts
         id: rewards
         if: steps.collection.outcome == 'success'
@@ -99,6 +114,8 @@ jobs:
           DATA_AGENT_RESULT: ${{ steps.data_agent.outcome }}
           SCENARIO_RESULT: ${{ steps.scenarios.outcome }}
           TRAIN_RESULT: ${{ steps.training.outcome }}
+          TRIAL_ACTIVATION_RESULT: ${{ steps.trial_activation.outcome }}
+          TRIAL_SCORE_RESULT: ${{ steps.trial_score.outcome }}
           REWARD_RESULT: ${{ steps.rewards.outcome }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
@@ -115,6 +132,8 @@ jobs:
           data_agent=read_report('data-agent-report.json')
           training=read_report('training-report.json')
           candidate=read_report('candidate-model.json')
+          trial_status=read_report('prospective-trial-status.json')
+          trial_score=read_report('prospective-trial-report.json')
           historical_quality=data_agent.get('historicalDataQuality') or {}
           status={
             'checkedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),
@@ -137,6 +156,15 @@ jobs:
             'beatsConstantBaseline':training.get('betterThanConstantBaseline'),
             'candidateModelStatus':candidate.get('status','MISSING'),
             'candidatePromotionEligible':candidate.get('promotionEligible',False),
+            'trialActivationStep':os.environ.get('TRIAL_ACTIVATION_RESULT','unknown'),
+            'trialStatus':trial_status.get('status','MISSING'),
+            'trialModelHash':trial_status.get('modelHash'),
+            'trialScoreStep':os.environ.get('TRIAL_SCORE_RESULT','unknown'),
+            'prospectiveScoreStatus':trial_score.get('status','MISSING'),
+            'prospectiveMaturedForecasts':trial_score.get('maturedForecasts',0),
+            'prospectiveDistinctUtcDays':trial_score.get('distinctForecastCreationUtcDays',0),
+            'prospectiveBeatsBothBaselines':trial_score.get('beatsBothConstantBaselines'),
+            'prospectivePassesProbabilityBenchmark':trial_score.get('passesProbabilityBenchmark',False),
             'automaticModelPromotion':False,
             'realTradingEnabled':False,
             'rewards':os.environ.get('REWARD_RESULT','unknown'),
@@ -150,7 +178,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add research-data.json historical-data.json historical-data-report.json data-agent-report.json scenario-report.json training-report.json candidate-model.json pipeline-status.json reward-report.json learning-status.json forecast-integrity-report.json teacher-report.json teacher-memory.json school-project.json
+          git add research-data.json historical-data.json historical-data-report.json data-agent-report.json scenario-report.json training-report.json candidate-model.json prospective-trial-status.json prospective-trial-report.json pipeline-status.json reward-report.json learning-status.json forecast-integrity-report.json teacher-report.json teacher-memory.json school-project.json
+          if [ -f prospective-trial.json ]; then git add prospective-trial.json; fi
           if ! git diff --cached --quiet; then
             git commit -m "Research: publish scheduled pipeline status"
             git pull --rebase origin main
@@ -165,6 +194,8 @@ jobs:
           DATA_AGENT_RESULT: ${{ steps.data_agent.outcome }}
           SCENARIO_RESULT: ${{ steps.scenarios.outcome }}
           TRAIN_RESULT: ${{ steps.training.outcome }}
+          TRIAL_ACTIVATION_RESULT: ${{ steps.trial_activation.outcome }}
+          TRIAL_SCORE_RESULT: ${{ steps.trial_score.outcome }}
           REWARD_RESULT: ${{ steps.rewards.outcome }}
         run: |
           test "$COLLECT_RESULT" = "success"
@@ -173,4 +204,6 @@ jobs:
           test "$DATA_AGENT_RESULT" = "success"
           test "$SCENARIO_RESULT" = "success"
           test "$TRAIN_RESULT" = "success"
+          test "$TRIAL_ACTIVATION_RESULT" = "success"
+          test "$TRIAL_SCORE_RESULT" = "success"
           test "$REWARD_RESULT" = "success"
