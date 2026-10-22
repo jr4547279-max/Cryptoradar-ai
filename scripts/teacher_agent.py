@@ -32,22 +32,23 @@ def _brier_score(report):
 def teach(training, rewards, integrity, scenario, memory=None):
     lessons = []
     status = training.get("status")
-    if status == "evaluated" and isinstance(training.get("holdoutBrier"), (int, float)) and isinstance(training.get("constantTrainRateBrier"), (int, float)):
+    baseline = training.get("bestConstantBaselineBrier", training.get("constantTrainRateBrier"))
+    baseline_name = training.get("bestConstantBaselineName", "training-rate")
+    if status == "evaluated" and isinstance(training.get("holdoutBrier"), (int, float)) and isinstance(baseline, (int, float)):
         model = training["holdoutBrier"]
-        baseline = training["constantTrainRateBrier"]
         if model < baseline:
             lessons.append({
                 "topic": "predictive_skill",
-                "finding": f"Chronological holdout Brier {model:.5f} beat the training-rate baseline {baseline:.5f}.",
-                "lesson": "One holdout win is a promising observation, not proof of a durable edge.",
-                "nextExperiment": "Freeze the model and test on a new, untouched forward window with fees and calibration reported."
+                "finding": f"Chronological holdout Brier {model:.5f} beat the {baseline_name} constant baseline {baseline:.5f}.",
+                "lesson": "One historical result is only a promising observation, not proof of a durable edge; reused holdouts cannot confirm generalisation.",
+                "nextExperiment": "Freeze the candidate and evaluate a prospectively timestamped, untouched forward window; report calibration and risk separately."
             })
         else:
             lessons.append({
                 "topic": "predictive_skill",
-                "finding": f"Chronological holdout Brier {model:.5f} did not beat baseline {baseline:.5f}.",
-                "lesson": "The current model has not demonstrated predictive skill against its simple baseline.",
-                "nextExperiment": "Keep the candidate shadow-only; test simpler features and probability calibration without touching the holdout."
+                "finding": f"Chronological holdout Brier {model:.5f} did not beat the best available constant baseline ({baseline_name}) {baseline:.5f}.",
+                "lesson": "The current model has not demonstrated predictive skill against a simple constant forecast; it must remain unpromoted.",
+                "nextExperiment": "Use development-only walk-forward experiments for feature research, then freeze the candidate and evaluate it prospectively without retuning on that window."
             })
     else:
         lessons.append({
