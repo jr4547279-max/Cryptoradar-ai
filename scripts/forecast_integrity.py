@@ -47,7 +47,7 @@ def audit(forecasts):
         if outcome is None:
             pending+=1
             if scored is not None:problems.append({'index':i,'reason':'unresolved_but_scored'})
-        elif outcome in (0,1) and isinstance(scored,int) and isinstance(created,int) and scored-created>=86400000:
+        elif outcome in (0,1) and not isinstance(outcome,bool) and isinstance(scored,int) and isinstance(created,int) and scored-created>=86400000:
             matured+=1
             closing=f.get('scoredPrice')
             if not isinstance(closing,(int,float)) or not math.isfinite(closing) or closing<=0:
