@@ -1,15 +1,15 @@
 {
-  "generatedAt": "2026-10-22T20:19:58.340816+00:00",
+  "generatedAt": "2026-10-22T20:26:40.657234+00:00",
   "teacherVersion": "teacher-v2-rule-based-memory",
   "mode": "RESEARCH_SUPERVISOR_ONLY",
   "grade": "NEEDS_MORE_EVIDENCE",
   "trainingStatus": "evaluated",
-  "trainingExamples": 5400,
+  "trainingExamples": 9720,
   "eligibleForReward": [],
   "lessons": [
     {
       "topic": "predictive_skill",
-      "finding": "Chronological holdout Brier 0.25418 did not beat baseline 0.25327.",
+      "finding": "Chronological holdout Brier 0.25379 did not beat baseline 0.25346.",
       "lesson": "The current model has not demonstrated predictive skill against its simple baseline.",
       "nextExperiment": "Keep the candidate shadow-only; test simpler features and probability calibration without touching the holdout."
     },
@@ -20,9 +20,9 @@
       "nextExperiment": "Keep every agent in shadow mode until enough mature, valid, independent outcomes exist."
     }
   ],
-  "lessonHistoryCount": 12,
-  "sameLessonPatternSeenBefore": false,
-  "repeatPatternCount": 0,
+  "lessonHistoryCount": 13,
+  "sameLessonPatternSeenBefore": true,
+  "repeatPatternCount": 1,
   "actionsPermitted": [
     "publish_lessons",
     "recommend_next_experiment",

@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-10-22T20:19:58.138368+00:00",
+  "generatedAt": "2026-10-22T20:26:40.406795+00:00",
   "status": "evaluated",
   "model": "logistic-regression-v2",
   "trainingData": "Real CoinGecko historical market_chart prices and prospective recorded prices only; synthetic scenarios excluded",
   "validation": "Chronological UTC-day split; 70% earlier dates for training; one-day embargo; later dates held out; no random shuffling",
-  "examples": 5400,
-  "uniqueCoins": 15,
+  "examples": 9720,
+  "uniqueCoins": 27,
   "distinctExampleUtcDays": 360,
-  "trainExamples": 3750,
-  "testExamples": 1635,
+  "trainExamples": 6750,
+  "testExamples": 2943,
   "testDays": 109,
   "trainStartUtcDay": 20387,
   "trainEndUtcDay": 20636,
@@ -18,42 +18,42 @@
   "trainEndDateUtc": "2026-07-02",
   "holdoutStartDateUtc": "2026-07-04",
   "holdoutEndDateUtc": "2026-10-20",
-  "holdoutBrier": 0.254177,
-  "constantTrainRateBrier": 0.253271,
+  "holdoutBrier": 0.253791,
+  "constantTrainRateBrier": 0.253456,
   "neutral50Brier": 0.25,
   "betterThanConstantBaseline": false,
-  "baselineImprovementBrier": -0.000906,
-  "holdoutLogLoss": 0.701668,
-  "holdoutAccuracy": 0.488685,
-  "constantMajorityAccuracy": 0.486239,
+  "baselineImprovementBrier": -0.000335,
+  "holdoutLogLoss": 0.700818,
+  "holdoutAccuracy": 0.493374,
+  "constantMajorityAccuracy": 0.489636,
   "calibrationBins": [
     {
       "lowerBound": 0.2,
       "upperBound": 0.3,
-      "count": 8,
-      "meanPredictedProbability": 0.27295,
-      "observedUpRate": 0.375
+      "count": 3,
+      "meanPredictedProbability": 0.28765,
+      "observedUpRate": 0.0
     },
     {
       "lowerBound": 0.3,
       "upperBound": 0.4,
-      "count": 113,
-      "meanPredictedProbability": 0.37271,
-      "observedUpRate": 0.59292
+      "count": 170,
+      "meanPredictedProbability": 0.37628,
+      "observedUpRate": 0.54118
     },
     {
       "lowerBound": 0.4,
       "upperBound": 0.5,
-      "count": 1448,
-      "meanPredictedProbability": 0.45105,
-      "observedUpRate": 0.5076
+      "count": 2743,
+      "meanPredictedProbability": 0.4477,
+      "observedUpRate": 0.50711
     },
     {
       "lowerBound": 0.5,
       "upperBound": 0.6,
-      "count": 66,
-      "meanPredictedProbability": 0.51536,
-      "observedUpRate": 0.5303
+      "count": 27,
+      "meanPredictedProbability": 0.51224,
+      "observedUpRate": 0.7037
     }
   ],
   "optimizer": {
@@ -61,10 +61,10 @@
     "learningRate": 0.08,
     "l2": 0.02,
     "maxEpochs": 1000,
-    "epochsRun": 661,
+    "epochsRun": 665,
     "convergedByGradientTolerance": true
   },
-  "datasetSha256": "5f21b11f1d93862d4cb1d7b6abe80591c61c8a46da91c81ab1d434a0ce70c3da",
+  "datasetSha256": "ecf15d397ef0021893ee5e49cfb7e5930f171489852078176ae259abd5a78b54",
   "holdoutLimitations": [
     "A single chronological holdout is not proof of durable predictive skill.",
     "Crypto assets share market-wide shocks, so asset rows are not independent trials.",
