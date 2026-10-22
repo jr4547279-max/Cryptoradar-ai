@@ -23,8 +23,13 @@ MIN_COINS = 10
 MIN_TRAIN_EXAMPLES = 150
 MIN_TEST_EXAMPLES = 50
 MIN_TEST_DAYS = 21
-FEATURE_NAMES = ["log_return_1d", "log_return_previous_day", "log_return_two_days_ago"]
-MODEL_VERSION = "logistic-regression-v2"
+FEATURE_NAMES = [
+    "log_return_1d", "log_return_3d", "log_return_7d", "log_return_14d", "log_return_30d",
+    "realized_volatility_7d", "realized_volatility_30d",
+    "momentum_volatility_ratio_7d", "momentum_volatility_ratio_30d",
+    "distance_from_sma7", "distance_from_sma30", "drawdown_30d",
+]
+MODEL_VERSION = "trend-logistic-v1"
 LEARNING_RATE = 0.08
 L2 = 0.02
 MAX_EPOCHS = 800
@@ -71,7 +76,25 @@ def merge_observations(live_data, historical_data):
     return sorted(daily.values(), key=lambda row: (row["time"], row["id"]))
 
 
+def _clip(value, lower, upper):
+    return max(lower, min(upper, value))
+
+
+def _mean(values):
+    return sum(values) / len(values)
+
+
+def _population_std(values):
+    mean = _mean(values)
+    return math.sqrt(_mean([(value - mean) ** 2 for value in values]))
+
+
+def _log_return(current, previous):
+    return math.log(current / previous)
+
+
 def build_examples(observations):
+    """Create strict next-calendar-day labels and point-in-time technical features."""
     by_coin = {}
     for row in observations:
         if valid_price_row(row):
@@ -79,35 +102,50 @@ def build_examples(observations):
     examples = []
     for coin, points in by_coin.items():
         points.sort()
-        daily = {}
+        by_day = {}
         for timestamp, price in points:
-            daily[timestamp // DAY_MS] = (timestamp, price)
-        ordered = [daily[key] for key in sorted(daily)]
-        for index, (timestamp, price) in enumerate(ordered):
-            def prior(days_ago):
-                eligible = [p for p in ordered[:index] if p[0] <= timestamp - days_ago * DAY_MS]
-                return eligible[-1][1] if eligible else None
-
-            previous = prior(1)
-            previous2 = prior(2)
-            previous3 = prior(3)
-            if not (previous and previous2 and previous3):
+            by_day[timestamp // DAY_MS] = (timestamp, price)
+        days = sorted(by_day)
+        prices = {day: by_day[day][1] for day in days}
+        available = set(prices)
+        for day in days:
+            # Fixed one-calendar-day target: do not silently change the forecast horizon
+            # when a historical day is missing. Features may only use day <= forecast day.
+            if any(required not in available for required in range(day - 30, day + 2)):
                 continue
-            future = next((p for p in ordered[index + 1:] if p[0] >= timestamp + DAY_MS), None)
-            if future is None:
-                continue
+            p = prices[day]
+            returns = {
+                lag: _log_return(p, prices[day - lag])
+                for lag in (1, 3, 7, 14, 30)
+            }
+            returns_7 = [_log_return(prices[d], prices[d - 1]) for d in range(day - 6, day + 1)]
+            returns_30 = [_log_return(prices[d], prices[d - 1]) for d in range(day - 29, day + 1)]
+            vol_7 = _population_std(returns_7)
+            vol_30 = _population_std(returns_30)
+            sma_7 = _mean([prices[d] for d in range(day - 6, day + 1)])
+            sma_30 = _mean([prices[d] for d in range(day - 29, day + 1)])
+            max_30 = max(prices[d] for d in range(day - 29, day + 1))
             features = [
-                max(-0.5, min(0.5, math.log(price / previous))),
-                max(-0.5, min(0.5, math.log(previous / previous2))),
-                max(-0.5, min(0.5, math.log(previous2 / previous3))),
+                _clip(returns[1], -0.5, 0.5),
+                _clip(returns[3], -1.0, 1.0),
+                _clip(returns[7], -1.5, 1.5),
+                _clip(returns[14], -2.0, 2.0),
+                _clip(returns[30], -3.0, 3.0),
+                _clip(vol_7, 0.0, 1.0),
+                _clip(vol_30, 0.0, 1.0),
+                _clip(returns[7] / max(vol_7 * math.sqrt(7), 1e-4), -10.0, 10.0),
+                _clip(returns[30] / max(vol_30 * math.sqrt(30), 1e-4), -10.0, 10.0),
+                _clip(math.log(p / sma_7), -1.0, 1.0),
+                _clip(math.log(p / sma_30), -1.0, 1.0),
+                _clip(p / max_30 - 1.0, -1.0, 0.0),
             ]
+            next_price = prices[day + 1]
             if not all(math.isfinite(value) for value in features):
                 continue
-            examples.append({"time": timestamp, "coin": coin, "x": features,
-                             "y": int(future[1] > price)})
+            examples.append({"time": by_day[day][0], "coin": coin, "x": features,
+                             "y": int(next_price > p)})
     examples.sort(key=lambda row: (row["time"], row["coin"]))
     return examples
-
 
 def chronological_split(examples):
     """Split by UTC date, not individual rows; keep a full UTC-day embargo."""
