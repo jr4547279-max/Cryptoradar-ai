@@ -1,12 +1,19 @@
 #!/usr/bin/env python3
 """Read-only scheduled forecast research. No orders, secrets, or exchange access."""
 import json, pathlib, urllib.request, urllib.error, datetime, math, time
+from prospective_trial import MODEL_KEY, predict_trial_probability
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 PATH=ROOT/'research-data.json'
 now=datetime.datetime.now(datetime.timezone.utc)
 ms=int(now.timestamp()*1000)
 try: state=json.loads(PATH.read_text())
 except (FileNotFoundError,ValueError): state={'observations':[],'forecasts':[]}
+try: historical_state=json.loads((ROOT/'historical-data.json').read_text())
+except (FileNotFoundError,ValueError): historical_state={'observations':[]}
+try: prospective_trial=json.loads((ROOT/'prospective-trial.json').read_text())
+except (FileNotFoundError,ValueError): prospective_trial={}
+historical_observations=historical_state.get('observations',[]) if isinstance(historical_state,dict) else []
+if not isinstance(historical_observations,list): historical_observations=[]
 url='https://api.coingecko.com/api/v3/coins/markets?vs_currency=gbp&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=24h'
 request=urllib.request.Request(url,headers={'Accept':'application/json','User-Agent':'CryptoRadarResearch/0.1'})
 coins=None
@@ -51,7 +58,12 @@ for cid,c in latest.items():
     # No selection or tuning using the existing evaluated holdout.
     models={'momentum':momentum,'mean_reversion':mean_reversion,'trend_48h':trend,'neutral':.5}
     ensemble=sum(models.values())/len(models)
-    state['forecasts'].append({'id':cid,'symbol':c.get('symbol',''),'created':ms,'price':p,'pUp':ensemble,'models':models,'outcome':None,'scoredAt':None,'method':'V16 fixed untrained research ensemble'})
+    forecast={'id':cid,'symbol':c.get('symbol',''),'created':ms,'price':p,'pUp':ensemble,'models':models,'outcome':None,'scoredAt':None,'method':'V16 fixed untrained research ensemble','challengers':{}}
+    # Frozen learned candidates are logged separately and never alter the rule ensemble.
+    challenger=predict_trial_probability(prospective_trial,cid,historical_observations,state['observations'],ms)
+    if challenger is not None:
+        forecast['challengers'][MODEL_KEY]=challenger
+    state['forecasts'].append(forecast)
 for f in state['forecasts']:
     if f.get('outcome') is not None or ms-f['created']<86400000:continue
     c=latest.get(f['id'])
