@@ -7,6 +7,9 @@ on:
       - 'scripts/hourly_research.py'
       - 'scripts/data_agent.py'
       - 'tests/test_data_agent.py'
+      - 'scripts/backfill_historical.py'
+      - 'tests/test_historical_backfill.py'
+      - 'tests/test_train_research.py'
       - 'scripts/train_research.py'
       - 'scripts/scenario_stress.py'
       - 'scripts/reward_referee.py'
@@ -43,13 +46,24 @@ jobs:
         id: collection
         continue-on-error: true
         run: python scripts/hourly_research.py
-      - name: Test and run Data Agent evidence audit
-        id: data_agent
+      - name: Test Data Agent, history backfill and trainer
+        id: unit_tests
         if: steps.collection.outcome == 'success'
         continue-on-error: true
         run: |
           python tests/test_data_agent.py
-          python scripts/data_agent.py
+          python tests/test_historical_backfill.py
+          python tests/test_train_research.py
+      - name: Incrementally backfill real historical market data
+        id: history_backfill
+        if: steps.collection.outcome == 'success' && steps.unit_tests.outcome == 'success'
+        continue-on-error: true
+        run: python scripts/backfill_historical.py
+      - name: Audit live and historical evidence
+        id: data_agent
+        if: steps.collection.outcome == 'success' && steps.unit_tests.outcome == 'success' && steps.history_backfill.outcome == 'success'
+        continue-on-error: true
+        run: python scripts/data_agent.py
       - name: Run deterministic synthetic scenario suite
         id: scenarios
         if: steps.collection.outcome == 'success'
@@ -57,7 +71,7 @@ jobs:
         run: python scripts/scenario_stress.py
       - name: Train and validate when enough real history exists
         id: training
-        if: steps.collection.outcome == 'success'
+        if: steps.collection.outcome == 'success' && steps.unit_tests.outcome == 'success' && steps.history_backfill.outcome == 'success' && steps.data_agent.outcome == 'success'
         continue-on-error: true
         run: python scripts/train_research.py
       - name: Test reward referee and score matured forecasts
@@ -74,12 +88,14 @@ jobs:
           python scripts/teacher_agent.py
           python scripts/school_project.py
       - name: Publish unattended learning readiness
-        if: steps.collection.outcome == 'success'
+        if: steps.collection.outcome == 'success' && steps.training.outcome == 'success'
         run: python scripts/learning_status.py
       - name: Publish transparent pipeline status
         if: always()
         env:
           COLLECT_RESULT: ${{ steps.collection.outcome }}
+          UNIT_TEST_RESULT: ${{ steps.unit_tests.outcome }}
+          HISTORY_RESULT: ${{ steps.history_backfill.outcome }}
           DATA_AGENT_RESULT: ${{ steps.data_agent.outcome }}
           SCENARIO_RESULT: ${{ steps.scenarios.outcome }}
           TRAIN_RESULT: ${{ steps.training.outcome }}
@@ -92,6 +108,8 @@ jobs:
           status={
             'checkedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),
             'collection':os.environ.get('COLLECT_RESULT','unknown'),
+            'unitTests':os.environ.get('UNIT_TEST_RESULT','unknown'),
+            'historicalBackfill':os.environ.get('HISTORY_RESULT','unknown'),
             'dataAgent':os.environ.get('DATA_AGENT_RESULT','unknown'),
             'scenarios':os.environ.get('SCENARIO_RESULT','unknown'),
             'training':os.environ.get('TRAIN_RESULT','unknown'),
@@ -106,7 +124,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add research-data.json data-agent-report.json scenario-report.json training-report.json pipeline-status.json reward-report.json learning-status.json forecast-integrity-report.json teacher-report.json teacher-memory.json school-project.json
+          git add research-data.json historical-data.json historical-data-report.json data-agent-report.json scenario-report.json training-report.json candidate-model.json pipeline-status.json reward-report.json learning-status.json forecast-integrity-report.json teacher-report.json teacher-memory.json school-project.json
           if ! git diff --cached --quiet; then
             git commit -m "Research: publish scheduled pipeline status"
             git pull --rebase origin main
@@ -116,12 +134,16 @@ jobs:
         if: always()
         env:
           COLLECT_RESULT: ${{ steps.collection.outcome }}
+          UNIT_TEST_RESULT: ${{ steps.unit_tests.outcome }}
+          HISTORY_RESULT: ${{ steps.history_backfill.outcome }}
           DATA_AGENT_RESULT: ${{ steps.data_agent.outcome }}
           SCENARIO_RESULT: ${{ steps.scenarios.outcome }}
           TRAIN_RESULT: ${{ steps.training.outcome }}
           REWARD_RESULT: ${{ steps.rewards.outcome }}
         run: |
           test "$COLLECT_RESULT" = "success"
+          test "$UNIT_TEST_RESULT" = "success"
+          test "$HISTORY_RESULT" = "success"
           test "$DATA_AGENT_RESULT" = "success"
           test "$SCENARIO_RESULT" = "success"
           test "$TRAIN_RESULT" = "success"
