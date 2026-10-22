@@ -114,7 +114,7 @@ def audit_data(data, now_ms=None, historical=None):
             "status": ("INSUFFICIENT_DATA" if hist_valid == 0 and hist_structural_status == "PASS" else hist_structural_status),
             "observations": hist_audit.get("observations", len(hist_rows) if isinstance(hist_rows, list) else 0),
             "validObservations": hist_valid, "coins": hist_audit.get("coins", 0),
-            "utcDays": hist_audit.get("utcDays", 0), "warnings": hist_audit.get("warnings", []),
+            "utcDays": hist_audit.get("utcDays", 0), "warnings": [w for w in hist_audit.get("warnings", []) if w != "no_forecasts_yet"],
             "sourceDeclaredByBackfill": historical.get("source") if isinstance(historical, dict) else None,
             "quoteCurrency": historical.get("quoteCurrency") if isinstance(historical, dict) else None,
             "externalAuthenticityVerified": False
@@ -127,7 +127,7 @@ def audit_data(data, now_ms=None, historical=None):
             errors.append("historical_quote_currency_not_gbp")
         if isinstance(hist_rows, list):
             for i, row in enumerate(hist_rows):
-                if isinstance(row, dict) and not isinstance(row.get("source"), str):
+                if isinstance(row, dict) and (not isinstance(row.get("source"), str) or not row.get("source", "").strip()):
                     errors.append(f"historical_observation_{i}_missing_source_attribution")
 
     return {
