@@ -5,6 +5,8 @@ on:
     paths:
       - '.github/workflows/forecast-research.yml'
       - 'scripts/hourly_research.py'
+      - 'scripts/data_agent.py'
+      - 'tests/test_data_agent.py'
       - 'scripts/train_research.py'
       - 'scripts/scenario_stress.py'
       - 'scripts/reward_referee.py'
@@ -41,6 +43,13 @@ jobs:
         id: collection
         continue-on-error: true
         run: python scripts/hourly_research.py
+      - name: Test and run Data Agent evidence audit
+        id: data_agent
+        if: steps.collection.outcome == 'success'
+        continue-on-error: true
+        run: |
+          python tests/test_data_agent.py
+          python scripts/data_agent.py
       - name: Run deterministic synthetic scenario suite
         id: scenarios
         if: steps.collection.outcome == 'success'
@@ -71,6 +80,7 @@ jobs:
         if: always()
         env:
           COLLECT_RESULT: ${{ steps.collection.outcome }}
+          DATA_AGENT_RESULT: ${{ steps.data_agent.outcome }}
           SCENARIO_RESULT: ${{ steps.scenarios.outcome }}
           TRAIN_RESULT: ${{ steps.training.outcome }}
           REWARD_RESULT: ${{ steps.rewards.outcome }}
@@ -82,6 +92,7 @@ jobs:
           status={
             'checkedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),
             'collection':os.environ.get('COLLECT_RESULT','unknown'),
+            'dataAgent':os.environ.get('DATA_AGENT_RESULT','unknown'),
             'scenarios':os.environ.get('SCENARIO_RESULT','unknown'),
             'training':os.environ.get('TRAIN_RESULT','unknown'),
             'rewards':os.environ.get('REWARD_RESULT','unknown'),
@@ -95,7 +106,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add research-data.json scenario-report.json training-report.json pipeline-status.json reward-report.json learning-status.json forecast-integrity-report.json teacher-report.json teacher-memory.json school-project.json
+          git add research-data.json data-agent-report.json scenario-report.json training-report.json pipeline-status.json reward-report.json learning-status.json forecast-integrity-report.json teacher-report.json teacher-memory.json school-project.json
           if ! git diff --cached --quiet; then
             git commit -m "Research: publish scheduled pipeline status"
             git pull --rebase origin main
@@ -110,6 +121,7 @@ jobs:
           REWARD_RESULT: ${{ steps.rewards.outcome }}
         run: |
           test "$COLLECT_RESULT" = "success"
+          test "$DATA_AGENT_RESULT" = "success"
           test "$SCENARIO_RESULT" = "success"
           test "$TRAIN_RESULT" = "success"
           test "$REWARD_RESULT" = "success"
