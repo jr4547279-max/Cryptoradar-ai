@@ -65,6 +65,39 @@ def test_evaluation_emits_shadow_candidate_not_promoted_model():
     assert candidate["mode"] == "SHADOW_RESEARCH_ONLY"
 
 
+def test_features_use_only_past_and_current_prices():
+    observations = []
+    prices = {}
+    for day in range(90):
+        price = 100.0 * math.exp(0.01 * day)
+        prices[day] = price
+        observations.append({"id": "causal-coin", "time": day * DAY_MS, "price": price})
+    examples = build_examples(observations)
+    target = next(row for row in examples if row["time"] // DAY_MS == 50)
+    assert abs(target["x"][0] - 0.01) < 1e-10
+    assert abs(target["x"][2] - 0.07) < 1e-10
+    assert abs(target["x"][4] - 0.30) < 1e-10
+    assert target["y"] == 1
+
+    # Changing only the next day's price must flip the label without changing features.
+    changed = [dict(row) for row in observations]
+    for row in changed:
+        if row["time"] // DAY_MS == 51:
+            row["price"] = prices[50] * 0.5
+    changed_target = next(row for row in build_examples(changed)
+                          if row["time"] // DAY_MS == 50)
+    assert changed_target["x"] == target["x"]
+    assert changed_target["y"] == 0
+
+
+def test_missing_next_day_is_not_mislabeled_as_a_one_day_forecast():
+    observations = [{"id": "gap-coin", "time": day * DAY_MS,
+                     "price": 100.0 * math.exp(0.01 * day)}
+                    for day in range(90) if day != 51]
+    examples = build_examples(observations)
+    assert not any(row["time"] // DAY_MS == 50 for row in examples)
+
+
 def test_insufficient_data_does_not_fit_or_promote():
     observations = [{"id": "only-one", "time": day * DAY_MS, "price": 100 + day}
                     for day in range(10)]
@@ -79,5 +112,7 @@ if __name__ == "__main__":
     test_builder_and_split_are_chronological_with_day_embargo()
     test_model_fit_is_finite_and_reproducible()
     test_evaluation_emits_shadow_candidate_not_promoted_model()
+    test_features_use_only_past_and_current_prices()
+    test_missing_next_day_is_not_mislabeled_as_a_one_day_forecast()
     test_insufficient_data_does_not_fit_or_promote()
-    print("Research trainer tests passed (5 cases)")
+    print("Research trainer tests passed (7 cases)")
