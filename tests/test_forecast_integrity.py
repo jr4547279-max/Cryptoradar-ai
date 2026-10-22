@@ -15,6 +15,8 @@ def test():
     for field,value in [('scoredAt',1001),('scoredPrice',99.),('pUp',.9),('price',-1.)]:
         f=fixture();f[field]=value
         assert audit([f])['status']=='FAIL',field
+    f=fixture();f['outcome']=True
+    assert audit([f])['status']=='FAIL'
     f=fixture();f['outcome']=None;f['scoredAt']=None;f.pop('scoredPrice')
     assert audit([f])['status']=='PASS'
     f=fixture()
