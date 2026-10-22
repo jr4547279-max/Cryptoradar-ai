@@ -319,7 +319,7 @@ def score_trial(trial, research_data, now_ms=None):
     seed = int(trial["modelHash"][:8], 16)
     bootstrap_neutral = _cluster_bootstrap(rows, 0.5, seed)
     bootstrap_train_rate = _cluster_bootstrap(rows, training_rate, seed + 1)
-    accuracy = sum(int((row["pUp"] >= 0.5) == bool(row["outcome"]) for row in rows)) / len(rows)
+    accuracy = sum(int((row["pUp"] >= 0.5) == bool(row["outcome"])) for row in rows) / len(rows)
     enough = (len(rows) >= MIN_MATURED_FORECASTS and len(days) >= MIN_DISTINCT_DAYS
               and len(coin_ids) >= MIN_DISTINCT_COINS)
     beats_both = candidate_brier < neutral_brier and candidate_brier < train_rate_brier
