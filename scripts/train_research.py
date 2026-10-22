@@ -219,6 +219,10 @@ def calibration_bins(probabilities, labels, bins=10):
     return output
 
 
+def utc_date(day_number):
+    return datetime.datetime.fromtimestamp(day_number * DAY_MS / 1000, datetime.timezone.utc).date().isoformat()
+
+
 def dataset_fingerprint(observations):
     canonical = "\n".join(
         f"{row['id']}|{row['time']}|{float(row['price']):.12g}"
@@ -289,14 +293,10 @@ def evaluate_training(live_data, historical_data):
         "trainExamples": len(train), "testExamples": len(test), "testDays": len(set(test_dates)),
         "trainStartUtcDay": min(train_dates), "trainEndUtcDay": max(train_dates),
         "holdoutStartUtcDay": min(test_dates), "holdoutEndUtcDay": max(test_dates),
-        "trainStartDateUtc": datetime.date.fromtimestamp(min(train_dates) * DAY_MS / 1000).isoformat(),
-        "trainEndDateUtc": datetime.date.fromtimestamp(max(train_dates) * DAY_MS / 1000).isoformat(),
-        "holdoutStartDateUtc": datetime.date.fromtimestamp(min(test_dates) * DAY_MS / 1000).isoformat(),
-        "holdoutEndDateUtc": datetime.date.fromtimestamp(max(test_dates) * DAY_MS / 1000).isoformat(),
-        "trainStartDateUtc": datetime.date.fromtimestamp(min(train_dates) * DAY_MS / 1000).isoformat(),
-        "trainEndDateUtc": datetime.date.fromtimestamp(max(train_dates) * DAY_MS / 1000).isoformat(),
-        "holdoutStartDateUtc": datetime.date.fromtimestamp(min(test_dates) * DAY_MS / 1000).isoformat(),
-        "holdoutEndDateUtc": datetime.date.fromtimestamp(max(test_dates) * DAY_MS / 1000).isoformat(),
+        "trainStartDateUtc": utc_date(min(train_dates)),
+        "trainEndDateUtc": utc_date(max(train_dates)),
+        "holdoutStartDateUtc": utc_date(min(test_dates)),
+        "holdoutEndDateUtc": utc_date(max(test_dates)),
         "holdoutBrier": round(holdout_brier, 6),
         "constantTrainRateBrier": round(constant_brier, 6),
         "neutral50Brier": round(neutral_brier, 6),
@@ -323,6 +323,8 @@ def evaluate_training(live_data, historical_data):
         "trainingExamples": len(train), "holdoutExamples": len(test),
         "trainStartUtcDay": min(train_dates), "trainEndUtcDay": max(train_dates),
         "holdoutStartUtcDay": min(test_dates), "holdoutEndUtcDay": max(test_dates),
+        "trainStartDateUtc": utc_date(min(train_dates)), "trainEndDateUtc": utc_date(max(train_dates)),
+        "holdoutStartDateUtc": utc_date(min(test_dates)), "holdoutEndDateUtc": utc_date(max(test_dates)),
         "holdoutBrier": round(holdout_brier, 6), "constantTrainRateBrier": round(constant_brier, 6),
         "betterThanConstantBaseline": better,
         "note": "Weights are fitted for research reproducibility only. Automatic promotion and real trading are disabled."
