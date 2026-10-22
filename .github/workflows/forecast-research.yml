@@ -13,6 +13,8 @@ on:
       - 'scripts/forecast_integrity.py'
       - 'tests/test_forecast_integrity.py'
       - 'tests/test_reward_referee.py'
+      - 'scripts/trading_objective.py'
+      - 'tests/test_trading_objective.py'
   schedule:
     - cron: '17 * * * *'
   workflow_dispatch:
@@ -52,6 +54,7 @@ jobs:
         continue-on-error: true
         run: |
           python tests/test_reward_referee.py
+          python tests/test_trading_objective.py
           python tests/test_forecast_integrity.py
           python scripts/forecast_integrity.py
           python scripts/score_rewards.py
