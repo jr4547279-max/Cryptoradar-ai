@@ -1,0 +1,32 @@
+{
+  "generatedAt": "2026-10-22T12:18:49.650804+00:00",
+  "teacherVersion": "teacher-v1-rule-based",
+  "mode": "RESEARCH_SUPERVISOR_ONLY",
+  "grade": "NEEDS_MORE_EVIDENCE",
+  "eligibleForReward": [],
+  "lessons": [
+    {
+      "topic": "evidence_quality",
+      "finding": "There is not yet a usable comparable candidate scorecard.",
+      "lesson": "Do not infer skill from simulation volume or incomplete samples.",
+      "nextExperiment": "Collect timestamped predictions and wait for their outcomes to mature before grading."
+    },
+    {
+      "topic": "reward_discipline",
+      "finding": "No shadow agent currently qualifies for reward.",
+      "lesson": "Zero reward is the correct result when evidence is insufficient or an agent fails its baseline.",
+      "nextExperiment": "Keep all agents in shadow mode until there are enough mature, valid, independent observations."
+    }
+  ],
+  "actionsPermitted": [
+    "publish_lessons",
+    "recommend_next_experiment"
+  ],
+  "actionsForbidden": [
+    "edit_model_weights",
+    "change_scoring_rules",
+    "promote_model",
+    "place_orders"
+  ],
+  "warning": "Teacher conclusions are deterministic checks over current reports, not proof of trading skill. Reward decisions require valid prospective evidence."
+}
