@@ -93,6 +93,39 @@ def _log_return(current, previous):
     return math.log(current / previous)
 
 
+def feature_vector_for_day(prices, day):
+    """Build the exact training feature vector using prices on/before the forecast day."""
+    if any(required not in prices for required in range(day - 30, day + 1)):
+        return None
+    p = prices[day]
+    returns = {
+        lag: _log_return(p, prices[day - lag])
+        for lag in (1, 3, 7, 14, 30)
+    }
+    returns_7 = [_log_return(prices[d], prices[d - 1]) for d in range(day - 6, day + 1)]
+    returns_30 = [_log_return(prices[d], prices[d - 1]) for d in range(day - 29, day + 1)]
+    vol_7 = _population_std(returns_7)
+    vol_30 = _population_std(returns_30)
+    sma_7 = _mean([prices[d] for d in range(day - 6, day + 1)])
+    sma_30 = _mean([prices[d] for d in range(day - 29, day + 1)])
+    max_30 = max(prices[d] for d in range(day - 29, day + 1))
+    features = [
+        _clip(returns[1], -0.5, 0.5),
+        _clip(returns[3], -1.0, 1.0),
+        _clip(returns[7], -1.5, 1.5),
+        _clip(returns[14], -2.0, 2.0),
+        _clip(returns[30], -3.0, 3.0),
+        _clip(vol_7, 0.0, 1.0),
+        _clip(vol_30, 0.0, 1.0),
+        _clip(returns[7] / max(vol_7 * math.sqrt(7), 1e-4), -10.0, 10.0),
+        _clip(returns[30] / max(vol_30 * math.sqrt(30), 1e-4), -10.0, 10.0),
+        _clip(math.log(p / sma_7), -1.0, 1.0),
+        _clip(math.log(p / sma_30), -1.0, 1.0),
+        _clip(p / max_30 - 1.0, -1.0, 0.0),
+    ]
+    return features if all(math.isfinite(value) for value in features) else None
+
+
 def build_examples(observations):
     """Create strict next-calendar-day labels and point-in-time technical features."""
     by_coin = {}
@@ -105,45 +138,16 @@ def build_examples(observations):
         by_day = {}
         for timestamp, price in points:
             by_day[timestamp // DAY_MS] = (timestamp, price)
-        days = sorted(by_day)
-        prices = {day: by_day[day][1] for day in days}
-        available = set(prices)
-        for day in days:
-            # Fixed one-calendar-day target: do not silently change the forecast horizon
-            # when a historical day is missing. Features may only use day <= forecast day.
-            if any(required not in available for required in range(day - 30, day + 2)):
+        prices = {day: by_day[day][1] for day in by_day}
+        for day in sorted(prices):
+            # Fixed one-calendar-day target; missing next days are skipped, not relabelled.
+            if day + 1 not in prices:
                 continue
-            p = prices[day]
-            returns = {
-                lag: _log_return(p, prices[day - lag])
-                for lag in (1, 3, 7, 14, 30)
-            }
-            returns_7 = [_log_return(prices[d], prices[d - 1]) for d in range(day - 6, day + 1)]
-            returns_30 = [_log_return(prices[d], prices[d - 1]) for d in range(day - 29, day + 1)]
-            vol_7 = _population_std(returns_7)
-            vol_30 = _population_std(returns_30)
-            sma_7 = _mean([prices[d] for d in range(day - 6, day + 1)])
-            sma_30 = _mean([prices[d] for d in range(day - 29, day + 1)])
-            max_30 = max(prices[d] for d in range(day - 29, day + 1))
-            features = [
-                _clip(returns[1], -0.5, 0.5),
-                _clip(returns[3], -1.0, 1.0),
-                _clip(returns[7], -1.5, 1.5),
-                _clip(returns[14], -2.0, 2.0),
-                _clip(returns[30], -3.0, 3.0),
-                _clip(vol_7, 0.0, 1.0),
-                _clip(vol_30, 0.0, 1.0),
-                _clip(returns[7] / max(vol_7 * math.sqrt(7), 1e-4), -10.0, 10.0),
-                _clip(returns[30] / max(vol_30 * math.sqrt(30), 1e-4), -10.0, 10.0),
-                _clip(math.log(p / sma_7), -1.0, 1.0),
-                _clip(math.log(p / sma_30), -1.0, 1.0),
-                _clip(p / max_30 - 1.0, -1.0, 0.0),
-            ]
-            next_price = prices[day + 1]
-            if not all(math.isfinite(value) for value in features):
+            features = feature_vector_for_day(prices, day)
+            if features is None:
                 continue
             examples.append({"time": by_day[day][0], "coin": coin, "x": features,
-                             "y": int(next_price > p)})
+                             "y": int(prices[day + 1] > prices[day])})
     examples.sort(key=lambda row: (row["time"], row["coin"]))
     return examples
 
