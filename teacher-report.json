@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-22T12:22:27.784840+00:00",
+  "generatedAt": "2026-10-22T15:16:24.302612+00:00",
   "teacherVersion": "teacher-v2-rule-based-memory",
   "mode": "RESEARCH_SUPERVISOR_ONLY",
   "grade": "NEEDS_MORE_EVIDENCE",
@@ -14,19 +14,13 @@
       "nextExperiment": "Continue collecting real observations; require chronological holdout evaluation before comparing candidates."
     },
     {
-      "topic": "integrity",
-      "finding": "Integrity status is PASS with 0 forecasts.",
-      "lesson": "A clean empty file is not evidence of predictive performance; malformed or duplicated records must receive no reward.",
-      "nextExperiment": "Verify that valid specialist predictions are being recorded and rerun adversarial integrity tests."
-    },
-    {
       "topic": "reward_discipline",
       "finding": "No shadow agent currently qualifies for reward.",
       "lesson": "Zero reward is correct when evidence is insufficient or an agent fails its baseline.",
       "nextExperiment": "Keep every agent in shadow mode until enough mature, valid, independent outcomes exist."
     }
   ],
-  "lessonHistoryCount": 1,
+  "lessonHistoryCount": 2,
   "sameLessonPatternSeenBefore": false,
   "repeatPatternCount": 0,
   "actionsPermitted": [
