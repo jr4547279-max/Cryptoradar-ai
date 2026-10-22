@@ -18,7 +18,7 @@ REPORT_PATH = ROOT / "training-report.json"
 MODEL_PATH = ROOT / "candidate-model.json"
 DAY_MS = 86_400_000
 MIN_EXAMPLES = 300
-MIN_DAYS = 90
+MIN_DAYS = 120
 MIN_COINS = 10
 MIN_TRAIN_EXAMPLES = 150
 MIN_TEST_EXAMPLES = 50
@@ -27,8 +27,9 @@ FEATURE_NAMES = ["log_return_1d", "log_return_previous_day", "log_return_two_day
 MODEL_VERSION = "logistic-regression-v2"
 LEARNING_RATE = 0.08
 L2 = 0.02
-MAX_EPOCHS = 1000
-GRADIENT_TOLERANCE = 1e-7
+MAX_EPOCHS = 800
+GRADIENT_TOLERANCE = 1e-6
+L2_GRID = [0.005, 0.02, 0.1, 0.5]
 
 
 def read_json(path):
@@ -145,7 +146,7 @@ def transformed(features, means, scales):
     return [(features[j] - means[j]) / scales[j] for j in range(len(FEATURE_NAMES))]
 
 
-def fit_logistic(train):
+def fit_logistic(train, l2=L2):
     """Full-batch, deterministic L2-regularized logistic regression."""
     means, scales = standardizer(train)
     normalized = [(transformed(row["x"], means, scales), row["y"]) for row in train]
@@ -162,7 +163,7 @@ def fit_logistic(train):
                 gradients[j + 1] += error * value
         gradients = [gradient / len(normalized) for gradient in gradients]
         for j in range(1, len(gradients)):
-            gradients[j] += L2 * weights[j]
+            gradients[j] += l2 * weights[j]
         max_gradient = max(abs(value) for value in gradients)
         for j, gradient in enumerate(gradients):
             weights[j] -= LEARNING_RATE * gradient
@@ -176,12 +177,92 @@ def fit_logistic(train):
         "featureScales": scales,
         "weights": weights,
         "optimizer": {"name": "full_batch_gradient_descent", "learningRate": LEARNING_RATE,
-                      "l2": L2, "maxEpochs": MAX_EPOCHS, "epochsRun": epochs_used,
+                      "l2": l2, "maxEpochs": MAX_EPOCHS, "epochsRun": epochs_used,
                       "convergedByGradientTolerance": epochs_used < MAX_EPOCHS},
         "promotionEligible": False,
         "mode": "SHADOW_RESEARCH_ONLY"
     }
     return model
+
+
+def walk_forward_select_l2(development):
+    """Select regularization from expanding-window validation, never the outer holdout."""
+    days = sorted({row["time"] // DAY_MS for row in development})
+    if len(days) < 60:
+        return {"available": False, "reason": "too_few_development_days", "selectedL2": L2,
+                "candidates": [], "folds": []}
+    validation_length = max(10, int(len(days) * 0.12))
+    starts = [int(len(days) * fraction) for fraction in (0.50, 0.65, 0.80)]
+    folds = []
+    for fold_index, start_index in enumerate(starts, 1):
+        if start_index >= len(days) - 5:
+            continue
+        end_index = min(len(days), start_index + validation_length)
+        start_day, end_day = days[start_index], days[end_index - 1]
+        fit_rows = [row for row in development if row["time"] // DAY_MS < start_day - 1]
+        validation_rows = [row for row in development
+                           if start_day <= row["time"] // DAY_MS <= end_day]
+        if len(fit_rows) < MIN_TRAIN_EXAMPLES or len(validation_rows) < MIN_TEST_EXAMPLES:
+            continue
+        folds.append({"fold": fold_index, "train": fit_rows, "validation": validation_rows,
+                      "startDay": start_day, "endDay": end_day})
+    if len(folds) < 2:
+        return {"available": False, "reason": "insufficient_walk_forward_folds", "selectedL2": L2,
+                "candidates": [], "folds": []}
+
+    scores = []
+    for l2 in L2_GRID:
+        fold_results = []
+        weighted_candidate, weighted_constant, weighted_neutral, total = 0.0, 0.0, 0.0, 0
+        for fold in folds:
+            fit_rows, validation_rows = fold["train"], fold["validation"]
+            model = fit_logistic(fit_rows, l2=l2)
+            labels = [row["y"] for row in validation_rows]
+            probs = [predict_probability(row["x"], model) for row in validation_rows]
+            train_rate = sum(row["y"] for row in fit_rows) / len(fit_rows)
+            candidate_brier = brier_score(probs, labels)
+            constant_brier = brier_score([train_rate] * len(labels), labels)
+            neutral_brier = brier_score([0.5] * len(labels), labels)
+            count = len(labels)
+            weighted_candidate += candidate_brier * count
+            weighted_constant += constant_brier * count
+            weighted_neutral += neutral_brier * count
+            total += count
+            fold_results.append({
+                "fold": fold["fold"], "validationExamples": count,
+                "validationStartUtcDay": fold["startDay"], "validationEndUtcDay": fold["endDay"],
+                "candidateBrier": round(candidate_brier, 6),
+                "trainRateBaselineBrier": round(constant_brier, 6),
+                "neutral50BaselineBrier": round(neutral_brier, 6)
+            })
+        if total:
+            mean_brier = weighted_candidate / total
+            train_rate_brier = weighted_constant / total
+            neutral_brier = weighted_neutral / total
+            best_baseline = min(train_rate_brier, neutral_brier)
+            scores.append({
+                "l2": l2, "meanValidationBrier": round(mean_brier, 6),
+                "trainRateBaselineBrier": round(train_rate_brier, 6),
+                "neutral50BaselineBrier": round(neutral_brier, 6),
+                "bestConstantBaselineBrier": round(best_baseline, 6),
+                "beatsBestConstantBaseline": mean_brier < best_baseline,
+                "validationExamples": total, "folds": fold_results
+            })
+    if not scores:
+        return {"available": False, "reason": "no_valid_scores", "selectedL2": L2,
+                "candidates": [], "folds": []}
+    # Hyperparameters are selected on development-only walk-forward scores.
+    # On ties within 1e-6, prefer the more regularized (simpler) candidate.
+    best = min(scores, key=lambda row: (round(row["meanValidationBrier"], 6), -row["l2"]))
+    return {
+        "available": True, "method": "3-fold expanding-window chronological validation",
+        "selectionMetric": "weighted mean validation Brier score",
+        "selectionData": "development dates only; final chronological holdout excluded",
+        "selectedL2": best["l2"], "selectedMeanValidationBrier": best["meanValidationBrier"],
+        "selectedBeatsBestConstantBaseline": best["beatsBestConstantBaseline"],
+        "candidateGrid": L2_GRID, "candidates": scores,
+        "warning": "Validation windows are correlated market periods and do not establish future trading profitability."
+    }
 
 
 def predict_probability(features, model):
@@ -270,7 +351,9 @@ def evaluate_training(live_data, historical_data):
         report, candidate = insufficient_report(examples, observations, fingerprint, reason)
         return report, candidate
 
-    model = fit_logistic(train)
+    cv = walk_forward_select_l2(train)
+    selected_l2 = cv.get("selectedL2", L2)
+    model = fit_logistic(train, l2=selected_l2)
     labels = [row["y"] for row in test]
     probabilities = [predict_probability(row["x"], model) for row in test]
     train_rate = sum(row["y"] for row in train) / len(train)
@@ -283,7 +366,8 @@ def evaluate_training(live_data, historical_data):
     majority_accuracy = sum(int((train_rate >= 0.5) == bool(y)) for y in labels) / len(labels)
     train_dates = [row["time"] // DAY_MS for row in train]
     test_dates = [row["time"] // DAY_MS for row in test]
-    better = holdout_brier < constant_brier
+    best_constant_brier = min(constant_brier, neutral_brier)
+    better = holdout_brier < best_constant_brier
     report = {
         "generatedAt": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "status": "evaluated", "model": MODEL_VERSION,
@@ -300,12 +384,15 @@ def evaluate_training(live_data, historical_data):
         "holdoutBrier": round(holdout_brier, 6),
         "constantTrainRateBrier": round(constant_brier, 6),
         "neutral50Brier": round(neutral_brier, 6),
+        "bestConstantBaselineBrier": round(best_constant_brier, 6),
+        "bestConstantBaselineName": "training_rate" if constant_brier <= neutral_brier else "neutral_0.5",
         "betterThanConstantBaseline": better,
         "baselineImprovementBrier": round(constant_brier - holdout_brier, 6),
         "holdoutLogLoss": round(log_loss(probabilities, labels), 6),
         "holdoutAccuracy": round(accuracy, 6),
         "constantMajorityAccuracy": round(majority_accuracy, 6),
         "calibrationBins": calibration_bins(probabilities, labels),
+        "walkForwardCV": cv,
         "optimizer": model["optimizer"],
         "datasetSha256": fingerprint,
         "holdoutLimitations": [
@@ -327,6 +414,7 @@ def evaluate_training(live_data, historical_data):
         "holdoutStartDateUtc": utc_date(min(test_dates)), "holdoutEndDateUtc": utc_date(max(test_dates)),
         "holdoutBrier": round(holdout_brier, 6), "constantTrainRateBrier": round(constant_brier, 6),
         "betterThanConstantBaseline": better,
+        "walkForwardCV": cv,
         "note": "Weights are fitted for research reproducibility only. Automatic promotion and real trading are disabled."
     })
     return report, candidate
