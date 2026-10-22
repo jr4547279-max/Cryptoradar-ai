@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Incremental real-history backfill from CoinGecko. Never synthesizes price data.
+"""Incremental real-history backfill from CoinGecko; no synthetic prices.
 
-This runs before training. It fetches at most 12 missing/aged assets per invocation,
-uses a conservative request pace, preserves earlier valid history on failures, and
-writes an audit report. These historical points are training data, never forecasts.
+Uses the current collector's observed universe, prioritises established crypto
+assets, and deliberately stays below public API rate limits. Backfilled data is
+used only for chronological training/backtesting, never as pretend live forecasts.
 """
 import datetime
 import json
@@ -15,19 +15,32 @@ import urllib.parse
 import urllib.request
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
+LIVE_PATH = ROOT / "research-data.json"
 DATA_PATH = ROOT / "historical-data.json"
 REPORT_PATH = ROOT / "historical-data-report.json"
 BASE = "https://api.coingecko.com/api/v3"
 QUOTE = "gbp"
 DAYS = 365
 MAX_COINS_PER_RUN = 12
-REQUEST_SPACING_SECONDS = 10
+MAX_ASSETS_TOTAL = 30
+REQUEST_SPACING_SECONDS = 15
 HISTORY_REFRESH_DAYS = 180
 FAILED_RETRY_DAYS = 7
-USER_AGENT = "CryptoRadarAI-Research/1.0 (historical evidence backfill)"
+USER_AGENT = "CryptoRadarAI-Research/1.0"
 
-# Exclude stablecoins, tokenized funds/gold, and common wrapped versions from the
-# directional-crypto training basket. The list is deliberately conservative.
+# Candidate order is a stable priority order, not an asserted ranking or forecast.
+CORE_ASSETS = [
+    "bitcoin", "ethereum", "binancecoin", "ripple", "solana", "dogecoin",
+    "cardano", "tron", "chainlink", "hyperliquid", "bitcoin-cash", "stellar",
+    "avalanche-2", "litecoin", "polkadot", "sui", "near", "bittensor",
+    "monero", "hedera-hashgraph", "aave", "uniswap", "internet-computer",
+    "cosmos", "aptos", "injective-protocol", "algorand", "vechain",
+    "render-token", "arbitrum", "optimism", "mantle", "the-open-network",
+    "kaspa", "filecoin", "pepe", "shiba-inu", "curve-dao-token",
+    "quant-network", "worldcoin-wld", "nexo", "pancakeswap-token",
+    "kucoin-shares", "dash", "bitget-token", "jupiter-exchange-solana",
+    "morpho", "ether-fi"
+]
 EXCLUDED_IDS = {
     "tether", "usd-coin", "dai", "ethena-usde", "paypal-usd", "usdd",
     "usds", "usd1-wlfi", "usdgo", "global-dollar", "gho", "bfusd",
@@ -37,12 +50,7 @@ EXCLUDED_IDS = {
     "superstate-short-duration-us-government-securities-fund-ustb",
     "pax-gold", "tether-gold", "wrapped-bitcoin", "coinbase-wrapped-btc",
 }
-EXCLUDED_SYMBOLS = {
-    "USDT", "USDC", "DAI", "USDE", "PYUSD", "USDD", "USDS", "USD1",
-    "GUSD", "FDUSD", "TUSD", "USDP", "EURC", "EURCV", "XAUT", "PAXG",
-}
-EXCLUDED_NAME_TERMS = (" stablecoin", "tokenized fund", "digital liquidity fund",
-                       "government securities fund", "gold token")
+DAY_MS = 86_400_000
 
 
 def utc_now():
@@ -59,58 +67,77 @@ def default_store():
             "observations": [], "coins": {}, "updatedAt": None}
 
 
-def load_store():
+def load_json(path, default):
     try:
-        store = json.loads(DATA_PATH.read_text(encoding="utf-8"))
-        if not isinstance(store, dict):
-            raise ValueError("root must be an object")
+        value = json.loads(path.read_text(encoding="utf-8"))
+        return value if isinstance(value, dict) else default
     except (OSError, ValueError):
-        store = default_store()
-    store.setdefault("schemaVersion", 1)
-    store.setdefault("source", "CoinGecko public API market_chart")
-    store.setdefault("quoteCurrency", QUOTE)
-    store.setdefault("requestedDays", DAYS)
-    store.setdefault("observations", [])
-    store.setdefault("coins", {})
-    if not isinstance(store["observations"], list):
+        return default
+
+
+def load_store():
+    store = load_json(DATA_PATH, default_store())
+    for key, value in default_store().items():
+        store.setdefault(key, value)
+    if not isinstance(store.get("observations"), list):
         store["observations"] = []
-    if not isinstance(store["coins"], dict):
+    if not isinstance(store.get("coins"), dict):
         store["coins"] = {}
     return store
 
 
 def fetch_json(url, timeout=35):
-    req = urllib.request.Request(url, headers={
+    request = urllib.request.Request(url, headers={
         "Accept": "application/json", "User-Agent": USER_AGENT
     })
-    with urllib.request.urlopen(req, timeout=timeout) as response:
+    with urllib.request.urlopen(request, timeout=timeout) as response:
         return json.load(response)
 
 
-def choose_assets(coins):
-    selected = []
-    for coin in coins if isinstance(coins, list) else []:
-        if not isinstance(coin, dict):
+def live_coin_ids(live_data, now_ms):
+    rows = live_data.get("observations", []) if isinstance(live_data, dict) else []
+    newest = {}
+    for row in rows if isinstance(rows, list) else []:
+        if not isinstance(row, dict) or not isinstance(row.get("id"), str):
             continue
-        cid = coin.get("id")
-        symbol = str(coin.get("symbol", "")).upper()
-        name = str(coin.get("name", "")).lower()
-        rank = coin.get("market_cap_rank")
-        if not isinstance(cid, str) or not cid or cid in EXCLUDED_IDS:
+        timestamp, price = row.get("time"), row.get("price")
+        if isinstance(timestamp, bool) or not isinstance(timestamp, int):
             continue
-        if symbol in EXCLUDED_SYMBOLS or not isinstance(rank, int):
+        if isinstance(price, bool) or not isinstance(price, (int, float)) or not math.isfinite(price) or price <= 0:
             continue
-        if any(term in name for term in EXCLUDED_NAME_TERMS):
+        newest[row["id"]] = max(timestamp, newest.get(row["id"], 0))
+    return {cid for cid, timestamp in newest.items() if now_ms - timestamp <= 36 * 60 * 60 * 1000}
+
+
+def select_candidate_ids(live_data, store, now_epoch):
+    available = live_coin_ids(live_data, now_epoch * 1000)
+    metadata = store.get("coins", {}) if isinstance(store, dict) else {}
+    qualified = {
+        cid for cid, record in metadata.items()
+        if isinstance(record, dict) and record.get("status") == "ok"
+        and isinstance(record.get("pointCount"), int) and record["pointCount"] >= 30
+    }
+    slots = max(0, MAX_ASSETS_TOTAL - len(qualified))
+    candidates = []
+    for cid in CORE_ASSETS:
+        if cid not in available or cid in EXCLUDED_IDS or cid in qualified:
             continue
-        if not isinstance(coin.get("current_price"), (int, float)):
+        record = metadata.get(cid, {})
+        if not isinstance(record, dict):
+            record = {}
+        last_attempt = record.get("lastAttemptEpoch")
+        if (isinstance(last_attempt, int) and now_epoch - last_attempt < FAILED_RETRY_DAYS * 86400
+                and record.get("status") != "ok"):
             continue
-        selected.append((rank, cid))
-    selected.sort(key=lambda item: item[0])
-    return [cid for _, cid in selected]
+        fetched = record.get("fetchedAtEpoch")
+        if isinstance(fetched, int) and now_epoch - fetched < HISTORY_REFRESH_DAYS * 86400:
+            continue
+        candidates.append(cid)
+    return candidates[:min(MAX_COINS_PER_RUN, slots)], len(qualified)
 
 
 def latest_day_samples(cid, prices, now_ms):
-    """Keep one latest valid observed market point per UTC date."""
+    """Keep the latest valid provider price sample in each UTC day."""
     by_day = {}
     invalid = 0
     if not isinstance(prices, list):
@@ -130,16 +157,16 @@ def latest_day_samples(cid, prices, now_ms):
         if timestamp <= 0 or timestamp > now_ms + 300_000:
             invalid += 1
             continue
-        day = timestamp // 86_400_000
-        previous = by_day.get(day)
-        if previous is None or timestamp > previous["time"]:
+        day = timestamp // DAY_MS
+        prior = by_day.get(day)
+        if prior is None or timestamp > prior["time"]:
             by_day[day] = {"id": cid, "time": timestamp, "price": float(price),
                            "source": "CoinGecko market_chart"}
     return sorted(by_day.values(), key=lambda row: row["time"]), invalid
 
 
 def merge_observations(existing, incoming):
-    """Merge by coin and UTC day, retaining the latest timestamp without duplicates."""
+    """Merge by coin and UTC day, retaining the newest price timestamp without duplicates."""
     by_day = {}
     for row in existing + incoming:
         if not isinstance(row, dict):
@@ -149,12 +176,11 @@ def merge_observations(existing, incoming):
             continue
         if isinstance(price, bool) or not isinstance(price, (int, float)) or not math.isfinite(price) or price <= 0:
             continue
-        key = (cid, timestamp // 86_400_000)
-        prev = by_day.get(key)
-        if prev is None or timestamp > prev["time"]:
-            clean = {"id": cid, "time": timestamp, "price": float(price),
-                     "source": str(row.get("source", "CoinGecko market_chart"))}
-            by_day[key] = clean
+        key = (cid, timestamp // DAY_MS)
+        previous = by_day.get(key)
+        if previous is None or timestamp > previous["time"]:
+            by_day[key] = {"id": cid, "time": timestamp, "price": float(price),
+                           "source": str(row.get("source", "CoinGecko market_chart"))}
     return sorted(by_day.values(), key=lambda row: (row["time"], row["id"]))
 
 
@@ -174,75 +200,50 @@ def audit_history(store, failures=None, attempted=0, successful=0, now_ms=None, 
         if isinstance(price, bool) or not isinstance(price, (int, float)) or not math.isfinite(price) or price <= 0:
             invalid += 1
             continue
-        coin_days.add((cid, timestamp // 86_400_000))
-        days.add(timestamp // 86_400_000)
+        coin_days.add((cid, timestamp // DAY_MS))
+        days.add(timestamp // DAY_MS)
         coins.add(cid)
     return {
-        "generatedAt": iso_now(),
-        "status": status or ("PASS" if invalid == 0 else "FAIL"),
+        "generatedAt": iso_now(), "status": status or ("PASS" if invalid == 0 else "FAIL"),
         "source": "CoinGecko public API /coins/{id}/market_chart",
+        "candidateUniverse": "Core-asset priority list intersected with recent live observations",
         "quoteCurrency": QUOTE, "requestedDays": DAYS,
         "assetsAttemptedThisRun": attempted, "assetsFetchedThisRun": successful,
+        "assetLimit": MAX_ASSETS_TOTAL, "requestSpacingSeconds": REQUEST_SPACING_SECONDS,
         "assetsWithStoredHistory": len(coins), "uniqueCoinUtcDays": len(coin_days),
         "distinctUtcDays": len(days), "storedObservations": len(observations),
         "invalidStoredRows": invalid, "failedAssets": (failures or [])[:30],
-        "throttleSeconds": REQUEST_SPACING_SECONDS,
         "limitations": [
             "External-source authenticity is not independently verified.",
-            "Historical prices are not evidence that a forecast could have been made at the time; this file is only for chronological training/backtesting.",
+            "Historical prices are for chronological training/backtesting, not pretend live forecasts.",
             "Recently listed assets may have less than one year of history.",
-            "Backfill is incremental and may take multiple runs; no synthetic points are created."
+            "Backfill is incremental; no synthetic points are created."
         ]
     }
 
 
 def main():
     store = load_store()
+    live = load_json(LIVE_PATH, {})
+    start_monotonic = time.monotonic()
     now = utc_now()
     now_ms = int(now.timestamp() * 1000)
+    now_epoch = int(now.timestamp())
     failures = []
     attempted = successful = 0
     blocked_by_rate_limit = False
-    try:
-        market_url = BASE + "/coins/markets?" + urllib.parse.urlencode({
-            "vs_currency": QUOTE, "order": "market_cap_desc",
-            "per_page": 100, "page": 1, "sparkline": "false"
-        })
-        markets = fetch_json(market_url)
-        if not isinstance(markets, list) or not markets:
-            raise ValueError("CoinGecko markets endpoint returned no asset list")
-        candidates = choose_assets(markets)
-    except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, ValueError) as exc:
-        candidates = []
-        failures.append({"stage": "market_list", "error": str(exc)[:250]})
-        blocked_by_rate_limit = isinstance(exc, urllib.error.HTTPError) and exc.code == 429
+    candidates, qualified_count = select_candidate_ids(live, store, now_epoch)
+    incoming = []
+    last_request_at = start_monotonic
 
-    metadata = store["coins"]
-    now_epoch = int(now.timestamp())
-    to_fetch = []
     for cid in candidates:
-        record = metadata.get(cid, {})
+        elapsed = time.monotonic() - last_request_at
+        if elapsed < REQUEST_SPACING_SECONDS:
+            time.sleep(REQUEST_SPACING_SECONDS - elapsed)
+        attempted += 1
+        record = store["coins"].get(cid, {})
         if not isinstance(record, dict):
             record = {}
-        fetched_at = record.get("fetchedAtEpoch")
-        attempted_at = record.get("lastAttemptEpoch")
-        point_count = record.get("pointCount", 0)
-        if isinstance(fetched_at, int) and point_count >= 30 and now_epoch - fetched_at < HISTORY_REFRESH_DAYS * 86400:
-            continue
-        if isinstance(attempted_at, int) and now_epoch - attempted_at < FAILED_RETRY_DAYS * 86400 and record.get("status") != "ok":
-            continue
-        to_fetch.append(cid)
-    to_fetch = to_fetch[:MAX_COINS_PER_RUN]
-
-    incoming = []
-    last_request_at = None
-    for cid in to_fetch:
-        if last_request_at is not None:
-            elapsed = time.monotonic() - last_request_at
-            if elapsed < REQUEST_SPACING_SECONDS:
-                time.sleep(REQUEST_SPACING_SECONDS - elapsed)
-        attempted += 1
-        record = metadata.get(cid, {}) if isinstance(metadata.get(cid), dict) else {}
         record["lastAttemptAt"] = iso_now()
         record["lastAttemptEpoch"] = int(utc_now().timestamp())
         url = BASE + "/coins/" + urllib.parse.quote(cid, safe="") + "/market_chart?" + urllib.parse.urlencode({
@@ -250,28 +251,27 @@ def main():
         })
         last_request_at = time.monotonic()
         try:
-            result = fetch_json(url)
-            points, invalid = latest_day_samples(cid, result.get("prices") if isinstance(result, dict) else None, now_ms)
+            response = fetch_json(url)
+            points, invalid = latest_day_samples(cid, response.get("prices") if isinstance(response, dict) else None, now_ms)
             if not points:
                 record.update({"status": "no_valid_history", "pointCount": 0, "lastError": "No valid historical price points"})
-                metadata[cid] = record
+                store["coins"][cid] = record
                 failures.append({"asset": cid, "error": "no valid historical price points"})
                 continue
             incoming.extend(points)
-            point_times = [p["time"] for p in points]
+            times = [row["time"] for row in points]
             record.update({
                 "status": "ok" if len(points) >= 30 else "short_history",
                 "fetchedAt": iso_now(), "fetchedAtEpoch": int(utc_now().timestamp()),
-                "pointCount": len(points), "firstPointMs": min(point_times),
-                "lastPointMs": max(point_times), "invalidPointsIgnored": invalid,
-                "lastError": None
+                "pointCount": len(points), "firstPointMs": min(times), "lastPointMs": max(times),
+                "invalidPointsIgnored": invalid, "lastError": None
             })
-            metadata[cid] = record
+            store["coins"][cid] = record
             successful += 1
             print(f"Historical backfill: {cid}: {len(points)} daily samples", flush=True)
         except urllib.error.HTTPError as exc:
             record.update({"status": "http_error", "lastError": f"HTTP {exc.code}"})
-            metadata[cid] = record
+            store["coins"][cid] = record
             failures.append({"asset": cid, "error": f"HTTP {exc.code}"})
             print(f"Historical backfill: {cid}: HTTP {exc.code}", flush=True)
             if exc.code == 429:
@@ -279,25 +279,28 @@ def main():
                 break
         except (urllib.error.URLError, TimeoutError, ValueError, json.JSONDecodeError) as exc:
             record.update({"status": "fetch_error", "lastError": str(exc)[:250]})
-            metadata[cid] = record
+            store["coins"][cid] = record
             failures.append({"asset": cid, "error": str(exc)[:250]})
             print(f"Historical backfill: {cid}: {exc}", flush=True)
 
     if incoming:
-        store["observations"] = merge_observations(store["observations"], incoming)
-    store["coins"] = metadata
+        store["observations"] = merge_observations(store.get("observations", []), incoming)
+    store["coins"]["_summary"] = {
+        "coreAssetLimit": MAX_ASSETS_TOTAL,
+        "qualifiedCoreAssetsAtStart": qualified_count,
+        "backfillAttemptedAt": iso_now()
+    }
     store["updatedAt"] = iso_now()
     DATA_PATH.write_text(json.dumps(store, separators=(",", ":")) + "\n", encoding="utf-8")
 
     status = "RATE_LIMITED" if blocked_by_rate_limit else ("PARTIAL" if failures else "PASS")
     report = audit_history(store, failures, attempted, successful, now_ms, status)
     if not candidates and not failures:
-        report["status"] = "NO_CANDIDATES"
+        report["status"] = "CAP_REACHED" if qualified_count >= MAX_ASSETS_TOTAL else "NO_CANDIDATES"
     REPORT_PATH.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print("Historical backfill:", report["status"], "| stored assets:", report["assetsWithStoredHistory"],
           "| stored days:", report["distinctUtcDays"], "| this run:", successful, "/", attempted, flush=True)
-    # API availability/rate limits do not invalidate existing data or the Data Agent.
-    # The report records partial status while the research pipeline continues fail-closed.
+    # Rate limiting or provider/network failure is recorded but does not corrupt existing data.
     return 0
 
 
