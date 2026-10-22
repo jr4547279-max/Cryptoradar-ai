@@ -108,14 +108,19 @@ def audit_data(data, now_ms=None, historical=None):
             "status": "FAIL", "errors": ["historical_observations_not_list"], "warnings": [],
             "validObservations": 0, "coins": 0, "utcDays": 0
         }
+        hist_valid = hist_audit.get("validObservations", 0)
+        hist_structural_status = hist_audit["status"]
         historical_report = {
-            "status": hist_audit["status"], "observations": hist_audit.get("observations", len(hist_rows) if isinstance(hist_rows, list) else 0),
-            "validObservations": hist_audit.get("validObservations", 0), "coins": hist_audit.get("coins", 0),
+            "status": ("INSUFFICIENT_DATA" if hist_valid == 0 and hist_structural_status == "PASS" else hist_structural_status),
+            "observations": hist_audit.get("observations", len(hist_rows) if isinstance(hist_rows, list) else 0),
+            "validObservations": hist_valid, "coins": hist_audit.get("coins", 0),
             "utcDays": hist_audit.get("utcDays", 0), "warnings": hist_audit.get("warnings", []),
             "sourceDeclaredByBackfill": historical.get("source") if isinstance(historical, dict) else None,
             "quoteCurrency": historical.get("quoteCurrency") if isinstance(historical, dict) else None,
             "externalAuthenticityVerified": False
         }
+        if hist_valid == 0:
+            warnings.append("historical_data_not_available_yet")
         for item in hist_audit.get("errors", []):
             errors.append("historical_" + item)
         if isinstance(historical, dict) and historical.get("quoteCurrency") not in (None, "gbp"):
