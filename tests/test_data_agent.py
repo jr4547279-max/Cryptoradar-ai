@@ -23,10 +23,15 @@ def test():
     f={"id":"bitcoin","created":NOW-DAY,"price":100,"pUp":1.5,"outcome":None,"scoredAt":None}
     r=audit_data({"observations":[],"forecasts":[f]},NOW)
     assert r["status"]=="FAIL" and "forecast_0_invalid_probability" in r["errors"]
+    empty_history={"source":"CoinGecko public API market_chart","quoteCurrency":"gbp","observations":[]}
+    r=audit_data({"observations":[],"forecasts":[]},NOW,historical=empty_history)
+    assert r["status"]=="PASS"
+    assert r["historicalDataQuality"]["status"]=="INSUFFICIENT_DATA"
+    assert "historical_data_not_available_yet" in r["warnings"]
     bad_historical={"source":"CoinGecko public API market_chart","quoteCurrency":"gbp","observations":[{"id":"bitcoin","price":-1,"time":NOW}]}
     r=audit_data({"observations":[],"forecasts":[]},NOW,historical=bad_historical)
     assert r["status"]=="FAIL"
     assert "historical_observation_0_invalid_price" in r["errors"]
     assert "historical_observation_0_missing_source_attribution" in r["errors"]
-    print("Data Agent tests passed (6 cases)")
+    print("Data Agent tests passed (7 cases)")
 if __name__=="__main__": test()
