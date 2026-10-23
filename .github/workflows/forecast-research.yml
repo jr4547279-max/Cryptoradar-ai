@@ -210,6 +210,8 @@ jobs:
           DATA_AGENT_RESULT: ${{ steps.data_agent.outcome }}
           SCENARIO_RESULT: ${{ steps.scenarios.outcome }}
           TRAIN_RESULT: ${{ steps.training.outcome }}
+          EXPERIMENT_RESULT: ${{ steps.trend_experiments.outcome }}
+          CHALLENGER_RESULT: ${{ steps.trend_challenger.outcome }}
           TRIAL_ACTIVATION_RESULT: ${{ steps.trial_activation.outcome }}
           TRIAL_SCORE_RESULT: ${{ steps.trial_score.outcome }}
           REWARD_RESULT: ${{ steps.rewards.outcome }}
@@ -221,6 +223,8 @@ jobs:
           test "$SCENARIO_RESULT" = "success"
           test "$TRAIN_RESULT" = "success"
           test "$EXPERIMENT_RESULT" = "success"
+          test "$CHALLENGER_RESULT" = "success"
+          test -s trend-challenger.json
           test "$TRIAL_ACTIVATION_RESULT" = "success"
           test "$TRIAL_SCORE_RESULT" = "success"
           test "$REWARD_RESULT" = "success"
