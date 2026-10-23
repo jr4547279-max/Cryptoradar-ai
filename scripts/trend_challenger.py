@@ -24,6 +24,10 @@ def mask_features(rows, indices):
 
 
 def main():
+    existing = read_json(OUTPUT_PATH)
+    if existing.get("status") == "FROZEN_DEVELOPMENT_CHALLENGER":
+        print("Existing challenger retained unchanged; new research does not overwrite frozen weights.")
+        return
     experiments = read_json(EXPERIMENT_PATH)
     best = experiments.get("bestDevelopmentCandidate") or {}
     if experiments.get("status") != "EVALUATED" or not best.get("beatsConstantBaselineOnDevelopment"):
