@@ -53,7 +53,6 @@ def evaluate_groups(development):
         for l2 in L2_VALUES:
             scores, constant_scores, neutral_scores, counts = [], [], [], []
             for train, validation in folds:
-                train_subset, val_subset = subset(train, indices), subset(validation, indices)
                 # The trainer's standardizer uses global feature count, so temporarily
                 # retain zeroed inactive features rather than changing model dimensions.
                 train_masked = [dict(r, x=[v if j in indices else 0.0 for j, v in enumerate(r["x"])]) for r in train]
