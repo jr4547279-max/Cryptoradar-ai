@@ -11,6 +11,7 @@ on:
       - 'tests/test_historical_backfill.py'
       - 'tests/test_train_research.py'
       - 'scripts/train_research.py'
+      - 'scripts/trend_experiments.py'
       - 'scripts/prospective_trial.py'
       - 'scripts/activate_prospective_trial.py'
       - 'scripts/score_prospective_trial.py'
@@ -79,6 +80,11 @@ jobs:
         if: steps.collection.outcome == 'success' && steps.unit_tests.outcome == 'success' && steps.history_backfill.outcome == 'success' && steps.data_agent.outcome == 'success'
         continue-on-error: true
         run: python scripts/train_research.py
+      - name: Explore Trend feature groups on development folds only
+        id: trend_experiments
+        if: steps.training.outcome == 'success'
+        continue-on-error: true
+        run: python scripts/trend_experiments.py
       - name: Freeze qualified Trend model for prospective paper trial
         id: trial_activation
         if: steps.training.outcome == 'success' && steps.unit_tests.outcome == 'success' && steps.data_agent.outcome == 'success'
@@ -114,6 +120,7 @@ jobs:
           DATA_AGENT_RESULT: ${{ steps.data_agent.outcome }}
           SCENARIO_RESULT: ${{ steps.scenarios.outcome }}
           TRAIN_RESULT: ${{ steps.training.outcome }}
+          EXPERIMENT_RESULT: ${{ steps.trend_experiments.outcome }}
           TRIAL_ACTIVATION_RESULT: ${{ steps.trial_activation.outcome }}
           TRIAL_SCORE_RESULT: ${{ steps.trial_score.outcome }}
           REWARD_RESULT: ${{ steps.rewards.outcome }}
@@ -148,6 +155,7 @@ jobs:
             'historicalEvidenceAuditStatus':historical_quality.get('status','MISSING'),
             'scenarios':os.environ.get('SCENARIO_RESULT','unknown'),
             'trainingStep':os.environ.get('TRAIN_RESULT','unknown'),
+            'trendExperimentsStep':os.environ.get('EXPERIMENT_RESULT','unknown'),
             'modelTrainingStatus':training.get('status','MISSING'),
             'modelExamples':training.get('examples',0),
             'modelCoins':training.get('uniqueCoins',0),
@@ -178,7 +186,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add research-data.json historical-data.json historical-data-report.json data-agent-report.json scenario-report.json training-report.json candidate-model.json prospective-trial-status.json prospective-trial-report.json pipeline-status.json reward-report.json learning-status.json forecast-integrity-report.json teacher-report.json teacher-memory.json school-project.json
+          git add trend-experiment-report.json research-data.json historical-data.json historical-data-report.json data-agent-report.json scenario-report.json training-report.json candidate-model.json prospective-trial-status.json prospective-trial-report.json pipeline-status.json reward-report.json learning-status.json forecast-integrity-report.json teacher-report.json teacher-memory.json school-project.json
           if [ -f prospective-trial.json ]; then git add prospective-trial.json; fi
           if ! git diff --cached --quiet; then
             git commit -m "Research: publish scheduled pipeline status"
@@ -204,6 +212,7 @@ jobs:
           test "$DATA_AGENT_RESULT" = "success"
           test "$SCENARIO_RESULT" = "success"
           test "$TRAIN_RESULT" = "success"
+          test "$EXPERIMENT_RESULT" = "success"
           test "$TRIAL_ACTIVATION_RESULT" = "success"
           test "$TRIAL_SCORE_RESULT" = "success"
           test "$REWARD_RESULT" = "success"
