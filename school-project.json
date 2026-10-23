@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-22T22:24:24.516435+00:00",
+  "generatedAt": "2026-10-23T01:31:34.197337+00:00",
   "school": "CryptoRadar Research School",
   "projectTitle": "The Great Market Atlas: Multi-Agent Evidence Challenge",
   "status": "IN_PROGRESS",
   "level": "CAPSTONE",
   "currentEvidence": {
     "trainingStatus": "evaluated",
-    "trainingExamples": 10020,
-    "validForecasts": 1,
+    "trainingExamples": 10049,
+    "validForecasts": 99,
     "integrityStatus": "PASS",
     "rewardEligibleStudents": [],
     "scenarioStatus": "missing"
@@ -97,8 +97,10 @@
       "gate": "Independent review only; passing earns research XP, never trading permission"
     }
   ],
-  "completedAssignments": [],
-  "researchXpAwarded": 0,
+  "completedAssignments": [
+    "capstone-01-data-audit"
+  ],
+  "researchXpAwarded": 100,
   "xpRules": [
     "XP are symbolic research points, not cash, tokens, or financial rewards.",
     "No XP for fabricated, duplicated, immature, leaked or integrity-failing results.",
@@ -107,6 +109,6 @@
     "Passing this project never authorizes live trading."
   ],
   "nextLesson": "Start with real-data quality and a valid observation pipeline; current training evidence is insufficient until the prospective dataset meets its minimum requirements.",
-  "memoryEntries": 17,
+  "memoryEntries": 18,
   "warning": "Research-only school project. Automated assignment tracking is not proof that a task was completed; each gate needs independent verification."
 }
