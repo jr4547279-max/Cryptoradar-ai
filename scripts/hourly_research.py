@@ -2,6 +2,7 @@
 """Read-only scheduled forecast research. No orders, secrets, or exchange access."""
 import json, pathlib, urllib.request, urllib.error, datetime, math, time
 from prospective_trial import MODEL_KEY, predict_trial_probability
+from challenger_shadow import predict_challenger
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 PATH=ROOT/'research-data.json'
 now=datetime.datetime.now(datetime.timezone.utc)
@@ -12,6 +13,8 @@ try: historical_state=json.loads((ROOT/'historical-data.json').read_text())
 except (FileNotFoundError,ValueError): historical_state={'observations':[]}
 try: prospective_trial=json.loads((ROOT/'prospective-trial.json').read_text())
 except (FileNotFoundError,ValueError): prospective_trial={}
+try: frozen_challenger=json.loads((ROOT/'trend-challenger.json').read_text())
+except (FileNotFoundError,ValueError): frozen_challenger={}
 historical_observations=historical_state.get('observations',[]) if isinstance(historical_state,dict) else []
 if not isinstance(historical_observations,list): historical_observations=[]
 url='https://api.coingecko.com/api/v3/coins/markets?vs_currency=gbp&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=24h'
@@ -63,6 +66,9 @@ for cid,c in latest.items():
     challenger=predict_trial_probability(prospective_trial,cid,historical_observations,state['observations'],ms)
     if challenger is not None:
         forecast['challengers'][MODEL_KEY]=challenger
+    shadow=predict_challenger(frozen_challenger,cid,historical_observations,state['observations'],ms)
+    if shadow is not None:
+        forecast['challengers']['trend_medium_momentum_shadow_v1']=shadow
     state['forecasts'].append(forecast)
 for f in state['forecasts']:
     if f.get('outcome') is not None or ms-f['created']<86400000:continue
