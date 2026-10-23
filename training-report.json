@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-10-23T01:31:33.937449+00:00",
+  "generatedAt": "2026-10-23T02:55:52.617554+00:00",
   "status": "evaluated",
   "model": "trend-logistic-v1",
   "trainingData": "Real CoinGecko historical market_chart prices and prospective recorded prices only; synthetic scenarios excluded",
   "validation": "Chronological UTC-day split; 70% earlier dates for training; one-day embargo; later dates held out; no random shuffling",
-  "examples": 10049,
+  "examples": 10050,
   "uniqueCoins": 30,
   "distinctExampleUtcDays": 335,
   "trainExamples": 6990,
-  "testExamples": 3029,
+  "testExamples": 3030,
   "testDays": 101,
   "trainingPositiveRate": 0.46123,
   "trainingCoins": [
@@ -51,16 +51,16 @@
   "trainEndDateUtc": "2026-07-12",
   "holdoutStartDateUtc": "2026-07-14",
   "holdoutEndDateUtc": "2026-10-22",
-  "holdoutBrier": 0.254058,
-  "constantTrainRateBrier": 0.252975,
+  "holdoutBrier": 0.254153,
+  "constantTrainRateBrier": 0.253115,
   "neutral50Brier": 0.25,
   "bestConstantBaselineBrier": 0.25,
   "bestConstantBaselineName": "neutral_0.5",
   "betterThanConstantBaseline": false,
-  "baselineImprovementBrier": -0.004058,
-  "holdoutLogLoss": 0.701343,
-  "holdoutAccuracy": 0.481677,
-  "constantMajorityAccuracy": 0.481017,
+  "baselineImprovementBrier": -0.004153,
+  "holdoutLogLoss": 0.701534,
+  "holdoutAccuracy": 0.479868,
+  "constantMajorityAccuracy": 0.479208,
   "calibrationBins": [
     {
       "lowerBound": 0.2,
@@ -79,9 +79,9 @@
     {
       "lowerBound": 0.4,
       "upperBound": 0.5,
-      "count": 2888,
+      "count": 2889,
       "meanPredictedProbability": 0.45132,
-      "observedUpRate": 0.52147
+      "observedUpRate": 0.52336
     },
     {
       "lowerBound": 0.5,
@@ -269,7 +269,7 @@
     "epochsRun": 528,
     "convergedByGradientTolerance": true
   },
-  "datasetSha256": "7c23117d48c44c5b3f854001c1f1fd851c38e486addcd85db8d8ec61461646fc",
+  "datasetSha256": "24d31989edd4bf5abac3773d377c7c01aae7a41923a60999c53739436f3a5b6c",
   "holdoutStatus": "REUSED_HISTORICAL_EXPLORATORY_BENCHMARK",
   "independentProspectiveValidationRequired": true,
   "holdoutLimitations": [
