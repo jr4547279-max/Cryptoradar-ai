@@ -1,10 +1,10 @@
 {
   "status": "PASS",
-  "forecasts": 100,
-  "matured": 0,
+  "forecasts": 101,
+  "matured": 1,
   "pending": 100,
   "issues": [],
   "issueCount": 0,
   "limitation": "Checks internal consistency, not independent immutability or market data authenticity.",
-  "checkedAt": "2026-10-23T13:32:15.490565+00:00"
+  "checkedAt": "2026-10-23T18:29:04.274324+00:00"
 }
