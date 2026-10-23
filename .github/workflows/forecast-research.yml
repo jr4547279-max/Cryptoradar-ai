@@ -13,6 +13,8 @@ on:
       - 'scripts/train_research.py'
       - 'scripts/trend_experiments.py'
       - 'scripts/trend_challenger.py'
+      - 'scripts/challenger_shadow.py'
+      - 'tests/test_challenger_shadow.py'
       - 'scripts/prospective_trial.py'
       - 'scripts/activate_prospective_trial.py'
       - 'scripts/score_prospective_trial.py'
@@ -61,6 +63,7 @@ jobs:
           python tests/test_historical_backfill.py
           python tests/test_train_research.py
           python tests/test_prospective_trial.py
+          python tests/test_challenger_shadow.py
       - name: Incrementally backfill real historical market data
         id: history_backfill
         if: steps.collection.outcome == 'success' && steps.unit_tests.outcome == 'success'
