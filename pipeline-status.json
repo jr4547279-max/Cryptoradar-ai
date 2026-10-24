@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-24T20:54:39.480738+00:00",
+  "checkedAt": "2026-10-24T23:19:36.012369+00:00",
   "collection": "success",
   "unitTests": "success",
   "historicalBackfillStep": "success",
@@ -33,5 +33,5 @@
   "automaticModelPromotion": false,
   "realTradingEnabled": false,
   "rewards": "failure",
-  "runUrl": "https://github.com/jr4547279-max/Cryptoradar-ai/actions/runs/40131413495"
+  "runUrl": "https://github.com/jr4547279-max/Cryptoradar-ai/actions/runs/40141796335"
 }
