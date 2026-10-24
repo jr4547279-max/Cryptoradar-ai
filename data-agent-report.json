@@ -1,12 +1,12 @@
 {
   "status": "PASS",
-  "checkedAt": "2026-10-24T05:52:33.417000+00:00",
+  "checkedAt": "2026-10-24T10:58:29.676000+00:00",
   "sourceDeclaredByCollector": "CoinGecko public markets endpoint; source authenticity is not independently verified",
   "observations": 406,
   "validObservations": 406,
   "coins": 104,
   "utcDays": 4,
-  "latestObservationMs": 1792821123287,
+  "latestObservationMs": 1792839486375,
   "forecasts": 200,
   "maturedForecasts": 99,
   "pendingForecasts": 101,
@@ -22,7 +22,9 @@
     "validObservations": 10950,
     "coins": 30,
     "utcDays": 365,
-    "warnings": [],
+    "warnings": [
+      "latest_observation_older_than_36_hours"
+    ],
     "sourceDeclaredByBackfill": "CoinGecko public API market_chart",
     "quoteCurrency": "gbp",
     "externalAuthenticityVerified": false
