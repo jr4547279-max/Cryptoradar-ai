@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-24T23:19:36.012369+00:00",
+  "checkedAt": "2026-10-25T01:19:16.803444+00:00",
   "collection": "success",
   "unitTests": "success",
   "historicalBackfillStep": "success",
@@ -14,9 +14,9 @@
   "trendExperimentsStep": "success",
   "trendChallengerStep": "success",
   "modelTrainingStatus": "evaluated",
-  "modelExamples": 10080,
+  "modelExamples": 10110,
   "modelCoins": 30,
-  "holdoutBrier": 0.253624,
+  "holdoutBrier": 0.25379,
   "bestConstantBaselineBrier": 0.25,
   "beatsConstantBaseline": false,
   "candidateModelStatus": "FITTED_UNPROMOTED_CANDIDATE",
@@ -25,13 +25,13 @@
   "trialStatus": "ACTIVE_EXPERIMENTAL_SHADOW_TRIAL",
   "trialModelHash": "2e0bdf86cd754c7dc1febea9f3d7d93a50e16fb769edc5fcdccf5abbf34a32b4",
   "trialScoreStep": "success",
-  "prospectiveScoreStatus": "WAITING_FOR_MATURED_EVIDENCE",
-  "prospectiveMaturedForecasts": 0,
-  "prospectiveDistinctUtcDays": 0,
-  "prospectiveBeatsBothBaselines": null,
+  "prospectiveScoreStatus": "INSUFFICIENT_EVIDENCE",
+  "prospectiveMaturedForecasts": 29,
+  "prospectiveDistinctUtcDays": 1,
+  "prospectiveBeatsBothBaselines": false,
   "prospectivePassesProbabilityBenchmark": false,
   "automaticModelPromotion": false,
   "realTradingEnabled": false,
   "rewards": "failure",
-  "runUrl": "https://github.com/jr4547279-max/Cryptoradar-ai/actions/runs/40141796335"
+  "runUrl": "https://github.com/jr4547279-max/Cryptoradar-ai/actions/runs/40149583471"
 }
