@@ -247,5 +247,5 @@
   ],
   "issueCount": 60,
   "limitation": "Checks internal consistency, not independent immutability or market data authenticity.",
-  "checkedAt": "2026-10-25T19:12:49.612696+00:00"
+  "checkedAt": "2026-10-25T21:55:37.801016+00:00"
 }
