@@ -1,8 +1,8 @@
 {
   "status": "FAIL",
-  "forecasts": 402,
+  "forecasts": 500,
   "matured": 299,
-  "pending": 103,
+  "pending": 201,
   "issues": [
     {
       "index": 101,
@@ -359,9 +359,53 @@
     {
       "index": 395,
       "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 402,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 403,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 405,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 408,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 409,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 412,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 413,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 414,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 417,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 419,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 420,
+      "reason": "missing_challenger_trialId"
     }
   ],
-  "issueCount": 89,
+  "issueCount": 118,
   "limitation": "Checks internal consistency, not independent immutability or market data authenticity.",
-  "checkedAt": "2026-10-26T19:27:04.965907+00:00"
+  "checkedAt": "2026-10-26T23:58:00.623534+00:00"
 }
