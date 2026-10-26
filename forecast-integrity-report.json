@@ -1,8 +1,8 @@
 {
   "status": "FAIL",
-  "forecasts": 302,
+  "forecasts": 399,
   "matured": 200,
-  "pending": 102,
+  "pending": 199,
   "issues": [
     {
       "index": 101,
@@ -243,9 +243,125 @@
     {
       "index": 299,
       "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 302,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 303,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 305,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 308,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 309,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 312,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 313,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 314,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 317,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 319,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 321,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 322,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 323,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 326,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 327,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 329,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 331,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 333,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 337,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 349,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 357,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 359,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 364,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 372,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 378,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 380,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 381,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 386,
+      "reason": "missing_challenger_trialId"
+    },
+    {
+      "index": 395,
+      "reason": "missing_challenger_trialId"
     }
   ],
-  "issueCount": 60,
+  "issueCount": 89,
   "limitation": "Checks internal consistency, not independent immutability or market data authenticity.",
-  "checkedAt": "2026-10-25T21:55:37.801016+00:00"
+  "checkedAt": "2026-10-26T00:31:24.106881+00:00"
 }
