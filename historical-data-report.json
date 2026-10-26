@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-26T13:01:06.185821+00:00",
+  "generatedAt": "2026-10-26T19:18:58.138487+00:00",
   "status": "CAP_REACHED",
   "source": "CoinGecko public API /coins/{id}/market_chart",
   "candidateUniverse": "Core-asset priority list intersected with recent live observations",
