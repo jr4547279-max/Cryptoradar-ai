@@ -348,7 +348,7 @@
     "Selecting among many candidates increases overfitting risk; prospective shadow testing is required.",
     "No model is promoted or connected to real-money trading."
   ],
-  "generatedAt": "2026-10-29T01:03:58.933673+00:00",
+  "generatedAt": "2026-10-29T07:10:23.298867+00:00",
   "developmentExamples": 7020,
   "outerHoldoutUsedForSelection": false,
   "realTradingEnabled": false
