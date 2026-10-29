@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-29T14:19:57.303949+00:00",
+  "generatedAt": "2026-10-29T20:19:04.106870+00:00",
   "status": "evaluated",
   "model": "trend-logistic-v1",
   "trainingData": "Real CoinGecko historical market_chart prices and prospective recorded prices only; synthetic scenarios excluded",
@@ -269,7 +269,7 @@
     "epochsRun": 532,
     "convergedByGradientTolerance": true
   },
-  "datasetSha256": "44c7a9f6fbfb9f887d55bf4259062b6d331fd9ae10065ad68a74e52fcc62d245",
+  "datasetSha256": "5215aca4bc925680d826d20ef85bc45c409975e5b205a0fc8daeb7c435aa0d96",
   "holdoutStatus": "REUSED_HISTORICAL_EXPLORATORY_BENCHMARK",
   "independentProspectiveValidationRequired": true,
   "holdoutLimitations": [
