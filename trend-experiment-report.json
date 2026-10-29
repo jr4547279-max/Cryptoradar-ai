@@ -12,10 +12,10 @@
         8
       ],
       "l2": 0.5,
-      "developmentBrier": 0.248937,
-      "trainingRateBaselineBrier": 0.249359,
+      "developmentBrier": 0.247982,
+      "trainingRateBaselineBrier": 0.248462,
       "neutralBaselineBrier": 0.25,
-      "bestConstantBaselineBrier": 0.249359,
+      "bestConstantBaselineBrier": 0.248462,
       "beatsConstantBaselineOnDevelopment": true,
       "validationExamples": 2520,
       "folds": 3
@@ -37,10 +37,10 @@
         11
       ],
       "l2": 2.0,
-      "developmentBrier": 0.248968,
-      "trainingRateBaselineBrier": 0.249359,
+      "developmentBrier": 0.248065,
+      "trainingRateBaselineBrier": 0.248462,
       "neutralBaselineBrier": 0.25,
-      "bestConstantBaselineBrier": 0.249359,
+      "bestConstantBaselineBrier": 0.248462,
       "beatsConstantBaselineOnDevelopment": true,
       "validationExamples": 2520,
       "folds": 3
@@ -56,10 +56,28 @@
         8
       ],
       "l2": 2.0,
-      "developmentBrier": 0.249034,
-      "trainingRateBaselineBrier": 0.249359,
+      "developmentBrier": 0.248105,
+      "trainingRateBaselineBrier": 0.248462,
       "neutralBaselineBrier": 0.25,
-      "bestConstantBaselineBrier": 0.249359,
+      "bestConstantBaselineBrier": 0.248462,
+      "beatsConstantBaselineOnDevelopment": true,
+      "validationExamples": 2520,
+      "folds": 3
+    },
+    {
+      "featureGroup": "trend_distance",
+      "featureIndices": [
+        0,
+        2,
+        9,
+        10,
+        11
+      ],
+      "l2": 0.5,
+      "developmentBrier": 0.248167,
+      "trainingRateBaselineBrier": 0.248462,
+      "neutralBaselineBrier": 0.25,
+      "bestConstantBaselineBrier": 0.248462,
       "beatsConstantBaselineOnDevelopment": true,
       "validationExamples": 2520,
       "folds": 3
@@ -81,28 +99,10 @@
         11
       ],
       "l2": 0.5,
-      "developmentBrier": 0.249073,
-      "trainingRateBaselineBrier": 0.249359,
+      "developmentBrier": 0.248196,
+      "trainingRateBaselineBrier": 0.248462,
       "neutralBaselineBrier": 0.25,
-      "bestConstantBaselineBrier": 0.249359,
-      "beatsConstantBaselineOnDevelopment": true,
-      "validationExamples": 2520,
-      "folds": 3
-    },
-    {
-      "featureGroup": "trend_distance",
-      "featureIndices": [
-        0,
-        2,
-        9,
-        10,
-        11
-      ],
-      "l2": 0.5,
-      "developmentBrier": 0.249078,
-      "trainingRateBaselineBrier": 0.249359,
-      "neutralBaselineBrier": 0.25,
-      "bestConstantBaselineBrier": 0.249359,
+      "bestConstantBaselineBrier": 0.248462,
       "beatsConstantBaselineOnDevelopment": true,
       "validationExamples": 2520,
       "folds": 3
@@ -117,28 +117,10 @@
         11
       ],
       "l2": 2.0,
-      "developmentBrier": 0.249133,
-      "trainingRateBaselineBrier": 0.249359,
+      "developmentBrier": 0.248223,
+      "trainingRateBaselineBrier": 0.248462,
       "neutralBaselineBrier": 0.25,
-      "bestConstantBaselineBrier": 0.249359,
-      "beatsConstantBaselineOnDevelopment": true,
-      "validationExamples": 2520,
-      "folds": 3
-    },
-    {
-      "featureGroup": "short_momentum",
-      "featureIndices": [
-        0,
-        1,
-        2,
-        5,
-        7
-      ],
-      "l2": 0.5,
-      "developmentBrier": 0.24914,
-      "trainingRateBaselineBrier": 0.249359,
-      "neutralBaselineBrier": 0.25,
-      "bestConstantBaselineBrier": 0.249359,
+      "bestConstantBaselineBrier": 0.248462,
       "beatsConstantBaselineOnDevelopment": true,
       "validationExamples": 2520,
       "folds": 3
@@ -153,10 +135,28 @@
         7
       ],
       "l2": 2.0,
-      "developmentBrier": 0.249156,
-      "trainingRateBaselineBrier": 0.249359,
+      "developmentBrier": 0.2483,
+      "trainingRateBaselineBrier": 0.248462,
       "neutralBaselineBrier": 0.25,
-      "bestConstantBaselineBrier": 0.249359,
+      "bestConstantBaselineBrier": 0.248462,
+      "beatsConstantBaselineOnDevelopment": true,
+      "validationExamples": 2520,
+      "folds": 3
+    },
+    {
+      "featureGroup": "short_momentum",
+      "featureIndices": [
+        0,
+        1,
+        2,
+        5,
+        7
+      ],
+      "l2": 0.5,
+      "developmentBrier": 0.248349,
+      "trainingRateBaselineBrier": 0.248462,
+      "neutralBaselineBrier": 0.25,
+      "bestConstantBaselineBrier": 0.248462,
       "beatsConstantBaselineOnDevelopment": true,
       "validationExamples": 2520,
       "folds": 3
@@ -171,28 +171,10 @@
         11
       ],
       "l2": 0.1,
-      "developmentBrier": 0.249604,
-      "trainingRateBaselineBrier": 0.249359,
+      "developmentBrier": 0.248619,
+      "trainingRateBaselineBrier": 0.248462,
       "neutralBaselineBrier": 0.25,
-      "bestConstantBaselineBrier": 0.249359,
-      "beatsConstantBaselineOnDevelopment": false,
-      "validationExamples": 2520,
-      "folds": 3
-    },
-    {
-      "featureGroup": "short_momentum",
-      "featureIndices": [
-        0,
-        1,
-        2,
-        5,
-        7
-      ],
-      "l2": 0.1,
-      "developmentBrier": 0.249668,
-      "trainingRateBaselineBrier": 0.249359,
-      "neutralBaselineBrier": 0.25,
-      "bestConstantBaselineBrier": 0.249359,
+      "bestConstantBaselineBrier": 0.248462,
       "beatsConstantBaselineOnDevelopment": false,
       "validationExamples": 2520,
       "folds": 3
@@ -208,10 +190,28 @@
         8
       ],
       "l2": 0.1,
-      "developmentBrier": 0.249746,
-      "trainingRateBaselineBrier": 0.249359,
+      "developmentBrier": 0.248738,
+      "trainingRateBaselineBrier": 0.248462,
       "neutralBaselineBrier": 0.25,
-      "bestConstantBaselineBrier": 0.249359,
+      "bestConstantBaselineBrier": 0.248462,
+      "beatsConstantBaselineOnDevelopment": false,
+      "validationExamples": 2520,
+      "folds": 3
+    },
+    {
+      "featureGroup": "short_momentum",
+      "featureIndices": [
+        0,
+        1,
+        2,
+        5,
+        7
+      ],
+      "l2": 0.1,
+      "developmentBrier": 0.248923,
+      "trainingRateBaselineBrier": 0.248462,
+      "neutralBaselineBrier": 0.25,
+      "bestConstantBaselineBrier": 0.248462,
       "beatsConstantBaselineOnDevelopment": false,
       "validationExamples": 2520,
       "folds": 3
@@ -233,28 +233,10 @@
         11
       ],
       "l2": 0.1,
-      "developmentBrier": 0.250156,
-      "trainingRateBaselineBrier": 0.249359,
+      "developmentBrier": 0.249199,
+      "trainingRateBaselineBrier": 0.248462,
       "neutralBaselineBrier": 0.25,
-      "bestConstantBaselineBrier": 0.249359,
-      "beatsConstantBaselineOnDevelopment": false,
-      "validationExamples": 2520,
-      "folds": 3
-    },
-    {
-      "featureGroup": "short_momentum",
-      "featureIndices": [
-        0,
-        1,
-        2,
-        5,
-        7
-      ],
-      "l2": 0.02,
-      "developmentBrier": 0.250289,
-      "trainingRateBaselineBrier": 0.249359,
-      "neutralBaselineBrier": 0.25,
-      "bestConstantBaselineBrier": 0.249359,
+      "bestConstantBaselineBrier": 0.248462,
       "beatsConstantBaselineOnDevelopment": false,
       "validationExamples": 2520,
       "folds": 3
@@ -269,10 +251,28 @@
         11
       ],
       "l2": 0.02,
-      "developmentBrier": 0.250754,
-      "trainingRateBaselineBrier": 0.249359,
+      "developmentBrier": 0.249456,
+      "trainingRateBaselineBrier": 0.248462,
       "neutralBaselineBrier": 0.25,
-      "bestConstantBaselineBrier": 0.249359,
+      "bestConstantBaselineBrier": 0.248462,
+      "beatsConstantBaselineOnDevelopment": false,
+      "validationExamples": 2520,
+      "folds": 3
+    },
+    {
+      "featureGroup": "short_momentum",
+      "featureIndices": [
+        0,
+        1,
+        2,
+        5,
+        7
+      ],
+      "l2": 0.02,
+      "developmentBrier": 0.249517,
+      "trainingRateBaselineBrier": 0.248462,
+      "neutralBaselineBrier": 0.25,
+      "bestConstantBaselineBrier": 0.248462,
       "beatsConstantBaselineOnDevelopment": false,
       "validationExamples": 2520,
       "folds": 3
@@ -288,10 +288,10 @@
         8
       ],
       "l2": 0.02,
-      "developmentBrier": 0.250961,
-      "trainingRateBaselineBrier": 0.249359,
+      "developmentBrier": 0.249869,
+      "trainingRateBaselineBrier": 0.248462,
       "neutralBaselineBrier": 0.25,
-      "bestConstantBaselineBrier": 0.249359,
+      "bestConstantBaselineBrier": 0.248462,
       "beatsConstantBaselineOnDevelopment": false,
       "validationExamples": 2520,
       "folds": 3
@@ -313,10 +313,10 @@
         11
       ],
       "l2": 0.02,
-      "developmentBrier": 0.251554,
-      "trainingRateBaselineBrier": 0.249359,
+      "developmentBrier": 0.250301,
+      "trainingRateBaselineBrier": 0.248462,
       "neutralBaselineBrier": 0.25,
-      "bestConstantBaselineBrier": 0.249359,
+      "bestConstantBaselineBrier": 0.248462,
       "beatsConstantBaselineOnDevelopment": false,
       "validationExamples": 2520,
       "folds": 3
@@ -333,10 +333,10 @@
       8
     ],
     "l2": 0.5,
-    "developmentBrier": 0.248937,
-    "trainingRateBaselineBrier": 0.249359,
+    "developmentBrier": 0.247982,
+    "trainingRateBaselineBrier": 0.248462,
     "neutralBaselineBrier": 0.25,
-    "bestConstantBaselineBrier": 0.249359,
+    "bestConstantBaselineBrier": 0.248462,
     "beatsConstantBaselineOnDevelopment": true,
     "validationExamples": 2520,
     "folds": 3
@@ -348,7 +348,7 @@
     "Selecting among many candidates increases overfitting risk; prospective shadow testing is required.",
     "No model is promoted or connected to real-money trading."
   ],
-  "generatedAt": "2026-10-28T21:07:51.362193+00:00",
+  "generatedAt": "2026-10-29T01:03:58.933673+00:00",
   "developmentExamples": 7020,
   "outerHoldoutUsedForSelection": false,
   "realTradingEnabled": false
