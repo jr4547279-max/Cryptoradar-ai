@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-31T15:46:29.902541+00:00",
+  "generatedAt": "2026-10-31T20:00:18.804167+00:00",
   "status": "evaluated",
   "model": "trend-logistic-v1",
   "trainingData": "Real CoinGecko historical market_chart prices and prospective recorded prices only; synthetic scenarios excluded",
@@ -51,16 +51,16 @@
   "trainEndDateUtc": "2026-07-19",
   "holdoutStartDateUtc": "2026-07-21",
   "holdoutEndDateUtc": "2026-10-30",
-  "holdoutBrier": 0.253291,
-  "constantTrainRateBrier": 0.252517,
+  "holdoutBrier": 0.2533,
+  "constantTrainRateBrier": 0.252544,
   "neutral50Brier": 0.25,
   "bestConstantBaselineBrier": 0.25,
   "bestConstantBaselineName": "neutral_0.5",
   "betterThanConstantBaseline": false,
-  "baselineImprovementBrier": -0.003291,
-  "holdoutLogLoss": 0.699808,
-  "holdoutAccuracy": 0.492962,
-  "constantMajorityAccuracy": 0.490016,
+  "baselineImprovementBrier": -0.0033,
+  "holdoutLogLoss": 0.699826,
+  "holdoutAccuracy": 0.492635,
+  "constantMajorityAccuracy": 0.489689,
   "calibrationBins": [
     {
       "lowerBound": 0.2,
@@ -81,7 +81,7 @@
       "upperBound": 0.5,
       "count": 2904,
       "meanPredictedProbability": 0.45103,
-      "observedUpRate": 0.51033
+      "observedUpRate": 0.51067
     },
     {
       "lowerBound": 0.5,
@@ -269,7 +269,7 @@
     "epochsRun": 532,
     "convergedByGradientTolerance": true
   },
-  "datasetSha256": "857cd8610e5f24a32048d5fd70f3459ef43660e4efd797c9960628e727c84348",
+  "datasetSha256": "f2d3c79446ec6877509ae6537c1823fa71be4c5beac7db601c4e5ed63cfba32d",
   "holdoutStatus": "REUSED_HISTORICAL_EXPLORATORY_BENCHMARK",
   "independentProspectiveValidationRequired": true,
   "holdoutLimitations": [
