@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-02T02:36:37.907517+00:00",
+  "checkedAt": "2026-11-02T11:09:29.487587+00:00",
   "collection": "success",
   "unitTests": "success",
   "historicalBackfillStep": "success",
@@ -16,7 +16,7 @@
   "modelTrainingStatus": "evaluated",
   "modelExamples": 10103,
   "modelCoins": 30,
-  "holdoutBrier": 0.25278,
+  "holdoutBrier": 0.252452,
   "bestConstantBaselineBrier": 0.25,
   "beatsConstantBaseline": false,
   "candidateModelStatus": "FITTED_UNPROMOTED_CANDIDATE",
@@ -33,5 +33,5 @@
   "automaticModelPromotion": false,
   "realTradingEnabled": false,
   "rewards": "failure",
-  "runUrl": "https://github.com/jr4547279-max/Cryptoradar-ai/actions/runs/41378023658"
+  "runUrl": "https://github.com/jr4547279-max/Cryptoradar-ai/actions/runs/41433578716"
 }
