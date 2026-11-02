@@ -1,83 +1,83 @@
 {
-  "generatedAt": "2026-10-26T13:34:53.229283+00:00",
+  "generatedAt": "2026-11-02T16:33:04.862795+00:00",
   "status": "evaluated",
   "source": "Binance Vision public historical daily spot candles, USDT-quoted, not GBP",
   "pairs": {
-    "BTCUSDT": 548,
-    "ETHUSDT": 548,
-    "SOLUSDT": 548,
-    "BNBUSDT": 548,
-    "XRPUSDT": 548
+    "BTCUSDT": 549,
+    "ETHUSDT": 549,
+    "SOLUSDT": 549,
+    "BNBUSDT": 549,
+    "XRPUSDT": 549
   },
-  "examples": 2665,
+  "examples": 2670,
   "method": "Regularized logistic regression; past 1/3/7/14-day log returns",
   "validation": "Chronological 70/30 time split with 2-day embargo; one held-out period; no synthetic samples",
   "downloadErrors": [],
   "warning": "Research only. USDT prices are not GBP prices. A single holdout cannot establish predictive skill or profitable trading.",
   "trainExamples": 1855,
-  "testExamples": 800,
-  "testStart": "2026-04-23",
-  "holdoutBrier": 0.25004,
-  "constantTrainRateBrier": 0.25001,
-  "betterThanConstantBaseline": false,
+  "testExamples": 805,
+  "testStart": "2026-05-23",
+  "holdoutBrier": 0.24998,
+  "constantTrainRateBrier": 0.24999,
+  "betterThanConstantBaseline": true,
   "walkForward": {
     "status": "evaluated",
     "folds": [
       {
-        "start": "2025-11-14",
-        "end": "2026-02-01",
+        "start": "2025-12-14",
+        "end": "2026-03-03",
         "trainExamples": 1055,
         "testExamples": 400,
         "brier": {
-          "constant": 0.253296,
-          "momentum": 0.24825,
-          "reversal": 0.25675,
-          "logistic": 0.253969
+          "constant": 0.251427,
+          "momentum": 0.24975,
+          "reversal": 0.25525,
+          "logistic": 0.251677
         }
       },
       {
-        "start": "2026-02-02",
-        "end": "2026-04-22",
+        "start": "2026-03-04",
+        "end": "2026-05-22",
         "trainExamples": 1455,
         "testExamples": 400,
         "brier": {
-          "constant": 0.250118,
-          "momentum": 0.252,
-          "reversal": 0.253,
-          "logistic": 0.250523
+          "constant": 0.250348,
+          "momentum": 0.2495,
+          "reversal": 0.2555,
+          "logistic": 0.250406
         }
       },
       {
-        "start": "2026-04-23",
-        "end": "2026-07-11",
+        "start": "2026-05-23",
+        "end": "2026-08-10",
         "trainExamples": 1855,
         "testExamples": 400,
         "brier": {
-          "constant": 0.249751,
-          "momentum": 0.24725,
-          "reversal": 0.25775,
-          "logistic": 0.24916
+          "constant": 0.249654,
+          "momentum": 0.24875,
+          "reversal": 0.25625,
+          "logistic": 0.247159
         }
       },
       {
-        "start": "2026-07-12",
-        "end": "2026-09-29",
+        "start": "2026-08-11",
+        "end": "2026-10-30",
         "trainExamples": 2255,
-        "testExamples": 400,
+        "testExamples": 405,
         "brier": {
-          "constant": 0.251037,
-          "momentum": 0.2595,
-          "reversal": 0.2455,
-          "logistic": 0.253615
+          "constant": 0.250803,
+          "momentum": 0.260278,
+          "reversal": 0.244722,
+          "logistic": 0.254365
         }
       }
     ],
-    "testExamples": 1600,
+    "testExamples": 1605,
     "aggregateBrier": {
-      "constant": 0.251051,
-      "momentum": 0.25175,
-      "reversal": 0.25325,
-      "logistic": 0.251817
+      "constant": 0.250559,
+      "momentum": 0.252095,
+      "reversal": 0.252905,
+      "logistic": 0.250913
     },
     "method": "Four expanding-window chronological folds, 2-day embargo, training-only scaling and L2 logistic regression",
     "caution": "Exploratory comparison, not untouched final validation. No demonstrated profitability."
@@ -85,19 +85,19 @@
   "regimes": {
     "method": "Fixed illustrative regimes: 14-day log momentum \u00b18%; trailing 7-day daily-return volatility 5.5%; volatility takes precedence.",
     "counts": {
-      "range_or_mixed": 1596,
-      "high_volatility": 104,
-      "downtrend": 467,
-      "uptrend": 498
+      "range_or_mixed": 1634,
+      "uptrend": 437,
+      "downtrend": 505,
+      "high_volatility": 94
     },
     "note": "Descriptive research, not learned regime classification or a validated trading signal."
   },
   "agentCouncil": {
     "status": "experimental",
-    "sampleCount": 2665,
+    "sampleCount": 2670,
     "decisions": {
-      "NO_TRADE": 2635,
-      "PAPER_LONG_CANDIDATE": 14,
+      "NO_TRADE": 2641,
+      "PAPER_LONG_CANDIDATE": 13,
       "PAPER_SHORT_CANDIDATE": 16
     },
     "description": "Five fixed-rule specialists; disagreement and risk gates default to no trade.",
@@ -105,9 +105,9 @@
   },
   "trainedCouncil": {
     "status": "evaluated",
-    "trainExamples": 2120,
+    "trainExamples": 2125,
     "testExamples": 535,
-    "testStart": "2026-06-15",
+    "testStart": "2026-07-16",
     "agents": [
       "short_term",
       "medium_term",
@@ -116,34 +116,34 @@
     ],
     "scores": {
       "baseline": {
-        "brier": 0.250746,
-        "logLoss": 0.69464,
-        "directionAccuracy": 0.47103
+        "brier": 0.251308,
+        "logLoss": 0.695765,
+        "directionAccuracy": 0.45981
       },
       "short_term": {
-        "brier": 0.252571,
-        "logLoss": 0.698325,
-        "directionAccuracy": 0.47664
+        "brier": 0.25322,
+        "logLoss": 0.699637,
+        "directionAccuracy": 0.48224
       },
       "medium_term": {
-        "brier": 0.251216,
-        "logLoss": 0.695592,
-        "directionAccuracy": 0.50467
+        "brier": 0.252037,
+        "logLoss": 0.69724,
+        "directionAccuracy": 0.4729
       },
       "long_term": {
-        "brier": 0.250682,
-        "logLoss": 0.694512,
-        "directionAccuracy": 0.4785
+        "brier": 0.251272,
+        "logLoss": 0.695692,
+        "directionAccuracy": 0.48224
       },
       "full_context": {
-        "brier": 0.252417,
-        "logLoss": 0.698002,
-        "directionAccuracy": 0.47664
+        "brier": 0.253036,
+        "logLoss": 0.699246,
+        "directionAccuracy": 0.4729
       },
       "equal_weight_council": {
-        "brier": 0.251578,
-        "logLoss": 0.696311,
-        "directionAccuracy": 0.50654
+        "brier": 0.25224,
+        "logLoss": 0.697637,
+        "directionAccuracy": 0.48972
       }
     },
     "councilBeatsBaselineBrier": false,
@@ -164,8 +164,8 @@
       {
         "bucket": 2,
         "count": 535,
-        "meanPrediction": 0.49032,
-        "observedUpRate": 0.52897
+        "meanPrediction": 0.48668,
+        "observedUpRate": 0.54019
       },
       {
         "bucket": 3,
@@ -187,137 +187,137 @@
     "status": "evaluated",
     "folds": [
       {
-        "start": "2026-01-06",
-        "trainExamples": 1320,
-        "testExamples": 395,
+        "start": "2026-02-06",
+        "trainExamples": 1325,
+        "testExamples": 400,
         "brier": {
-          "baseline": 0.253358,
-          "council": 0.252497,
-          "short_term": 0.253145,
-          "medium_term": 0.251799,
-          "long_term": 0.253812,
-          "full_context": 0.2525
+          "baseline": 0.249926,
+          "council": 0.248965,
+          "short_term": 0.250156,
+          "medium_term": 0.247574,
+          "long_term": 0.249974,
+          "full_context": 0.249183
         },
         "perAsset": {
           "BTCUSDT": {
-            "examples": 79,
-            "councilBrier": 0.25179,
-            "baselineBrier": 0.25302
+            "examples": 80,
+            "councilBrier": 0.249364,
+            "baselineBrier": 0.250024
           },
           "ETHUSDT": {
-            "examples": 79,
-            "councilBrier": 0.250989,
-            "baselineBrier": 0.252177
+            "examples": 80,
+            "councilBrier": 0.249542,
+            "baselineBrier": 0.250392
           },
           "SOLUSDT": {
-            "examples": 79,
-            "councilBrier": 0.250584,
-            "baselineBrier": 0.25302
+            "examples": 80,
+            "councilBrier": 0.246591,
+            "baselineBrier": 0.250024
           },
           "BNBUSDT": {
-            "examples": 79,
-            "councilBrier": 0.25072,
-            "baselineBrier": 0.251755
+            "examples": 80,
+            "councilBrier": 0.249004,
+            "baselineBrier": 0.250024
           },
           "XRPUSDT": {
-            "examples": 79,
-            "councilBrier": 0.258404,
-            "baselineBrier": 0.256818
+            "examples": 80,
+            "councilBrier": 0.250326,
+            "baselineBrier": 0.249166
           }
         }
       },
       {
-        "start": "2026-03-27",
-        "trainExamples": 1720,
-        "testExamples": 395,
+        "start": "2026-04-27",
+        "trainExamples": 1725,
+        "testExamples": 400,
         "brier": {
-          "baseline": 0.249855,
-          "council": 0.24934,
-          "short_term": 0.24998,
-          "medium_term": 0.248978,
-          "long_term": 0.249683,
-          "full_context": 0.249152
+          "baseline": 0.249367,
+          "council": 0.248909,
+          "short_term": 0.249525,
+          "medium_term": 0.24913,
+          "long_term": 0.248932,
+          "full_context": 0.248668
         },
         "perAsset": {
           "BTCUSDT": {
-            "examples": 79,
-            "councilBrier": 0.249729,
-            "baselineBrier": 0.249961
+            "examples": 80,
+            "councilBrier": 0.248882,
+            "baselineBrier": 0.249276
           },
           "ETHUSDT": {
-            "examples": 79,
-            "councilBrier": 0.247654,
-            "baselineBrier": 0.249829
+            "examples": 80,
+            "councilBrier": 0.248339,
+            "baselineBrier": 0.249581
           },
           "SOLUSDT": {
-            "examples": 79,
-            "councilBrier": 0.250172,
-            "baselineBrier": 0.249829
+            "examples": 80,
+            "councilBrier": 0.249936,
+            "baselineBrier": 0.249276
           },
           "BNBUSDT": {
-            "examples": 79,
-            "councilBrier": 0.24957,
-            "baselineBrier": 0.250094
+            "examples": 80,
+            "councilBrier": 0.248881,
+            "baselineBrier": 0.249428
           },
           "XRPUSDT": {
-            "examples": 79,
-            "councilBrier": 0.249577,
-            "baselineBrier": 0.249564
+            "examples": 80,
+            "councilBrier": 0.248505,
+            "baselineBrier": 0.249276
           }
         }
       },
       {
-        "start": "2026-06-15",
-        "trainExamples": 2120,
-        "testExamples": 395,
+        "start": "2026-07-16",
+        "trainExamples": 2125,
+        "testExamples": 400,
         "brier": {
-          "baseline": 0.250585,
-          "council": 0.250416,
-          "short_term": 0.251324,
-          "medium_term": 0.250251,
-          "long_term": 0.25016,
-          "full_context": 0.25051
+          "baseline": 0.252275,
+          "council": 0.253717,
+          "short_term": 0.255392,
+          "medium_term": 0.253495,
+          "long_term": 0.251918,
+          "full_context": 0.254776
         },
         "perAsset": {
           "BTCUSDT": {
-            "examples": 79,
-            "councilBrier": 0.250909,
-            "baselineBrier": 0.25053
+            "examples": 80,
+            "councilBrier": 0.253528,
+            "baselineBrier": 0.251928
           },
           "ETHUSDT": {
-            "examples": 79,
-            "councilBrier": 0.250567,
-            "baselineBrier": 0.251354
+            "examples": 80,
+            "councilBrier": 0.252937,
+            "baselineBrier": 0.252969
           },
           "SOLUSDT": {
-            "examples": 79,
-            "councilBrier": 0.249897,
-            "baselineBrier": 0.25053
+            "examples": 80,
+            "councilBrier": 0.253358,
+            "baselineBrier": 0.252275
           },
           "BNBUSDT": {
-            "examples": 79,
-            "councilBrier": 0.25083,
-            "baselineBrier": 0.251079
+            "examples": 80,
+            "councilBrier": 0.253927,
+            "baselineBrier": 0.253316
           },
           "XRPUSDT": {
-            "examples": 79,
-            "councilBrier": 0.249877,
-            "baselineBrier": 0.249431
+            "examples": 80,
+            "councilBrier": 0.254834,
+            "baselineBrier": 0.250887
           }
         }
       }
     ],
-    "testExamples": 1185,
+    "testExamples": 1200,
     "aggregateBrier": {
-      "baseline": 0.251266,
-      "council": 0.250751,
-      "short_term": 0.251483,
-      "medium_term": 0.250343,
-      "long_term": 0.251218,
-      "full_context": 0.250721
+      "baseline": 0.250523,
+      "council": 0.25053,
+      "short_term": 0.251691,
+      "medium_term": 0.250066,
+      "long_term": 0.250275,
+      "full_context": 0.250876
     },
-    "councilBeatsBaseline": true,
-    "foldsBeatingBaseline": 3,
+    "councilBeatsBaseline": false,
+    "foldsBeatingBaseline": 2,
     "method": "Three expanding chronological windows with two-day embargo and per-asset diagnostics; each model fitted on past data only.",
     "warning": "Exploratory windows on already inspected historical data. Overlapping research with previous evaluations means these are NOT new independent confirmations."
   },
@@ -325,46 +325,46 @@
     "status": "evaluated",
     "folds": [
       {
-        "start": "2026-01-06",
-        "selectedOnPastValidation": "medium_term",
-        "validationExamples": 330,
-        "testExamples": 395,
+        "start": "2026-02-06",
+        "selectedOnPastValidation": "short_term",
+        "validationExamples": 335,
+        "testExamples": 400,
         "brier": {
-          "baseline": 0.253358,
-          "selected": 0.251799,
-          "equal_weight_council": 0.252497
+          "baseline": 0.249926,
+          "selected": 0.250156,
+          "equal_weight_council": 0.248965
         }
       },
       {
-        "start": "2026-03-27",
+        "start": "2026-04-27",
         "selectedOnPastValidation": "medium_term",
-        "validationExamples": 430,
-        "testExamples": 395,
+        "validationExamples": 435,
+        "testExamples": 400,
         "brier": {
-          "baseline": 0.249855,
-          "selected": 0.248978,
-          "equal_weight_council": 0.24934
+          "baseline": 0.249367,
+          "selected": 0.24913,
+          "equal_weight_council": 0.248909
         }
       },
       {
-        "start": "2026-06-15",
-        "selectedOnPastValidation": "full_context",
-        "validationExamples": 530,
-        "testExamples": 395,
+        "start": "2026-07-16",
+        "selectedOnPastValidation": "medium_term",
+        "validationExamples": 535,
+        "testExamples": 400,
         "brier": {
-          "baseline": 0.250585,
-          "selected": 0.25051,
-          "equal_weight_council": 0.250416
+          "baseline": 0.252275,
+          "selected": 0.253495,
+          "equal_weight_council": 0.253717
         }
       }
     ],
-    "testExamples": 1185,
+    "testExamples": 1200,
     "aggregateBrier": {
-      "baseline": 0.251266,
-      "selected": 0.250429,
-      "equal_weight_council": 0.250751
+      "baseline": 0.250523,
+      "selected": 0.250927,
+      "equal_weight_council": 0.25053
     },
-    "selectionBeatsBaseline": true,
+    "selectionBeatsBaseline": false,
     "method": "Nested chronological validation: select among four specialists and equal-weight council using only earlier validation; refit on pre-test data; evaluate later period with two-day embargo.",
     "warning": "Exploratory historical research already inspected in prior versions; no untouched prospective validation, no profitability evidence."
   },
@@ -373,25 +373,25 @@
     "method": "Fixed council decisions evaluated on walk-forward test date windows; next-day close-to-close returns, fixed assumed round-trip cost.",
     "folds": [
       {
-        "start": "2025-11-14",
-        "end": "2026-02-01",
+        "start": "2025-12-14",
+        "end": "2026-03-03",
         "observations": 400,
-        "signals": 5,
-        "coverage": 0.0125,
+        "signals": 3,
+        "coverage": 0.0075,
         "correctDirections": 1,
-        "directionalHitRate": 0.2,
-        "sumGrossUnitNotionalReturns": -0.121965,
-        "sumNetUnitNotionalReturns": -0.141965,
+        "directionalHitRate": 0.33333,
+        "sumGrossUnitNotionalReturns": -0.032829,
+        "sumNetUnitNotionalReturns": -0.044829,
         "assumedRoundTripCost": 0.004,
         "noTradeReasons": {
-          "Specialists disagree or have insufficient conviction": 369,
-          "Volatile market regime: abstain": 20,
-          "Risk or estimated execution cost gate blocked": 6
+          "Specialists disagree or have insufficient conviction": 344,
+          "Volatile market regime: abstain": 30,
+          "Risk or estimated execution cost gate blocked": 23
         }
       },
       {
-        "start": "2026-02-02",
-        "end": "2026-04-22",
+        "start": "2026-03-04",
+        "end": "2026-05-22",
         "observations": 400,
         "signals": 2,
         "coverage": 0.005,
@@ -401,14 +401,13 @@
         "sumNetUnitNotionalReturns": 0.043367,
         "assumedRoundTripCost": 0.004,
         "noTradeReasons": {
-          "Specialists disagree or have insufficient conviction": 353,
-          "Risk or estimated execution cost gate blocked": 19,
-          "Volatile market regime: abstain": 26
+          "Volatile market regime: abstain": 7,
+          "Specialists disagree or have insufficient conviction": 391
         }
       },
       {
-        "start": "2026-04-23",
-        "end": "2026-07-11",
+        "start": "2026-05-23",
+        "end": "2026-08-10",
         "observations": 400,
         "signals": 3,
         "coverage": 0.0075,
@@ -418,41 +417,41 @@
         "sumNetUnitNotionalReturns": -0.012334,
         "assumedRoundTripCost": 0.004,
         "noTradeReasons": {
-          "Specialists disagree or have insufficient conviction": 375,
+          "Specialists disagree or have insufficient conviction": 374,
           "Risk or estimated execution cost gate blocked": 7,
-          "Volatile market regime: abstain": 15
+          "Volatile market regime: abstain": 16
         }
       },
       {
-        "start": "2026-07-12",
-        "end": "2026-09-29",
-        "observations": 400,
+        "start": "2026-08-11",
+        "end": "2026-10-30",
+        "observations": 405,
         "signals": 2,
-        "coverage": 0.005,
+        "coverage": 0.00494,
         "correctDirections": 2,
         "directionalHitRate": 1.0,
         "sumGrossUnitNotionalReturns": 0.036537,
         "sumNetUnitNotionalReturns": 0.028537,
         "assumedRoundTripCost": 0.004,
         "noTradeReasons": {
-          "Specialists disagree or have insufficient conviction": 356,
-          "Volatile market regime: abstain": 22,
+          "Specialists disagree or have insufficient conviction": 359,
+          "Volatile market regime: abstain": 24,
           "Risk or estimated execution cost gate blocked": 20
         }
       }
     ],
-    "observations": 1600,
-    "signals": 12,
-    "coverage": 0.0075,
-    "sumNetUnitNotionalReturns": -0.082395,
+    "observations": 1605,
+    "signals": 10,
+    "coverage": 0.00623,
+    "sumNetUnitNotionalReturns": 0.014741,
     "warning": "Exploratory and in-sample for the hand-chosen council rules, even though dates match walk-forward model test windows. Signals share days and correlated assets; summed unit-notional returns are NOT portfolio P&L. Close-to-close prices omit execution uncertainty, funding and borrow costs. No demonstrated profitability."
   },
   "selectiveForecasting": {
     "status": "evaluated",
-    "total": 1600,
-    "selected": 339,
-    "coverage": 0.2119,
-    "selectedBrier": 0.252353,
+    "total": 1605,
+    "selected": 314,
+    "coverage": 0.1956,
+    "selectedBrier": 0.253137,
     "rule": "Illustrative fixed filter: forecast only if absolute previous-day log return >=3%; fixed momentum probability 55/45.",
     "warning": "Abstention is not evidence of superior predictions; scores on selected examples cannot be directly compared with full-coverage scores."
   },
