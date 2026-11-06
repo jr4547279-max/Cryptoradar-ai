@@ -1,7 +1,7 @@
 {
   "status": "FAIL",
-  "forecasts": 1405,
-  "matured": 1299,
+  "forecasts": 1502,
+  "matured": 1396,
   "pending": 106,
   "issues": [
     {
@@ -405,7 +405,7 @@
       "reason": "missing_challenger_trialId"
     }
   ],
-  "issueCount": 379,
+  "issueCount": 408,
   "limitation": "Checks internal consistency, not independent immutability or market data authenticity.",
-  "checkedAt": "2026-11-06T15:09:55.174598+00:00"
+  "checkedAt": "2026-11-06T21:00:20.829657+00:00"
 }
