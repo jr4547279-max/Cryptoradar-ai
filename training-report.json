@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-11-06T00:18:07.207877+00:00",
+  "generatedAt": "2026-11-06T06:56:31.538675+00:00",
   "status": "evaluated",
   "model": "trend-logistic-v1",
   "trainingData": "Real CoinGecko historical market_chart prices and prospective recorded prices only; synthetic scenarios excluded",
   "validation": "Chronological UTC-day split; 70% earlier dates for training; one-day embargo; later dates held out; no random shuffling",
-  "examples": 10098,
+  "examples": 10099,
   "uniqueCoins": 30,
   "distinctExampleUtcDays": 337,
   "trainExamples": 7020,
-  "testExamples": 3048,
+  "testExamples": 3049,
   "testDays": 102,
   "trainingPositiveRate": 0.460969,
   "trainingCoins": [
@@ -51,16 +51,16 @@
   "trainEndDateUtc": "2026-07-25",
   "holdoutStartDateUtc": "2026-07-27",
   "holdoutEndDateUtc": "2026-11-05",
-  "holdoutBrier": 0.252734,
-  "constantTrainRateBrier": 0.251831,
+  "holdoutBrier": 0.252767,
+  "constantTrainRateBrier": 0.251997,
   "neutral50Brier": 0.25,
   "bestConstantBaselineBrier": 0.25,
   "bestConstantBaselineName": "neutral_0.5",
   "betterThanConstantBaseline": false,
-  "baselineImprovementBrier": -0.002734,
-  "holdoutLogLoss": 0.698684,
-  "holdoutAccuracy": 0.499016,
-  "constantMajorityAccuracy": 0.496063,
+  "baselineImprovementBrier": -0.002767,
+  "holdoutLogLoss": 0.698751,
+  "holdoutAccuracy": 0.49754,
+  "constantMajorityAccuracy": 0.493932,
   "calibrationBins": [
     {
       "lowerBound": 0.2,
@@ -79,16 +79,16 @@
     {
       "lowerBound": 0.4,
       "upperBound": 0.5,
-      "count": 2911,
-      "meanPredictedProbability": 0.45369,
-      "observedUpRate": 0.50361
+      "count": 2912,
+      "meanPredictedProbability": 0.4537,
+      "observedUpRate": 0.50549
     },
     {
       "lowerBound": 0.5,
       "upperBound": 0.6,
       "count": 13,
       "meanPredictedProbability": 0.50487,
-      "observedUpRate": 0.84615
+      "observedUpRate": 0.92308
     }
   ],
   "walkForwardCV": {
@@ -269,7 +269,7 @@
     "epochsRun": 529,
     "convergedByGradientTolerance": true
   },
-  "datasetSha256": "40d787c03bbf3f5c95b9ba27d20c229989deed8a826a3a8a0f0aad89ebf2bfc2",
+  "datasetSha256": "5a2f2eb9053aa70970dca6c0bc144dcb01e06ab06d59edcc9e4d64b451dbe45e",
   "holdoutStatus": "REUSED_HISTORICAL_EXPLORATORY_BENCHMARK",
   "independentProspectiveValidationRequired": true,
   "holdoutLimitations": [
