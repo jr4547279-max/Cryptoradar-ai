@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-08T21:10:33.241390+00:00",
+  "generatedAt": "2026-11-09T00:54:10.049864+00:00",
   "status": "CAP_REACHED",
   "source": "CoinGecko public API /coins/{id}/market_chart",
   "candidateUniverse": "Core-asset priority list intersected with recent live observations",
@@ -10,9 +10,9 @@
   "assetLimit": 30,
   "requestSpacingSeconds": 15,
   "assetsWithStoredHistory": 30,
-  "uniqueCoinUtcDays": 10530,
-  "distinctUtcDays": 351,
-  "storedObservations": 10530,
+  "uniqueCoinUtcDays": 10500,
+  "distinctUtcDays": 350,
+  "storedObservations": 10500,
   "invalidStoredRows": 0,
   "failedAssets": [],
   "limitations": [
