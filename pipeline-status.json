@@ -1,11 +1,11 @@
 {
-  "checkedAt": "2026-11-22T19:45:50.922859+00:00",
+  "checkedAt": "2026-11-23T00:58:01.566761+00:00",
   "collection": "success",
   "unitTests": "success",
   "historicalBackfillStep": "success",
   "historicalEvidenceStatus": "CAP_REACHED",
   "historicalAssetsWithHistory": 30,
-  "historicalDailySamples": 10110,
+  "historicalDailySamples": 10080,
   "dataAgentStep": "success",
   "dataAgentAuditStatus": "PASS",
   "historicalEvidenceAuditStatus": "PASS",
@@ -14,9 +14,9 @@
   "trendExperimentsStep": "success",
   "trendChallengerStep": "success",
   "modelTrainingStatus": "evaluated",
-  "modelExamples": 10199,
+  "modelExamples": 10261,
   "modelCoins": 96,
-  "holdoutBrier": 0.251998,
+  "holdoutBrier": 0.251945,
   "bestConstantBaselineBrier": 0.25,
   "beatsConstantBaseline": false,
   "candidateModelStatus": "FITTED_UNPROMOTED_CANDIDATE",
@@ -33,5 +33,5 @@
   "automaticModelPromotion": false,
   "realTradingEnabled": false,
   "rewards": "failure",
-  "runUrl": "https://github.com/jr4547279-max/Cryptoradar-ai/actions/runs/45061822330"
+  "runUrl": "https://github.com/jr4547279-max/Cryptoradar-ai/actions/runs/45091219362"
 }
