@@ -1,7 +1,7 @@
 {
   "status": "FAIL",
-  "forecasts": 3104,
-  "matured": 2994,
+  "forecasts": 3109,
+  "matured": 2999,
   "pending": 110,
   "issues": [
     {
@@ -407,5 +407,5 @@
   ],
   "issueCount": 1117,
   "limitation": "Checks internal consistency, not independent immutability or market data authenticity.",
-  "checkedAt": "2026-11-24T17:48:25.815097+00:00"
+  "checkedAt": "2026-11-25T02:32:36.598177+00:00"
 }
