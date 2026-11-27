@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-11-26T23:54:19.711837+00:00",
+  "generatedAt": "2026-11-27T08:31:18.964590+00:00",
   "status": "evaluated",
   "model": "trend-logistic-v1",
   "trainingData": "Real CoinGecko historical market_chart prices and prospective recorded prices only; synthetic scenarios excluded",
   "validation": "Chronological UTC-day split; 70% earlier dates for training; one-day embargo; later dates held out; no random shuffling",
-  "examples": 10450,
-  "uniqueCoins": 97,
+  "examples": 10514,
+  "uniqueCoins": 98,
   "distinctExampleUtcDays": 337,
   "trainExamples": 7020,
-  "testExamples": 3400,
+  "testExamples": 3464,
   "testDays": 102,
-  "trainingPositiveRate": 0.467949,
+  "trainingPositiveRate": 0.468091,
   "trainingCoins": [
     "aave",
     "algorand",
@@ -43,52 +43,52 @@
     "uniswap",
     "vechain"
   ],
-  "trainStartUtcDay": 20446,
-  "trainEndUtcDay": 20679,
-  "holdoutStartUtcDay": 20681,
-  "holdoutEndUtcDay": 20782,
-  "trainStartDateUtc": "2025-12-24",
-  "trainEndDateUtc": "2026-08-14",
-  "holdoutStartDateUtc": "2026-08-16",
-  "holdoutEndDateUtc": "2026-11-25",
-  "holdoutBrier": 0.252224,
-  "constantTrainRateBrier": 0.251913,
+  "trainStartUtcDay": 20447,
+  "trainEndUtcDay": 20680,
+  "holdoutStartUtcDay": 20682,
+  "holdoutEndUtcDay": 20783,
+  "trainStartDateUtc": "2025-12-25",
+  "trainEndDateUtc": "2026-08-15",
+  "holdoutStartDateUtc": "2026-08-17",
+  "holdoutEndDateUtc": "2026-11-26",
+  "holdoutBrier": 0.252407,
+  "constantTrainRateBrier": 0.252345,
   "neutral50Brier": 0.25,
   "bestConstantBaselineBrier": 0.25,
   "bestConstantBaselineName": "neutral_0.5",
   "betterThanConstantBaseline": false,
-  "baselineImprovementBrier": -0.002224,
-  "holdoutLogLoss": 0.697657,
-  "holdoutAccuracy": 0.512059,
-  "constantMajorityAccuracy": 0.486176,
+  "baselineImprovementBrier": -0.002407,
+  "holdoutLogLoss": 0.698021,
+  "holdoutAccuracy": 0.506928,
+  "constantMajorityAccuracy": 0.479215,
   "calibrationBins": [
     {
       "lowerBound": 0.2,
       "upperBound": 0.3,
       "count": 1,
-      "meanPredictedProbability": 0.29821,
+      "meanPredictedProbability": 0.29837,
       "observedUpRate": 1.0
     },
     {
       "lowerBound": 0.3,
       "upperBound": 0.4,
-      "count": 122,
-      "meanPredictedProbability": 0.3765,
-      "observedUpRate": 0.48361
+      "count": 124,
+      "meanPredictedProbability": 0.37677,
+      "observedUpRate": 0.47581
     },
     {
       "lowerBound": 0.4,
       "upperBound": 0.5,
-      "count": 3053,
-      "meanPredictedProbability": 0.46082,
-      "observedUpRate": 0.50147
+      "count": 3101,
+      "meanPredictedProbability": 0.46116,
+      "observedUpRate": 0.50855
     },
     {
       "lowerBound": 0.5,
       "upperBound": 0.6,
-      "count": 224,
-      "meanPredictedProbability": 0.51247,
-      "observedUpRate": 0.69643
+      "count": 238,
+      "meanPredictedProbability": 0.51276,
+      "observedUpRate": 0.70168
     }
   ],
   "walkForwardCV": {
@@ -97,8 +97,8 @@
     "selectionMetric": "weighted mean validation Brier score",
     "selectionData": "development dates only; final chronological holdout excluded",
     "selectedL2": 0.5,
-    "selectedMeanValidationBrier": 0.250039,
-    "selectedBeatsBestConstantBaseline": false,
+    "selectedMeanValidationBrier": 0.249206,
+    "selectedBeatsBestConstantBaseline": true,
     "candidateGrid": [
       0.005,
       0.02,
@@ -108,152 +108,152 @@
     "candidates": [
       {
         "l2": 0.005,
-        "meanValidationBrier": 0.250711,
-        "trainRateBaselineBrier": 0.250603,
+        "meanValidationBrier": 0.250047,
+        "trainRateBaselineBrier": 0.249729,
         "neutral50BaselineBrier": 0.25,
-        "bestConstantBaselineBrier": 0.25,
+        "bestConstantBaselineBrier": 0.249729,
         "beatsBestConstantBaseline": false,
         "validationExamples": 2520,
         "folds": [
           {
             "fold": 1,
             "validationExamples": 840,
-            "validationStartUtcDay": 20563,
-            "validationEndUtcDay": 20590,
-            "candidateBrier": 0.249322,
-            "trainRateBaselineBrier": 0.251244,
+            "validationStartUtcDay": 20564,
+            "validationEndUtcDay": 20591,
+            "candidateBrier": 0.249507,
+            "trainRateBaselineBrier": 0.250773,
             "neutral50BaselineBrier": 0.25
           },
           {
             "fold": 2,
             "validationExamples": 840,
-            "validationStartUtcDay": 20598,
-            "validationEndUtcDay": 20625,
-            "candidateBrier": 0.254507,
-            "trainRateBaselineBrier": 0.24718,
+            "validationStartUtcDay": 20599,
+            "validationEndUtcDay": 20626,
+            "candidateBrier": 0.253292,
+            "trainRateBaselineBrier": 0.246985,
             "neutral50BaselineBrier": 0.25
           },
           {
             "fold": 3,
             "validationExamples": 840,
-            "validationStartUtcDay": 20633,
-            "validationEndUtcDay": 20660,
-            "candidateBrier": 0.248303,
-            "trainRateBaselineBrier": 0.253385,
+            "validationStartUtcDay": 20634,
+            "validationEndUtcDay": 20661,
+            "candidateBrier": 0.247343,
+            "trainRateBaselineBrier": 0.251428,
             "neutral50BaselineBrier": 0.25
           }
         ]
       },
       {
         "l2": 0.02,
-        "meanValidationBrier": 0.250615,
-        "trainRateBaselineBrier": 0.250603,
+        "meanValidationBrier": 0.249917,
+        "trainRateBaselineBrier": 0.249729,
         "neutral50BaselineBrier": 0.25,
-        "bestConstantBaselineBrier": 0.25,
+        "bestConstantBaselineBrier": 0.249729,
         "beatsBestConstantBaseline": false,
         "validationExamples": 2520,
         "folds": [
           {
             "fold": 1,
             "validationExamples": 840,
-            "validationStartUtcDay": 20563,
-            "validationEndUtcDay": 20590,
-            "candidateBrier": 0.24917,
-            "trainRateBaselineBrier": 0.251244,
+            "validationStartUtcDay": 20564,
+            "validationEndUtcDay": 20591,
+            "candidateBrier": 0.2493,
+            "trainRateBaselineBrier": 0.250773,
             "neutral50BaselineBrier": 0.25
           },
           {
             "fold": 2,
             "validationExamples": 840,
-            "validationStartUtcDay": 20598,
-            "validationEndUtcDay": 20625,
-            "candidateBrier": 0.25377,
-            "trainRateBaselineBrier": 0.24718,
+            "validationStartUtcDay": 20599,
+            "validationEndUtcDay": 20626,
+            "candidateBrier": 0.252616,
+            "trainRateBaselineBrier": 0.246985,
             "neutral50BaselineBrier": 0.25
           },
           {
             "fold": 3,
             "validationExamples": 840,
-            "validationStartUtcDay": 20633,
-            "validationEndUtcDay": 20660,
-            "candidateBrier": 0.248905,
-            "trainRateBaselineBrier": 0.253385,
+            "validationStartUtcDay": 20634,
+            "validationEndUtcDay": 20661,
+            "candidateBrier": 0.247835,
+            "trainRateBaselineBrier": 0.251428,
             "neutral50BaselineBrier": 0.25
           }
         ]
       },
       {
         "l2": 0.1,
-        "meanValidationBrier": 0.250364,
-        "trainRateBaselineBrier": 0.250603,
+        "meanValidationBrier": 0.249607,
+        "trainRateBaselineBrier": 0.249729,
         "neutral50BaselineBrier": 0.25,
-        "bestConstantBaselineBrier": 0.25,
-        "beatsBestConstantBaseline": false,
+        "bestConstantBaselineBrier": 0.249729,
+        "beatsBestConstantBaseline": true,
         "validationExamples": 2520,
         "folds": [
           {
             "fold": 1,
             "validationExamples": 840,
-            "validationStartUtcDay": 20563,
-            "validationEndUtcDay": 20590,
-            "candidateBrier": 0.249198,
-            "trainRateBaselineBrier": 0.251244,
+            "validationStartUtcDay": 20564,
+            "validationEndUtcDay": 20591,
+            "candidateBrier": 0.249157,
+            "trainRateBaselineBrier": 0.250773,
             "neutral50BaselineBrier": 0.25
           },
           {
             "fold": 2,
             "validationExamples": 840,
-            "validationStartUtcDay": 20598,
-            "validationEndUtcDay": 20625,
-            "candidateBrier": 0.251756,
-            "trainRateBaselineBrier": 0.24718,
+            "validationStartUtcDay": 20599,
+            "validationEndUtcDay": 20626,
+            "candidateBrier": 0.25081,
+            "trainRateBaselineBrier": 0.246985,
             "neutral50BaselineBrier": 0.25
           },
           {
             "fold": 3,
             "validationExamples": 840,
-            "validationStartUtcDay": 20633,
-            "validationEndUtcDay": 20660,
-            "candidateBrier": 0.250138,
-            "trainRateBaselineBrier": 0.253385,
+            "validationStartUtcDay": 20634,
+            "validationEndUtcDay": 20661,
+            "candidateBrier": 0.248853,
+            "trainRateBaselineBrier": 0.251428,
             "neutral50BaselineBrier": 0.25
           }
         ]
       },
       {
         "l2": 0.5,
-        "meanValidationBrier": 0.250039,
-        "trainRateBaselineBrier": 0.250603,
+        "meanValidationBrier": 0.249206,
+        "trainRateBaselineBrier": 0.249729,
         "neutral50BaselineBrier": 0.25,
-        "bestConstantBaselineBrier": 0.25,
-        "beatsBestConstantBaseline": false,
+        "bestConstantBaselineBrier": 0.249729,
+        "beatsBestConstantBaseline": true,
         "validationExamples": 2520,
         "folds": [
           {
             "fold": 1,
             "validationExamples": 840,
-            "validationStartUtcDay": 20563,
-            "validationEndUtcDay": 20590,
-            "candidateBrier": 0.249788,
-            "trainRateBaselineBrier": 0.251244,
+            "validationStartUtcDay": 20564,
+            "validationEndUtcDay": 20591,
+            "candidateBrier": 0.249459,
+            "trainRateBaselineBrier": 0.250773,
             "neutral50BaselineBrier": 0.25
           },
           {
             "fold": 2,
             "validationExamples": 840,
-            "validationStartUtcDay": 20598,
-            "validationEndUtcDay": 20625,
-            "candidateBrier": 0.249046,
-            "trainRateBaselineBrier": 0.24718,
+            "validationStartUtcDay": 20599,
+            "validationEndUtcDay": 20626,
+            "candidateBrier": 0.248402,
+            "trainRateBaselineBrier": 0.246985,
             "neutral50BaselineBrier": 0.25
           },
           {
             "fold": 3,
             "validationExamples": 840,
-            "validationStartUtcDay": 20633,
-            "validationEndUtcDay": 20660,
-            "candidateBrier": 0.251284,
-            "trainRateBaselineBrier": 0.253385,
+            "validationStartUtcDay": 20634,
+            "validationEndUtcDay": 20661,
+            "candidateBrier": 0.249756,
+            "trainRateBaselineBrier": 0.251428,
             "neutral50BaselineBrier": 0.25
           }
         ]
@@ -269,7 +269,7 @@
     "epochsRun": 518,
     "convergedByGradientTolerance": true
   },
-  "datasetSha256": "d0b1eef5005c0ebd9140e17364112fc4ee0a9ce617a4eadfaf624632ea00475c",
+  "datasetSha256": "45c40214022d79cd125d4dcf417e53e1bf4726a564453284df2319f4533e73db",
   "holdoutStatus": "REUSED_HISTORICAL_EXPLORATORY_BENCHMARK",
   "independentProspectiveValidationRequired": true,
   "holdoutLimitations": [
